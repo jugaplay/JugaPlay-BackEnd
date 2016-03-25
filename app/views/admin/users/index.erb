@@ -1,0 +1,32 @@
+<h4 class="page-title">Usuarios</h4>
+<h6 class="page-title"><%= @users.count %> usuarios</h6>
+
+<div class="table-container">
+  <table class="stripped hoverable tb900">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nickname</th>
+        <th>Email</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Miembro desde</th>
+        <th>Jugadas</th>
+      </tr>
+    </thead>
+  
+    <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.id %></td>
+        <td><%= user.nickname %></td>
+        <td><%= user.email %></td>
+        <td><%= user.first_name %></td>
+        <td><%= user.last_name %></td>
+        <td><%= user.created_at.strftime('%d/%m/%Y') %></td>
+        <td><%= user.plays.count %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,64 @@
+<h4 class="page-title"><%= @team.name %> (<%= @team.id %>)</h4>
+
+<div class="row course-description">
+  <div class="col s12">
+    <div class="row col s12">
+      <h5>Nombre Corto</h5>
+      <%= @team.short_name %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Descripción</h5>
+      <%= @team.description %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Director</h5>
+      <%= @team.director.full_name %>
+      <%= @team.director.description %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Jugadores</h5><br>
+      <% @team.players.each do |player| %>
+        <p><%= link_to player.name, edit_admin_player_path(player.id) %></p>
+      <% end %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Importar nuevos jugadores</h5>
+      <%= form_for :players, url: import_players_admin_team_path(@team.id), method: :post, html: { id: 'import-players-form' } do |f| %>
+        <div class="file-field input-field">
+          <div class="btn">
+            <span>File (csv)</span>
+            <%= f.file_field :file, required: true %>
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text">
+          </div>
+        </div>
+
+        <br>
+        <i>
+          <h6>Ejemplo:</h6>
+          <p>first_name,last_name,position,description,birthday,nationality,weight,height,data_factory_id</p>
+          <p>Diego,Rodriguez,goalkeeper,arquero mediocre,25/6/1989,Argentina,80,1.90,200</p>
+          <p>Rodrigo,Mora,forward,el mejor delantero del mundo,12/8/1991,Uruguay,75,1.75,100</p>
+          <br>
+          <p>Todos los campos son obligatorios respetando el siguiente formato</p>
+          <ul>
+            <li>Fechas de nacimiento: <b>'DD/MM/AAAA'</b></li>
+            <li>Posiciones válidas: <b><%= Position::ALL.join(' - ') %></b></li>
+            <li>Nacionalidades válidas: <b><%= Country::ALL.join(' - ') %></b></li>
+            <li>Peso: <b>Numérico o decimal mayor a cero</b></li>
+            <li>Altura: <b>Numérico o decimal mayor a cero</b></li>
+            <li>Data Factory ID: <b>No admite duplicados</b></li>
+          </ul>
+        </i>
+        <br>
+
+        <%= submit_button_for 'Importar' %>
+      <% end %>
+    </div>
+  </div>
+</div>

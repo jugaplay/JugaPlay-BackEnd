@@ -1,0 +1,4 @@
+<h4 class="page-title">Nuevo Equipo</h4>
+<div class="row">
+  <%= render partial: 'admin/teams/form', locals: { url: admin_teams_path, method: :post, team: @team, director: @director } %>
+</div>

@@ -1,0 +1,48 @@
+<h4 class="page-title"><%= @table.title %></h4>
+
+<div class="row course-description">
+  <div class="col s12">
+    <div class="row col s12">
+      <h5>Numero de jugadores</h5>
+      <%= @table.number_of_players %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Costo de entrada</h5>
+      <%= @table.entry_coins_cost %> coins
+    </div>
+
+    <div class="row col s12">
+      <h5>Partidos</h5>
+      <ul>
+        <% @table.matches.each do |match| %>
+          <li><%= match.description %></li>
+        <% end %>
+      </ul>
+    </div>
+
+    <div class="row col s12">
+      <h5>Inicio</h5>
+      <%= @table.start_time.strftime('%d/%m/%Y - %H:%M') %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Fin</h5>
+      <%= @table.end_time.strftime('%d/%m/%Y - %H:%M') %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Descripcion</h5>
+      <%= @table.description %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Participantes</h5>
+      <ul>
+        <% @table.plays.each do |play| %>
+          <li><%= play.user.email %> [<%= play.players.map(&:name).join(', ') %>]</li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>

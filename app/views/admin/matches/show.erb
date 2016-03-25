@@ -1,0 +1,25 @@
+<h4 class="page-title"><%= @match.title %></h4>
+
+<div class="row course-description">
+  <div class="col s12">
+    <div class="row col s12">
+      <h5>Torneo</h5>
+      <%= @match.tournament.name %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Equipo local</h5>
+      <%= @match.local_team.name %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Equipo visitante</h5>
+      <%= @match.visitor_team.name %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Fecha y hora</h5>
+      <%= @match.datetime.strftime('%d/%m/%Y - %H:%M') %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,3 @@
+player_id,match_id,assists,defender_scored_goals,faults,free_kick_goal,goalkeeper_scored_goals,missed_penalties,missed_saves,offside,recoveries,red_cards,right_passes,saved_penalties,saves,scored_goals,shots,shots_on_goal,shots_outside,shots_to_the_post,undefeated_defense,undefeated_goal,winner_team,wrong_passes,yellow_cards
+1,1,0,0,0,0,0,0,0,0,0,0,10,0,0,0,0,0,0,0,0,0,0,0.0,0
+2,1,0,0,2,0,0,0,0,0,2,0,20,0,2,0,0,0,0,0,0,0,0,2.0,0

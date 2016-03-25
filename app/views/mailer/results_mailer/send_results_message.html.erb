@@ -1,0 +1,30 @@
+<div class="mail_container" style="background-color:#8FC858;" >
+  <div style="background-color:#0E191B; width:100%; height:67px; text-align:center;" ><img src="http://jugaplay.com/mail/img/logo.jpg" width="175" height="51" style="margin-top:10px; margin-left:auto; margin-right:auto;" /></div>
+  <div class="row" style="width:80%; margin-top:40px; margin-bottom:20px; margin-left:10%; margin-right:10%;text-align:center; color:#FFF;" >
+    <H1 style="font-size:55px; font-family:Arial, Helvetica, sans-serif;">¡LOS RESULTADOS!</H1>
+  </div>
+  <div class="row"style="width:80%; margin-top:0px; margin-bottom:20px; margin-left:10%; margin-right:10%;text-align:center;color:#FFF;" >
+    <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;">Muchas gracias por ingresar y participar en Jugaplay. </p>
+    <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;">Valoramos mucho tu visita.</p>
+  </div>
+  <div class="row" style="width:80%; margin-top:0px; margin-bottom:40px; margin-left:10%; margin-right:10%;text-align:center;color:#FFF;" >
+    <h3 style="font-size:30px; font-family:Arial, Helvetica, sans-serif;">¡LOS RESULTADOS DE TU JUGADA SON!</h3>
+    <% @play.players.each do |player| %>
+      <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;"> <%= "#{player.name}, sumo: #{@points_calculator.call_for_player(@play, player) } PTS"%> </p>
+    <% end %>
+    <p><b style="font-size:16px; font-family:Arial, Helvetica, sans-serif;">TOTAL: <%= @play.points %> PTS</b></p>
+    <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;">
+      Saliste <%= @table.position(@user) { fail "Missing position for user #{@user.id}" } %> en la Jugada <%= @table.title %>.
+      Sumaste <%= @table.payed_points(@user) { fail "Missing played points for user #{@user.id}" } %> puntos en el Ranking de Verano 2016!
+    </p>
+  </div>
+  <div class="row" style="width:80%; margin-top:0px; margin-bottom:20px; margin-left:10%; margin-right:10%;text-align:center;color:#FFF;" >
+    <h3 style="font-size:18px; font-family:Arial, Helvetica, sans-serif;">¡NOVEDADES!</h3>
+    <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;">Esta semana encontrarás nuevos features en el sitio, para comenzar encontraras una nueva forma más simple para hacer la Jugada y un Log-in para ingresar a tu cuenta.</p>
+  </div>
+  <div class="row" style="width:80%; margin-top:0px; margin-bottom:40px; margin-left:10%; margin-right:10%;text-align:center;color:#FFF;">
+    <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;">Si realmente sabes de futbol, te esperan muchisimos premios.</p>
+    <p style="font-size:12px; font-family:Arial, Helvetica, sans-serif;"><b>¡A seguir jugando! ¡El torneo local y la Copa Libertadores se aproximan! </b></p>
+  </div>
+  <div class="row" style="width:100%;text-align:center;" > <img src="http://jugaplay.com/mail/img/balon.jpg" style="margin-top:10px; margin-left:auto; margin-right:auto; width:50%; max-width:251px;" /></div>
+</div>

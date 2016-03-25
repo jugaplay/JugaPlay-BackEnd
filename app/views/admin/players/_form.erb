@@ -1,0 +1,49 @@
+<%= form_for player, url: url, method: method, html: { class: 'player-form col s12 m8 l6 offset-m2 offset-l3' } do |f| %>
+    <div class="input-field col s12">
+      <%= f.text_field :first_name, class: 'validate', required: true %>
+      <%= f.label :first_name, 'Nombre' %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= f.text_field :last_name, class: 'validate', required: true %>
+      <%= f.label :last_name, 'Apellido' %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= f.label :team_id, 'Equipo' %>
+      <%= f.collection_select :team_id, Team.all, :id, :name, { include_blank: true } %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= f.label :position, 'Posición' %>
+      <%= f.collection_select :position, Position::ALL, :itself, :itself, { include_blank: false }, { class: 'validate', required: true } %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= f.label :nationality, 'País' %>
+      <%= f.collection_select :nationality, Country::ALL, :itself, :itself, { include_blank: false }, { class: 'validate', required: true } %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= f.label :birthday, 'Fecha de Nacimiento (DD MM YYYY)', class: 'active' %>
+      <div class="input-field col s1"><%= f.text_field :day, placeholder: 'dd', value: @birthday.day, class: 'validate', required: true, maxlength: 2 %></div>
+      <div class="input-field col s1"><%= f.text_field :month, placeholder: 'mm', value: @birthday.month, class: 'validate', required: true, maxlength: 2 %></div>
+      <div class="input-field col s2"><%= f.text_field :year, placeholder: 'yyyy', value: @birthday.year, class: 'validate', required: true, maxlength: 4 %></div>
+    </div>
+
+    <%= f.text_field :birthday, hidden: true %>
+
+    <div class="input-field col s12">
+      <%= f.number_field :weight, class: 'validate', required: true %>
+      <%= f.label :weight, 'Peso (kg)' %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= f.number_field :height, class: 'validate', required: true %>
+      <%= f.label :height, 'Altura (m)' %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= submit_button_for 'Guardar' %>
+    </div>
+<% end %>

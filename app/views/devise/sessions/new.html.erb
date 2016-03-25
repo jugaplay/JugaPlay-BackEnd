@@ -1,0 +1,23 @@
+<h3>Iniciar sesión</h3>
+
+<%= form_for(resource, as: resource_name, url: admin_login_path, class: 'col s12 m6') do |f| %>
+  <div class="row">
+    <div class="input-field col s3">
+      <%= f.email_field :email, class: 'validate', required: true, autofocus: true %>
+      <%= f.label :email %><br />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s3">
+      <%= f.password_field :password, class: 'validate', required: true, autocomplete: 'off' %>
+      <%= f.label :password %><br />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s3">
+      <%= submit_button_for 'Iniciar' %>
+    </div>
+  </div>
+<% end %>

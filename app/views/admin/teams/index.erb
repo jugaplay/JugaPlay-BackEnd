@@ -1,0 +1,31 @@
+<h4 class="page-title">Equipos</h4>
+
+<div class="team-container">
+  <table class="stripped hoverable tb900">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Nombre Corto</th>
+        <th>Director</th>
+        <th>Jugadores</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+  
+    <tbody>
+    <% @teams.each do |team| %>
+      <tr>
+        <td><%= team.id %></td>
+        <td><%= link_to team.name, edit_admin_team_path(team.id) %></td>
+        <td><%= team.short_name %></td>
+        <td><%= team.director.full_name %></td>
+        <td><%= team.players.count %></td>
+        <td><%= link_to 'Ver +', admin_team_path(team.id) %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= add_floating_button_for new_admin_team_path %>

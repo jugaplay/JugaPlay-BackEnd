@@ -1,0 +1,37 @@
+<h4 class="page-title">Mesas</h4>
+
+<div class="table-container">
+  <table class="stripped hoverable tb900">
+    <thead>
+      <tr>
+        <th>Titulo</th>
+        <th>Numero de jugadores</th>
+        <th>Costo de entrada</th>
+        <th>Partidos</th>
+        <th>Inicio</th>
+        <th>Fin</th>
+        <th>Mesa cerrada?</th>
+        <th colspan="3"></th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+  
+    <tbody>
+    <% @tables.each do |table| %>
+      <tr>
+        <td><%= link_to table.title, edit_admin_table_path(table.id) %></td>
+        <td><%= table.number_of_players %></td>
+        <td><%= table.entry_coins_cost %></td>
+        <td><%= table.matches.count %></td>
+        <td><%= table.start_time.strftime('%d/%m/%Y - %H:%M') %></td>
+        <td><%= table.end_time.strftime('%d/%m/%Y - %H:%M') %></td>
+        <td><%= table.closed? ? 'Si' : 'No' %></td>
+        <td><%= link_to 'Ver +', admin_table_path(table.id) %></td>
+        <td><%= remove_button_for admin_table_path(table.id) %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= add_floating_button_for new_admin_table_path %>

@@ -1,0 +1,37 @@
+<%= form_for team, url: url, method: method, html: { class: 'team-form col s12 m8 l6 offset-m2 offset-l3' } do |f| %>
+    <div class="input-field col s12">
+      <%= f.text_field :name, class: 'validate', required: true %>
+      <%= f.label :name, 'Nombre' %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= f.text_field :short_name, class: 'validate', required: true %>
+      <%= f.label :short_name, 'Nombre Corto' %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= f.text_field :description, class: 'validate', required: true %>
+      <%= f.label :description, 'Descripción' %>
+    </div>
+
+    <%= f.fields_for director do |d| %>
+      <div class="input-field col s12">
+        <%= d.text_field :first_name, class: 'validate', required: true %>
+        <%= d.label :first_name, 'Nombre del DT' %>
+      </div>
+
+      <div class="input-field col s12">
+        <%= d.text_field :last_name, class: 'validate', required: true %>
+        <%= d.label :last_name, 'Apellido del DT' %>
+      </div>
+
+      <div class="input-field col s12">
+        <%= d.text_field :description, class: 'validate', required: true %>
+        <%= d.label :description, 'Descripción del DT' %>
+      </div>
+    <% end %>
+
+    <div class="input-field col s12">
+      <%= submit_button_for 'Guardar' %>
+    </div>
+<% end %>
