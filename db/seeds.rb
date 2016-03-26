@@ -5,9 +5,16 @@ ActiveRecord::Base.transaction do
   admin = User.new(email: 'admin@jugaplay.com', password: '12345678', first_name: 'Admin', last_name: 'Admin', nickname: 'Admin')
   admin.save!
   
+  
   ## USER
-  user = User.new(email: 'torielli.florencia@gmail.com', password: '12345678', first_name: 'Florencia', last_name: 'Torielli', nickname: 'Flor')
+  user = User.new( email: 'torielli.florencia@gmail.com', password: '12345678', first_name: 'Florencia', last_name: 'Torielli', nickname: 'Flor')
   user.save!
+  
+  ## USER WALLET
+  
+#	wallet =  Wallet.new(coins: 10, credits: 0, user: user)
+#  	wallet.save!
+#  	user.save!
   
   ## INDEPENDIENTE
   independiente_director = Director.create!(first_name: 'Mauricio', last_name: 'Pellegrino', description: '-')
@@ -215,32 +222,36 @@ ActiveRecord::Base.transaction do
   gimnasia = Team.create!(name: 'Gimnasia LP', director: gimnasia_director, players: gimnasia_players, description: 'El Lobo', short_name: 'GIM')
 
 
+
+
   ## PARTIDOS
-  slo_ind = Match.create(title: 'San Lorenzo vs Independiente', local_team: san_lorenzo, visitor_team: independiente, datetime: DateTime.strptime('12/1/16 22:10', '%d/%m/%y %H:%M'))
-  est_rac = Match.create(title: 'Estudiantes LP vs Racing', local_team: estudiantes, visitor_team: racing, datetime: DateTime.strptime('14/1/16 22:10', '%d/%m/%y %H:%M'))
-  slo_hur = Match.create(title: 'San Lorenzo vs Huracan', local_team: san_lorenzo, visitor_team: huracan, datetime: DateTime.strptime('16/1/16 22:10', '%d/%m/%y %H:%M'))
-  riv_ind = Match.create(title: 'River vs Independiente', local_team: river, visitor_team: independiente, datetime: DateTime.strptime('18/1/16 22:10', '%d/%m/%y %H:%M'))
-  boc_rac = Match.create(title: 'Boca vs Racing', local_team: boca, visitor_team: racing, datetime: DateTime.strptime('20/1/16 22:10', '%d/%m/%y %H:%M'))
-  boc_riv = Match.create(title: 'Boca vs River', local_team: boca, visitor_team: river, datetime: DateTime.strptime('23/1/16 22:10', '%d/%m/%y %H:%M'))
-  riv_slo = Match.create(title: 'River vs San Lorenzo', local_team: river, visitor_team: san_lorenzo, datetime: DateTime.strptime('26/1/16 22:10', '%d/%m/%y %H:%M'))
-  boc_est = Match.create(title: 'Boca vs Estudiantes', local_team: boca, visitor_team: estudiantes, datetime: DateTime.strptime('27/1/16 22:10', '%d/%m/%y %H:%M'))
-  rac_ind = Match.create(title: 'Racing vs Independiente', local_team: racing, visitor_team: independiente, datetime: DateTime.strptime('29/1/16 22:10', '%d/%m/%y %H:%M'))
-  boc_riv_2 = Match.create(title: 'Boca vs River', local_team: boca, visitor_team: river, datetime: DateTime.strptime('30/1/16 22:10', '%d/%m/%y %H:%M'))
-  est_gim = Match.create(title: 'Estudiantes LP vs Gimnasia LP', local_team: estudiantes, visitor_team: gimnasia, datetime: DateTime.strptime('31/1/16 22:10', '%d/%m/%y %H:%M'))
+  slo_ind = Match.create!(tournament: torneo_verano, title: 'San Lorenzo vs Independiente', local_team: san_lorenzo, visitor_team: independiente, datetime: DateTime.strptime('12/1/16 22:10', '%d/%m/%y %H:%M'))
+  est_rac = Match.create!(tournament: torneo_verano, title: 'Estudiantes LP vs Racing', local_team: estudiantes, visitor_team: racing, datetime: DateTime.strptime('14/1/16 22:10', '%d/%m/%y %H:%M'))
+  slo_hur = Match.create!(tournament: torneo_verano, title: 'San Lorenzo vs Huracan', local_team: san_lorenzo, visitor_team: huracan, datetime: DateTime.strptime('16/1/16 22:10', '%d/%m/%y %H:%M'))
+  riv_ind = Match.create!(tournament: torneo_verano, title: 'River vs Independiente', local_team: river, visitor_team: independiente, datetime: DateTime.strptime('18/1/16 22:10', '%d/%m/%y %H:%M'))
+  boc_rac = Match.create!(tournament: torneo_verano, title: 'Boca vs Racing', local_team: boca, visitor_team: racing, datetime: DateTime.strptime('20/1/16 22:10', '%d/%m/%y %H:%M'))
+  boc_riv = Match.create!(tournament: torneo_verano, title: 'Boca vs River', local_team: boca, visitor_team: river, datetime: DateTime.strptime('23/1/16 22:10', '%d/%m/%y %H:%M'))
+  riv_slo = Match.create!(tournament: torneo_verano, title: 'River vs San Lorenzo', local_team: river, visitor_team: san_lorenzo, datetime: DateTime.strptime('26/1/16 22:10', '%d/%m/%y %H:%M'))
+  boc_est = Match.create!(tournament: torneo_verano, title: 'Boca vs Estudiantes', local_team: boca, visitor_team: estudiantes, datetime: DateTime.strptime('27/1/16 22:10', '%d/%m/%y %H:%M'))
+  rac_ind = Match.create!(tournament: torneo_verano, title: 'Racing vs Independiente', local_team: racing, visitor_team: independiente, datetime: DateTime.strptime('29/1/16 22:10', '%d/%m/%y %H:%M'))
+  est_gim = Match.create!(tournament: torneo_verano, title: 'Estudiantes LP vs Gimnasia LP', local_team: estudiantes, visitor_team: gimnasia, datetime: DateTime.strptime('31/1/16 22:10', '%d/%m/%y %H:%M'))
 
 
 
   ## MESAS
-  Table.create(title: 'San Lorenzo vs Independiente', matches: [slo_ind], start_time: slo_ind.datetime, end_time: slo_ind.datetime + 1.day, tournament: torneo_verano,
+  Table.create!(title: 'San Lorenzo vs Independiente', matches: [slo_ind], start_time: slo_ind.datetime, end_time: slo_ind.datetime + 1.day, tournament: torneo_verano,
                number_of_players: 3, points_for_winners: PointsForWinners.default, description: '-', table_rules: TableRules.create,
                entry_coins_cost: 0)
                
   ## PLAYER STATS
   
   bonnin = Player.find_by(first_name: 'Yair', last_name: 'Bonnin', team: gimnasia)
-
-  PlayerStats.create(player: bonnin, match: slo_ind, match_id: 1, shots: 0, shots_on_goal: 0, shots_to_the_post: 0, shots_outside: 0, scored_goals: 0, goalkeeper_scored_goals:0, defender_scored_goals: 0, right_passes: 10, wrong_passes:0, recoveries:0, assists: 0, undefeated_defense: 0, undefeated_goal: 0, red_cards: 0, yellow_cards: 0, offside: 0, faults: 0, missed_penalties: 0, winner_team: 0)
+  PlayerStats.create!(player: bonnin, match: slo_ind,
+  shots: 0, shots_on_goal: 0, shots_to_the_post: 0, shots_outside: 0, 
+  scored_goals: 0, goalkeeper_scored_goals:0, defender_scored_goals: 0, free_kick_goal:0,
+  right_passes: 10, recoveries:0, assists: 0, undefeated_defense: 0, wrong_passes:0, 
+  saves: 0, saved_penalties:0,missed_saves:0,undefeated_goal: 0,  
+  red_cards: 0, yellow_cards: 0, offside: 0, faults: 0, missed_penalties: 0, winner_team: 0
+  )
  
-  
-
 end

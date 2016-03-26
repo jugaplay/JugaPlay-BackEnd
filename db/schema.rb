@@ -267,6 +267,7 @@ ActiveRecord::Schema.define(version: 20160221145117) do
   create_table "wallets", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "coins",      default: 40, null: false
+    t.integer  "credits",    default: 0,  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
