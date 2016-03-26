@@ -1,0 +1,40 @@
+<h4 class="page-title"><%= @player.name %> (<%= @player.id %>)</h4>
+
+<div class="row course-description">
+  <div class="col s12">
+    <div class="row col s12">
+      <h5>DF ID</h5>
+      <%= @player.data_factory_id_if_none { 'N/A' } %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Equipo</h5>
+      <%= @player.team_name_if_none { 'N/A' } %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Posición</h5>
+      <%= @player.position %>
+    </div>
+
+    <div class="row col s12">
+      <h5>País</h5>
+      <%= @player.nationality %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Fecha de nacimiento</h5>
+      <%= @player.birthday.strftime('%d/%m/%Y') %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Peso (kg)</h5>
+      <%= @player.weight %>
+    </div>
+
+    <div class="row col s12">
+      <h5>Altura (m)</h5>
+      <%= @player.height %>
+    </div>
+  </div>
+</div>

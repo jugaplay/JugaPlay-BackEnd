@@ -1,0 +1,40 @@
+<%= form_for match, url: url, method: method, html: { class: 'match-form col s12 m8 l6 offset-m2 offset-l3' } do |f| %>
+    <div class="input-field col s12">
+      <%= f.text_field :title, class: 'validate', required: true %>
+      <%= f.label :title, 'Titulo' %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= f.label :tournament_id, 'Torneo' %>
+      <%= f.collection_select :tournament_id, Tournament.all, :id, :name, { include_blank: false }, { class: 'validate', required: true } %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= f.label :local_team_id, 'Equipo Local' %>
+      <%= f.collection_select :local_team_id, Team.all, :id, :name, { include_blank: false }, { class: 'validate', required: true } %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= f.label :visitor_team_id, 'Equipo Visitante' %>
+      <%= f.collection_select :visitor_team_id, Team.all, :id, :name, { include_blank: false }, { class: 'validate', required: true } %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= f.label :datetime, 'Fecha (DD MM YYYY)', class: 'active' %>
+      <div class="input-field col s1"><%= f.text_field :day, placeholder: 'dd', value: @now.day, class: 'validate', required: true, maxlength: 2 %></div>
+      <div class="input-field col s1"><%= f.text_field :month, placeholder: 'mm', value: @now.month, class: 'validate', required: true, maxlength: 2 %></div>
+      <div class="input-field col s2"><%= f.text_field :year, placeholder: 'yyyy', value: @now.year, class: 'validate', required: true, maxlength: 4 %></div>
+    </div>
+
+    <div class="input-field col s12">
+      <%= f.label :datetime, 'Hora (HH MM)', class: 'active' %>
+      <div class="input-field col s1"><%= f.text_field :hour, placeholder: 'HH', value: @now.hour, class: 'validate', required: true, maxlength: 2 %></div>
+      <div class="input-field col s1"><%= f.text_field :minute, placeholder: 'MM', value: @now.minute, class: 'validate', required: true, maxlength: 2 %></div>
+    </div>
+
+    <%= f.text_field :datetime, hidden: true %>
+
+    <div class="input-field col s12">
+      <%= submit_button_for 'Guardar' %>
+    </div>
+<% end %>

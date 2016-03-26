@@ -1,0 +1,21 @@
+
+.dropdown-content li > a, .dropdown-content li > span {
+    
+    font-size: .9em;
+}
+
+.select-wrapper {
+    
+    i.mdi-navigation-arrow-drop-down{
+        top: 5px;
+    }
+    
+    input.select-dropdown {
+        text-overflow: ellipsis;
+    }
+    
+    .dropdown-content{
+        box-shadow: 4px 4px 00 rgba(0, 0, 0, 0.2);
+    }
+    
+}

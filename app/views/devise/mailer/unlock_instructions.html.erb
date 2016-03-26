@@ -1,0 +1,7 @@
+<p>Hola <%= @resource.email %>!</p>
+
+<p>Tu cuenta ha sido blockeada debido a un exceso de intento de ingresos fallidos.</p>
+
+<p>Hacé click en el siguiente link para debloquear tu cuenta:</p>
+
+<p><%= link_to 'Desbloquear mi cuenta', "http://#{ENV['DOMAIN_NAME']}/unlock_account?unlock_token=#{@token}" %></p>

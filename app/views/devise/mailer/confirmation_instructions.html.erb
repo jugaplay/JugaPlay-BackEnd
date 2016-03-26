@@ -1,0 +1,6 @@
+<h3>Bienvenido a Jugaplay!</h3>
+<p>Hola <%= @email %></p>
+
+<p>Podés confirmar tu cuenta de mail haciendo click en el siguiente link:</p>
+
+<p><%= link_to 'Confirmar mi cuenta', "http://#{ENV['DOMAIN_NAME']}/mail_confirmation?confirmation_token=#{@token}" %></p>

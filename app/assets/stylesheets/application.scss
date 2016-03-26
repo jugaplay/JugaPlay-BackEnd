@@ -1,0 +1,72 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "materialize";
+@import "variables";
+
+html {
+
+  body > .container {
+    padding-top: 5em;
+    min-height: -webkit-calc(#{$screen-height} - #{$footer-height});
+    min-height: -moz-calc(#{$screen-height} - #{$footer-height});
+    min-height: calc(#{$screen-height} - #{$footer-height});
+  }
+}
+
+a {
+  color: $links;
+
+  &:hover{
+    color: darken($links, 8%);
+    text-decoration: none;
+  }
+}
+
+img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.container {
+  padding: 0 1.5rem;
+  margin: 0 auto;
+  max-width: 1280px;
+  width: 85%;
+
+  .page-title {
+    font-family: 'Roboto';
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+    color: $dark-gray;
+    letter-spacing: 0.20em;
+  }
+}
+
+.col {
+  word-wrap: break-word;
+}
+
+.flash {
+  margin-top: 10px;
+}
+
+.btn, .btn-large {
+
+  color: white;
+  box-shadow: none;
+  background-color: $primary-color;
+  transition: background-color .3s;
+
+  &:hover{
+    color: white;
+    background: $secondary-color;
+    box-shadow: none;
+    transition: background-color .3s;
+  }
+
+}
+
+@import "menu";
+@import "forms";
+@import "table-container";

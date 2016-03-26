@@ -1,0 +1,9 @@
+<% if user_signed_in? %>
+    <li class="bold"><%= link_to 'Jugadores', admin_players_path %></li>
+    <li class="bold"><%= link_to 'Equipos', admin_teams_path %></li>
+    <li class="bold"><%= link_to 'Partidos', admin_matches_path %></li>
+    <li class="bold"><%= link_to 'Mesas', admin_tables_path %></li>
+    <li class="bold"><%= link_to 'Cerrar Mesas', to_be_closed_admin_tables_path %></li>
+    <li class="bold"><%= link_to 'Usuarios', admin_users_path %></li>
+    <li class="bold"><%= link_to 'Logout', admin_logout_path %></li>
+<% end %>
