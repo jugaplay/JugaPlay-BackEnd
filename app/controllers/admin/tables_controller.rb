@@ -54,8 +54,7 @@ class Admin::TablesController < Admin::BaseController
     @table = Table.find(params[:id])
     croupier.assign_scores(players_stats: create_player_stats)
     RankingSorter.new(@table.tournament).call
-    # TODO: Eliminar el envio de mails o bien buscar el archivo mailer/results_mailer/send_results_message y modificarlo
-    ResultsMailer.for_table(@table)
+    # ResultsMailer.for_table(@table)
     redirect_with_success_message to_be_closed_admin_tables_path, CLOSE_SUCCESS_MESSAGE
   rescue ArgumentError, ActiveRecord::RecordInvalid => error
     redirect_with_error_message to_be_closed_admin_tables_path, error

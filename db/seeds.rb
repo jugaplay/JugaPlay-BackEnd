@@ -1,20 +1,13 @@
 ActiveRecord::Base.transaction do
   torneo_verano = Tournament.create!(name: 'Torneo de Verano')
 
+   ## USER WALLET  
+	wallet =  Wallet.new(coins: 10, credits: 0)
+  	
   ## ADMIN
-  admin = User.new(email: 'admin@jugaplay.com', password: '12345678', first_name: 'Admin', last_name: 'Admin', nickname: 'Admin')
+  admin = User.new(wallet: wallet, email: 'admin@jugaplay.com', password: '12345678', first_name: 'Admin', last_name: 'Admin', nickname: 'Admin')
   admin.save!
-  
-  
-  ## USER
-  user = User.new( email: 'torielli.florencia@gmail.com', password: '12345678', first_name: 'Florencia', last_name: 'Torielli', nickname: 'Flor')
-  user.save!
-  
-  ## USER WALLET
-  
-#	wallet =  Wallet.new(coins: 10, credits: 0, user: user)
-#  	wallet.save!
-#  	user.save!
+     
   
   ## INDEPENDIENTE
   independiente_director = Director.create!(first_name: 'Mauricio', last_name: 'Pellegrino', description: '-')

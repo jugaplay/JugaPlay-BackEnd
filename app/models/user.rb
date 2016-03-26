@@ -17,18 +17,16 @@ class User < ActiveRecord::Base
 
   scope :ordered, -> { order(created_at: :asc) }
 
-
-  
   def name
     "#{first_name} #{last_name}"
   end
 
   def coins
-    wallet.coins
+  	Wallet.find_by_user_id(self.id).coins
   end
   
   def credits
-    wallet.credits
+  	Wallet.find_by_user_id(self.id).credits
   end
 
   def has_coins?(amount_of_coins)

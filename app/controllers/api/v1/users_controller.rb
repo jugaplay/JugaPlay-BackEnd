@@ -2,7 +2,7 @@ class Api::V1::UsersController < Api::BaseController
   skip_before_filter :authenticate_user!, only: [:create]
 
   def create
-    @user = User.new(create_user_params)
+    @user = User.new(create_user_params)  
     return render_json_errors @user.errors unless @user.save
     @user.invited_by.win_coins!(Wallet::COINS_PER_INVITATION) if @user.invited_by.present?
     WelcomeMailer.send_welcome_message(@user).deliver_now
