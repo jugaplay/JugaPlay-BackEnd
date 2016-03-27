@@ -37,6 +37,12 @@
       <%= f.text_field :description, class: 'validate', required: true %>
       <%= f.label :description, 'Descripcion' %>
     </div>
+    
+    <div class="input-field col s12">
+      <%= f.check_box :has_password %>
+      <%= f.label :has_password, 'Tiene password?' %>
+  	</div>
+  
 
     <div class="input-field col s12">
       <%= submit_button_for 'Guardar' %>

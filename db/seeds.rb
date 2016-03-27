@@ -232,7 +232,7 @@ ActiveRecord::Base.transaction do
 
 
   ## MESAS
-  Table.create!(title: 'San Lorenzo vs Independiente', matches: [slo_ind], start_time: slo_ind.datetime, end_time: slo_ind.datetime + 1.day, tournament: torneo_verano,
+  Table.create!(title: 'San Lorenzo vs Independiente', has_password: true,matches: [slo_ind], start_time: slo_ind.datetime, end_time: slo_ind.datetime + 1.day, tournament: torneo_verano,
                number_of_players: 3, points_for_winners: PointsForWinners.default, description: '-', table_rules: TableRules.create,
                entry_coins_cost: 0)
                

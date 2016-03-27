@@ -1,5 +1,6 @@
 json.id @table.id
 json.title @table.title
+json.has_password @table.has_password
 json.number_of_players @table.number_of_players
 json.entry_coins_cost @table.entry_coins_cost
 json.start_time @table.start_time.strftime('%d/%m/%Y - %H:%M')

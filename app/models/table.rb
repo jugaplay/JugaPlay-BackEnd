@@ -9,6 +9,7 @@ class Table < ActiveRecord::Base
   serialize :points_for_winners
 
   validates :title, presence: true
+  validates :has_password, presence: true
   validates :start_time, presence: true
   validates :end_time, presence: true, date: { after: :start_time }
   validates :number_of_players, presence: true, numericality: { greater_than: 0, only_integer: true }
