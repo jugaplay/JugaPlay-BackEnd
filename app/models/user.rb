@@ -21,6 +21,10 @@ class User < ActiveRecord::Base
     "#{first_name} #{last_name}"
   end
 
+  def host
+  	User.find(self.invited_by_id)
+  end
+
   def coins
   	Wallet.find_by_user_id(self.id).coins
   end

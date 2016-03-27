@@ -38,7 +38,8 @@ Rails.application.routes.draw do
       resources :teams, only: [:show]
       resources :plays, only: [:index]
       resources :comments, only: [:create]
-
+	  resources :guests, only: [:show, :index]
+	
       post '/play' => 'croupier#play'
     end
   end
