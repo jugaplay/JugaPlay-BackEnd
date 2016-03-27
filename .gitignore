@@ -12,5 +12,3 @@
 # Ignore configuration files
 .env
 
-/spec/spec_helper.rb~
-/spec/support/request_helpers.rb~
