@@ -1,6 +1,6 @@
 class Api::V1::TablesController < Api::BaseController
   def index
-    @tables = Table.all
+    @tables = Table.where(opened: true)
   end
 
   def show
