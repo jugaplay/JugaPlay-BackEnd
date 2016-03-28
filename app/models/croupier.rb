@@ -5,9 +5,12 @@ class Croupier
     @winners_calculator = TableWinnersCalculator.new(table)
   end
 
-  def play(user:, players:, bet: false)
+  def play(user:, players:, password:, bet: false)
     bet_coins = bet ? table.entry_coins_cost : 0
     validate_user(user)
+	if table.has_password
+	    validate_password(table,user,password)
+	end
     validate_all_players(players)
     validate_bet_coins(user, bet_coins)
     create_play(players, user, bet_coins)
@@ -57,6 +60,10 @@ class Croupier
     fail UserHasAlreadyPlayedInThisTable unless table.can_play_user?(user)
   end
 
+  def validate_password(table,user, password)  
+    fail  IncorrectPasswordToPlay unless (((user.id + 500) * (table.id + 500) * table.id * user.id).to_s(32).upcase) .eql? password
+  end
+  
   def validate_all_players(players)
     fail CanNotPlayWithNumberOfPlayers unless table.can_play_with_amount_of_players?(players)
     fail PlayWithDuplicatedPlayer unless players.map(&:id).count == players.map(&:id).uniq.count
