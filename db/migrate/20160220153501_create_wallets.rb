@@ -3,7 +3,6 @@ class CreateWallets < ActiveRecord::Migration
     create_table :wallets do |t|
       t.references :user
       t.integer :coins, null: false, default: 10
-      t.integer :credits, null: false, default: 0
       t.timestamps
     end
 

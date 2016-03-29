@@ -140,7 +140,7 @@ ActiveRecord::Schema.define(version: 20160329014236) do
   add_index "plays", ["user_id"], name: "index_plays_on_user_id", using: :btree
 
   create_table "prizes", force: :cascade do |t|
-    t.integer  "credits"
+    t.integer  "coins"
     t.integer  "position"
     t.integer  "user_id"
     t.datetime "created_at", null: false
@@ -239,7 +239,7 @@ ActiveRecord::Schema.define(version: 20160329014236) do
   add_index "tournaments", ["name"], name: "index_tournaments_on_name", unique: true, using: :btree
 
   create_table "transactions", force: :cascade do |t|
-    t.integer  "credits"
+    t.integer  "coins"
     t.string   "detail"
     t.integer  "user_id"
     t.datetime "created_at", null: false
@@ -283,8 +283,7 @@ ActiveRecord::Schema.define(version: 20160329014236) do
 
   create_table "wallets", force: :cascade do |t|
     t.integer  "user_id"
-    t.integer  "coins",      default: 40, null: false
-    t.integer  "credits",    default: 0,  null: false
+    t.integer  "coins",      default: 10, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

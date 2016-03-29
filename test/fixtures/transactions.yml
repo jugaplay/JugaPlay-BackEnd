@@ -1,9 +1,9 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  credits: MyString
+  coins: MyString
   detail: MyString
 
 two:
-  credits: MyString
+  coins: MyString
   detail: MyString

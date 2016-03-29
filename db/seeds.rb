@@ -2,7 +2,7 @@ ActiveRecord::Base.transaction do
   torneo_verano = Tournament.create!(name: 'Torneo de Verano')
 
    ## USER WALLET  
-	wallet =  Wallet.new(coins: 10, credits: 0)
+	wallet =  Wallet.new(coins: 10)
   	
   ## ADMIN
   admin = User.new(wallet: wallet, email: 'admin@jugaplay.com', password: '12345678', first_name: 'Admin', last_name: 'Admin', nickname: 'Admin')

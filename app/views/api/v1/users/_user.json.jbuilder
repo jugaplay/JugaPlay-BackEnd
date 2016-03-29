@@ -6,4 +6,3 @@ json.email user.email
 json.member_since user.created_at.strftime('%d/%m/%Y')
 json.image user.image
 json.coins user.coins
-json.credits user.credits

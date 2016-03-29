@@ -29,10 +29,6 @@ class User < ActiveRecord::Base
   	Wallet.find_by_user_id(self.id).coins
   end
   
-  def credits
-  	Wallet.find_by_user_id(self.id).credits
-  end
-
   def has_coins?(amount_of_coins)
     coins >= amount_of_coins
   end
@@ -43,14 +39,6 @@ class User < ActiveRecord::Base
 
   def win_coins!(amount_of_coins)
     wallet.add_coins!(amount_of_coins)
-  end
-
-  def pay_credits!(amount_of_credits)
-    wallet.subtract_credits!(amount_of_credits)
-  end
-
-  def win_credits!(amount_of_credits)
-    wallet.add_credits!(amount_of_credits)
   end
 
   def ranking_on_tournament(tournament)
