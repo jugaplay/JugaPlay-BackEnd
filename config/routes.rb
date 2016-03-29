@@ -38,7 +38,8 @@ Rails.application.routes.draw do
       resources :teams, only: [:show]
       resources :plays, only: [:index]
       resources :comments, only: [:create]
-	  resources :guests, only: [:show, :index]
+	  resources :guests, only: [:index, :show]
+	  resources :transactions, only: [:show, :create]
 	
       post '/play' => 'croupier#play'
     end
@@ -55,6 +56,7 @@ Rails.application.routes.draw do
 
     resources :users, only: [:index]
     resources :players, only: [:index, :new, :create, :show, :edit, :update, :destroy]
+    resources :transactions, only: [:index]
 
     resources :teams, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
       member do
