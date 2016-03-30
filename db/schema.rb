@@ -142,7 +142,7 @@ ActiveRecord::Schema.define(version: 20160329014236) do
   create_table "prizes", force: :cascade do |t|
     t.integer  "coins"
     t.integer  "position"
-    t.integer  "user_id"
+    t.integer  "table_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

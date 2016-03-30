@@ -3,7 +3,7 @@ class CreatePrizes < ActiveRecord::Migration
     create_table :prizes do |t|
       t.integer :coins
       t.integer :position
-	  t.references :user
+	  t.references :table
       t.timestamps null: false
     end
   end
