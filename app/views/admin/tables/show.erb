@@ -35,6 +35,11 @@
       <h5>Descripcion</h5>
       <%= @table.description %>
     </div>
+    
+    <div class="row col s12">
+      <h5>Tiene Password</h5>
+      <%=  @table.has_password? ? 'Si' : 'No' %>
+    </div>    
 
     <div class="row col s12">
       <h5>Participantes</h5>
