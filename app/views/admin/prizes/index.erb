@@ -1,0 +1,27 @@
+    <h5 class="page-title">Premios para Mesa 	<%= @table.title%></h5>
+     
+    
+  <div class="table-container">
+  <table class="stripped hoverable tb900">
+    <thead>
+      <tr>
+        <th>Posición</th>
+        <th>Premio</th>
+      </tr>
+    </thead>
+  
+    <tbody>
+    <% @table.prizes.order("position asc").each do |prize| %>
+      <tr>
+        <td><%= link_to prize.position, edit_admin_table_prize_path(@table.id,prize.id) %></td>
+        <td><%= prize.coins %> monedas</td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
+
+    
+    
+    <%= add_floating_button_for new_admin_table_prize_path(params[:table_id])  %>
+    

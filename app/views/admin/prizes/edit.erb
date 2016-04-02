@@ -1,0 +1,4 @@
+<h4 class="page-title">Editar Premio</h4>
+<div class="row">
+  <%= render 'form', url:  admin_table_prize_path(params[:table_id],params[:id]), method: :patch, prize: @prize %>
+</div>

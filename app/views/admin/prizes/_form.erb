@@ -1,0 +1,18 @@
+<%= form_for prize, url: url, method: method, html: { class: 'col s12 m8 l6 offset-m2 offset-l3' } do |f| %>
+   
+    <div class="input-field col s12">
+      <%= f.number_field :position, class: 'validate', required: true %>
+      <%= f.label :position, 'Posicion' %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= f.number_field :coins, class: 'validate', required: true %>
+      <%= f.label :coins, 'Monedas' %>
+    </div>
+
+    <%= f.hidden_field :table_id, value: params[:table_id] %>    
+
+    <div class="input-field col s12">
+      <%= submit_button_for 'Guardar' %>
+    </div>
+<% end %>

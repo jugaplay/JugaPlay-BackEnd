@@ -58,6 +58,7 @@ Rails.application.routes.draw do
     resources :players, only: [:index, :new, :create, :show, :edit, :update, :destroy]
     resources :transactions, only: [:index]
 
+
     resources :teams, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
       member do
         post 'import_players' => 'teams#import_players', as: :import_players
@@ -65,7 +66,8 @@ Rails.application.routes.draw do
     end
 
     resources :matches, only: [:index, :new, :create, :show, :edit, :update, :destroy]
-    resources :tables, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
+    
+    resources :tables, only: [:index, :new, :create, :show, :edit, :update, :destroy] do    
       collection do
         get 'to_be_closed' => 'tables#to_be_closed', as: :to_be_closed
       end
@@ -73,6 +75,10 @@ Rails.application.routes.draw do
       member do
         post 'close' => 'tables#close', as: :close
       end
+    
+      resources :prizes, only: [:index, :new, :create, :edit, :update]
+      
     end
+    
   end
 end

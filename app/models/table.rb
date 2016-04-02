@@ -2,6 +2,7 @@ class Table < ActiveRecord::Base
   has_many :plays
   has_one :table_rules
   belongs_to :tournament
+  has_many :prizes, dependent: :destroy
   has_many :users, through: :plays
   has_many :winners, class_name: 'TableWinner'
   has_and_belongs_to_many :matches
@@ -20,6 +21,10 @@ class Table < ActiveRecord::Base
 
   def can_play_user?(user)
     plays.where(user: user).empty?
+  end
+
+  def prizes
+ 	Prize.where(table_id: self.id)
   end
 
   def can_play_with_amount_of_players?(players)
