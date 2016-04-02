@@ -11,9 +11,23 @@ json.points_for_winners(@table.points_for_winners) do |points|
   json.points points
 end
 
+json.coins_for_winners(@table.prizes) do |prize|
+  json.position prize.position
+  json.coins prize.coins
+end
+
+json.playing(@table.plays) do |play|
+  json.user_id play.user.id
+  json.user_mail play.user.email
+  json.nickname play.user.nickname
+
+end
+        
+
 json.winners(@table.winners) do |winner|
   json.user_id winner.user_id
   json.user_email winner.user.email
+  json.nickname winner.user.nickname
   json.bet_coins winner.user.play_of_table(@table).bet_coins
   json.position winner.position
   json.points @table.points_for_winners[winner.position - 1]
