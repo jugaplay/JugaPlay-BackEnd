@@ -53,21 +53,6 @@ class User < ActiveRecord::Base
     plays.detect { |play| play.table == table }
   end
 
-  def self.from_omniauth(auth)
-    # TODO: Move all this shit outta here
-
-    user_by_email = find_by(email: auth.info.email)
-    return user_by_email if user_by_email.present?
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
-      user.first_name = auth.info.first_name
-      user.last_name = auth.info.last_name
-      user.email = auth.info.email
-      user.nickname = auth.uid
-      user.password = Devise.friendly_token[0,20]
-      user.image = auth.info.image
-      user.wallet = Wallet.new
-    end
-  end
 
   private
 
