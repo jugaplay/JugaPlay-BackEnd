@@ -15,6 +15,7 @@ class Api::V1::Users::OmniauthCallbacksController < Devise::OmniauthCallbacksCon
       user.password = Devise.friendly_token[0,20]
       user.image = @auth.info.image
       user.wallet = Wallet.new
+      @user = user
     end
     
     @host_user = User.find( @params["invited_by"])
@@ -28,14 +29,17 @@ class Api::V1::Users::OmniauthCallbacksController < Devise::OmniauthCallbacksCon
       session['devise.facebook_data'] = request.env['omniauth.auth']
       render json: { errors: @user.errors }
     end
+    
   end
   
   
-  
+ def failure
+    render json: { errors: 'There was an error trying to login with facebook' }
+  end
   
   
 
-  def failure
-    render json: { errors: 'There was an error trying to login with facebook' }
-  end
+  
+  
+
 end
