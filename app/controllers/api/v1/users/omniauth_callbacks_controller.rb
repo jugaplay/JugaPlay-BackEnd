@@ -2,29 +2,33 @@ class Api::V1::Users::OmniauthCallbacksController < Devise::OmniauthCallbacksCon
  
   def facebook
 	
-	@params = request.env['omniauth.params']
-	@auth = request.env['omniauth.auth']
 	
-    user_by_email = User.find_by_email( @auth.info.email)
-    return user_by_email if user_by_email.present?
-    User.where(provider: @auth.provider, uid: @auth.uid).first_or_create do |user|
-      user.first_name = @auth.info.first_name
-      user.last_name = @auth.info.last_name
-      user.email = @auth.info.email
-      user.nickname = @auth.uid
-      user.password = Devise.friendly_token[0,20]
-      user.image = @auth.info.image
-      user.wallet = Wallet.new
-      @user = user
-    end
+	 @user = User.from_omniauth(request.env['omniauth.auth'],request.env['omniauth.params'])
+
+
+#	@params = request.env['omniauth.params']
+#	@auth = request.env['omniauth.auth']
+	
+ #   user_by_email = User.find_by_email( @auth.info.email)
+  #  return user_by_email if user_by_email.present?
+  #  User.where(provider: @auth.provider, uid: @auth.uid).first_or_create do |user|
+  #    user.first_name = @auth.info.first_name
+  #    user.last_name = @auth.info.last_name
+  #    user.email = @auth.info.email
+  #    user.nickname = @auth.uid
+  #    user.password = Devise.friendly_token[0,20]
+  #    user.image = @auth.info.image
+  #    user.wallet = Wallet.new
+  #    @user = user
+  #  end
     
-    @host_user = User.find( @params["invited_by"])
-    @host_user.win_coins!(10)
-    
-    
-   if user.persisted?
-      sign_in user
-      redirect_to "http://#{ENV['DOMAIN_NAME']}"
+  #  @host_user = User.find( @params["invited_by"])
+  #  @host_user.win_coins!(10)
+    	
+	if @user.persisted?
+      sign_in @user
+       redirect_to "http://www.jugaplay.com.ar"
+#      redirect_to "http://#{ENV['DOMAIN_NAME']}"
     else
       session['devise.facebook_data'] = request.env['omniauth.auth']
       render json: { errors: @user.errors }
