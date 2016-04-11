@@ -1,13 +1,11 @@
 class Api::V1::Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
- 
+  
   def facebook
-	
-	
+  	
 	 @user = User.from_omniauth(request.env['omniauth.auth'],request.env['omniauth.params'])
     	
 	if @user.persisted?
       sign_in @user
-      # redirect_to "http://www.jugaplay.com.ar" 
       redirect_to "http://#{ENV['DOMAIN_NAME']}"
     else
       session['devise.facebook_data'] = request.env['omniauth.auth']
@@ -22,8 +20,4 @@ class Api::V1::Users::OmniauthCallbacksController < Devise::OmniauthCallbacksCon
   end
   
   
-
-  
-  
-
 end

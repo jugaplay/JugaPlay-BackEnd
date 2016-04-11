@@ -12,3 +12,8 @@
 # Ignore configuration files
 .env
 
+/Rakefile~
+/app/controllers/api/v1/prizes_controller.rb~
+/spec/spec_helper.rb~
+/spec/support/request_helpers.rb~
+/test/fixtures/prizes.yml~
