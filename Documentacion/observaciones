@@ -1,0 +1,17 @@
+Items a revisar:
+
+1- Existe una entidad Comentarios, no se encuentra relacionada con ninguna otra entidad:
+Creo que deberia un comentario deberia estar asociado a un usuario.  
+Parece que no se esta utilizando.
+
+2- Generacion de Nickname unico al usuario desde FaceBook.
+
+
+3- Paginacion en las vistas de administracion con muchos items (usuarios - mesas - jugadores - equipos - partidos).
+
+4- Ver facebook invitacion (para poner boton de invitar): http://subinsb.com/add-invite-facebook-friends-in-website
+
+5- Primer vez que se edita perfil, aparece undefined en la posicion.
+Si te permite modificar el mail, cuando vuelva a hacer el login de facebook no va a poder volver a entrar.
+
+6- Gif de moneda 
