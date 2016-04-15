@@ -51,8 +51,9 @@ class Admin::TablesController < Admin::BaseController
   end
 
   def close
-    @table = Table.find(params[:id])
-    croupier.assign_scores(players_stats: create_player_stats)
+    @table = Table.find(params[:id]) 
+    croupier.assign_scores(players_stats: create_player_stats) # Se asignan los puntos a los jugadores de futbol
+
     RankingSorter.new(@table.tournament).call
     ResultsMailer.for_table(@table)
     redirect_with_success_message to_be_closed_admin_tables_path, CLOSE_SUCCESS_MESSAGE

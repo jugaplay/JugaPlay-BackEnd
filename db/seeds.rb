@@ -7,7 +7,21 @@ ActiveRecord::Base.transaction do
   ## ADMIN
   admin = User.new(wallet: wallet, email: 'admin@jugaplay.com', password: '12345678', first_name: 'Admin', last_name: 'Admin', nickname: 'Admin')
   admin.save!
-     
+    
+     ## USER WALLET  
+	wallet2 =  Wallet.new(coins: 10)
+   	
+  ## USER1
+  user1 = User.new(wallet: wallet2, email: 'user1@jugaplay.com', password: '12345678', first_name: 'User1', last_name: 'User1', nickname: 'User1')
+  user1.save! 
+  
+   ## USER WALLET  
+	wallet3 =  Wallet.new(coins: 10)
+  
+  ## USER2
+  user2 = User.new(wallet: wallet3, email: 'user2@jugaplay.com', password: '12345678', first_name: 'User2', last_name: 'User2', nickname: 'User2')
+  user2.save! 
+  
   
   ## INDEPENDIENTE
   independiente_director = Director.create!(first_name: 'Mauricio', last_name: 'Pellegrino', description: '-')
@@ -232,7 +246,7 @@ ActiveRecord::Base.transaction do
 
 
   ## MESAS
-  Table.create!(title: 'San Lorenzo vs Independiente', has_password: true,matches: [slo_ind], start_time: slo_ind.datetime, end_time: slo_ind.datetime + 1.day, tournament: torneo_verano,
+  Table.create!(title: 'San Lorenzo vs Independiente', has_password: false,matches: [slo_ind], start_time: slo_ind.datetime, end_time: slo_ind.datetime + 1.day, tournament: torneo_verano,
                number_of_players: 3, points_for_winners: PointsForWinners.default, description: '-', table_rules: TableRules.create,
                entry_coins_cost: 0)
                
@@ -246,5 +260,7 @@ ActiveRecord::Base.transaction do
   saves: 0, saved_penalties:0,missed_saves:0,undefeated_goal: 0,  
   red_cards: 0, yellow_cards: 0, offside: 0, faults: 0, missed_penalties: 0, winner_team: 0
   )
+ 
+ 
  
 end

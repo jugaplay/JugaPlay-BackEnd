@@ -7,6 +7,7 @@ class Play < ActiveRecord::Base
   validates_uniqueness_of :user_id, scope: [:table]
   validates :bet_coins, presence: true, numericality: { only_integer: true, allow_nil: false, greater_than_or_equal_to: 0 }
 
+
   def involves_player?(player)
     players.include? player
   end
