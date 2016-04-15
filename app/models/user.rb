@@ -58,11 +58,11 @@ class User < ActiveRecord::Base
     user_by_email = find_by(email: auth.info.email)
     
     if not user_by_email.present?
-    if params.has_key?(:invited_by)
-      @host_user = User.find(params["invited_by"])
- 	  @host_user.win_coins!(10)
- 	end
- 	end
+        if (params["invited_by"].present?)
+	      @host_user = User.find(params["invited_by"])
+	 	  @host_user.win_coins!(10)
+	 	end
+	end
  	
     return user_by_email if user_by_email.present?
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
