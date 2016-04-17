@@ -1,7 +1,7 @@
 <div class="mail_container" style="background-color:#8FC858;" >
   <div style="background-color:#0E191B; width:100%; height:67px; text-align:center;" ><img src="http://jugaplay.com/mail/img/logo.jpg" width="175" height="51" style="margin-top:10px; margin-left:auto; margin-right:auto;" /></div>
   <div class="row" style="width:80%; margin-top:40px; margin-bottom:20px; margin-left:10%; margin-right:10%;text-align:center; color:#FFF;" >
-    <H1 style="font-size:55px; font-family:Arial, Helvetica, sans-serif;">¡LOS RESULTADOS!</H1>
+    <H1 style="font-size:55px; font-family:Arial, Helvetica, sans-serif;">¡RESULTADOS <%= @table.title %> !</H1>
   </div>
   <div class="row"style="width:80%; margin-top:0px; margin-bottom:20px; margin-left:10%; margin-right:10%;text-align:center;color:#FFF;" >
     <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;">Muchas gracias por ingresar y participar en Jugaplay. </p>
@@ -15,6 +15,9 @@
     <p><b style="font-size:16px; font-family:Arial, Helvetica, sans-serif;">TOTAL: <%= @play.points %> PTS</b></p>
     <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;">
       Saliste <%= @table.position(@user) { fail "Missing position for user #{@user.id}" } %> en la Jugada <%= @table.title %>.
+    </p>
+    <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;">
+     Si saliste entre los primeros 5 se te sumaran automáticamente las MONEDAS a tu cuenta para que puedas CANJEAR tu PREMIO en nuestra TIENDA por lo que más quieras. 
     </p>
     <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif; text-align:center;"><a href="http://www.jugaplay.com/" style="color:#FFF; text-decoration:inherit;"><div class="hola" style="background: #74942e;-webkit-border-radius: 7;-moz-border-radius:7; border-radius: 7px;color: #ffffff;font-size: 20px;padding: 10px 20px 10px 20px; width:200px; margin-left:auto; margin-right:auto;font-family:Arial, Helvetica, sans-serif;">IR A JUGAPLAY</div></a></p>
   </div>
