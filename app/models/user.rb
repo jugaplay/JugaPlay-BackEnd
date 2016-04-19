@@ -73,6 +73,9 @@ class User < ActiveRecord::Base
       user.password = Devise.friendly_token[0,20]
       user.image = auth.info.image
       user.wallet = Wallet.new
+      if (params["invited_by"].present?)
+	 	  user.invited_by_id = @host_user.id 
+	  end
     end
     
   end
