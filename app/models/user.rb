@@ -71,6 +71,8 @@ class User < ActiveRecord::Base
       user.email = auth.info.email
       if(auth.info.email.present?)
       	user.nickname = auth.info.email.split("@").first + Random.rand(999).to_s
+      else
+     	 user.nickname = @auth.uid
       end
       user.password = Devise.friendly_token[0,20]
       user.image = auth.info.image
