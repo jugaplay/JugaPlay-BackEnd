@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  won_coins: 
+  guest_ip: 
+  request_status_id: 
+  request_types_id: 
+  host_user_id: 
+  guest_user_id: 
+
+two:
+  won_coins: 
+  guest_ip: 
+  request_status_id: 
+  request_types_id: 
+  host_user_id: 
+  guest_user_id: 

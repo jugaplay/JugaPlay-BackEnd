@@ -265,7 +265,7 @@ ActiveRecord::Base.transaction do
  ## REQUEST TYPES
  ## Request_Type: Facebook - Whatsapp - SMS - Mail
 
- facebook = RequestType.create!(name:'Facebook')
+ RequestType.create!(name:'Facebook')
  RequestType.create!(name:'Whatsapp')
  RequestType.create!(name:'SMS')
  RequestType.create!(name:'Mail')
@@ -274,13 +274,11 @@ ActiveRecord::Base.transaction do
  ## REQUEST STATUS
  ## Request_Status: Unused - Entered- Registered 
  
- unused = RequestStatus.create!(name:'Unused')
+ RequestStatus.create!(name:'Unused')
  RequestStatus.create!(name:'Entered')
  RequestStatus.create!(name:'Registered')
+  
  
- ## REQUEST
- 
- Request.create!(won_coins: 10, request_status: unused, request_types: facebook, host_user: user1, guest_user: user2)
  
  
 end

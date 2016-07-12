@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160329014236) do
+ActiveRecord::Schema.define(version: 20160712004206) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -130,6 +130,7 @@ ActiveRecord::Schema.define(version: 20160329014236) do
     t.integer  "user_id",                null: false
     t.integer  "table_id",               null: false
     t.float    "points"
+    t.float    "coins"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "bet_coins",  default: 0, null: false
@@ -161,6 +162,29 @@ ActiveRecord::Schema.define(version: 20160329014236) do
   add_index "rankings", ["tournament_id", "user_id"], name: "index_rankings_on_tournament_id_and_user_id", unique: true, using: :btree
   add_index "rankings", ["tournament_id"], name: "index_rankings_on_tournament_id", using: :btree
   add_index "rankings", ["user_id"], name: "index_rankings_on_user_id", using: :btree
+
+  create_table "request_statuses", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "request_types", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "requests", force: :cascade do |t|
+    t.integer  "won_coins"
+    t.inet     "guest_ip"
+    t.integer  "request_status_id", null: false
+    t.integer  "request_types_id",  null: false
+    t.integer  "host_user_id",      null: false
+    t.integer  "guest_user_id",     null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
 
   create_table "table_rules", force: :cascade do |t|
     t.integer  "table_id",                                null: false
