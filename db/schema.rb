@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160712004206) do
+ActiveRecord::Schema.define(version: 20160712024846) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,20 @@ ActiveRecord::Schema.define(version: 20160712004206) do
 
   add_index "directors", ["first_name"], name: "index_directors_on_first_name", using: :btree
   add_index "directors", ["last_name"], name: "index_directors_on_last_name", using: :btree
+
+  create_table "explanations", force: :cascade do |t|
+    t.string   "name"
+    t.text     "detail"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "explanations_users", force: :cascade do |t|
+    t.integer  "user_id",        null: false
+    t.integer  "explanation_id", null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
 
   create_table "matches", force: :cascade do |t|
     t.string   "title",           null: false
@@ -179,7 +193,7 @@ ActiveRecord::Schema.define(version: 20160712004206) do
     t.integer  "won_coins"
     t.inet     "guest_ip"
     t.integer  "request_status_id", null: false
-    t.integer  "request_types_id",  null: false
+    t.integer  "request_type_id",   null: false
     t.integer  "host_user_id",      null: false
     t.integer  "guest_user_id",     null: false
     t.datetime "created_at",        null: false

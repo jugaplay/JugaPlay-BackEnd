@@ -4,7 +4,7 @@ class CreateRequests < ActiveRecord::Migration
       t.integer :won_coins
       t.inet :guest_ip
       t.references :request_status, null: false
-      t.references :request_types, null: false
+      t.references :request_type, null: false
       t.references :host_user, null: false
       t.references :guest_user, null: false
 

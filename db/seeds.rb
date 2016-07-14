@@ -280,7 +280,16 @@ ActiveRecord::Base.transaction do
  
  ## REQUEST
  
- Request.create!(won_coins: 10, request_status: unused, request_types: facebook, host_user: user1, guest_user: user2)
+ Request.create!(won_coins: 10, request_status: unused, request_type: facebook, host_user: user1, guest_user: user2)
  
+ ## EXPLANATIONS
  
+ explanation1 = Explanation.create!(name: 'Cómo Jugar',detail:'1- Elegí el partido que quieras Jugar y hace Click en el botón JUGAR .2- Elegí los que crees que van a ser los 3 mejores jugadores del partido.')
+ explanation2 = Explanation.create!(name: 'Cómo Ganar Monedas',detail:'El usuario que suma más puntos gana el partido.')
+ 
+ ## USER EXPLANATION
+ 
+ user1.update!(explanations: [explanation1, explanation2])
+ user2.update!(explanations: [explanation2])
+  
 end
