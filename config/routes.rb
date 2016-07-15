@@ -18,7 +18,7 @@ Rails.application.routes.draw do
       end
 
       resources :users, only: [:show, :create, :update] do
-      	resources :explanation, only: [:show, :create]
+      	resources :explanations, only: [:index, :show, :create]
       end
 
       resources :tournaments, only: [] do
