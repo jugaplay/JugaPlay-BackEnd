@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160712024846) do
+ActiveRecord::Schema.define(version: 20160719011509) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,12 +53,16 @@ ActiveRecord::Schema.define(version: 20160712024846) do
     t.datetime "updated_at", null: false
   end
 
+  add_index "explanations", ["name"], name: "index_explanations_on_name", unique: true, using: :btree
+
   create_table "explanations_users", force: :cascade do |t|
     t.integer  "user_id",        null: false
     t.integer  "explanation_id", null: false
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
   end
+
+  add_index "explanations_users", ["user_id", "explanation_id"], name: "index_explanations_users_on_user_id_and_explanation_id", unique: true, using: :btree
 
   create_table "matches", force: :cascade do |t|
     t.string   "title",           null: false
@@ -177,11 +181,25 @@ ActiveRecord::Schema.define(version: 20160712024846) do
   add_index "rankings", ["tournament_id"], name: "index_rankings_on_tournament_id", using: :btree
   add_index "rankings", ["user_id"], name: "index_rankings_on_user_id", using: :btree
 
-  create_table "request_statuses", force: :cascade do |t|
+  create_table "registration_statuses", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_index "registration_statuses", ["name"], name: "index_registration_statuses_on_name", unique: true, using: :btree
+
+  create_table "registrations", force: :cascade do |t|
+    t.integer  "won_coins"
+    t.inet     "guest_ip"
+    t.integer  "registration_status_id", null: false
+    t.integer  "request_id",             null: false
+    t.integer  "guest_user_id",          null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "registrations", ["guest_user_id", "request_id"], name: "index_registrations_on_guest_user_id_and_request_id", unique: true, using: :btree
 
   create_table "request_types", force: :cascade do |t|
     t.string   "name"
@@ -189,16 +207,16 @@ ActiveRecord::Schema.define(version: 20160712024846) do
     t.datetime "updated_at", null: false
   end
 
+  add_index "request_types", ["name"], name: "index_request_types_on_name", unique: true, using: :btree
+
   create_table "requests", force: :cascade do |t|
-    t.integer  "won_coins"
-    t.inet     "guest_ip"
-    t.integer  "request_status_id", null: false
-    t.integer  "request_type_id",   null: false
-    t.integer  "host_user_id",      null: false
-    t.integer  "guest_user_id",     null: false
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.integer  "request_type_id", null: false
+    t.integer  "host_user_id",    null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
+
+  add_index "requests", ["request_type_id"], name: "index_requests_on_request_type_id", unique: true, using: :btree
 
   create_table "table_rules", force: :cascade do |t|
     t.integer  "table_id",                                null: false

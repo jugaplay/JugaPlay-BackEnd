@@ -274,14 +274,18 @@ ActiveRecord::Base.transaction do
  ## REQUEST STATUS
  ## Request_Status: Unused - Entered- Registered 
  
- unused = RequestStatus.create!(name:'Unused')
- RequestStatus.create!(name:'Entered')
- RequestStatus.create!(name:'Registered')
+ entered = RegistrationStatus.create!(name:'Entered')
+ RegistrationStatus.create!(name:'Registered')
  
- ## REQUEST
+ ## REQUESTS
  
- Request.create!(won_coins: 10, request_status: unused, request_type: facebook, host_user: user1, guest_user: user2)
+ request1 = Request.create!(request_type: facebook, host_user: user1)
+
+ ## REGISTRATIONS
  
+ Registration.create!(registration_status: entered, guest_user: user2, request: request1 )
+ 
+  
  ## EXPLANATIONS
  
  explanation1 = Explanation.create!(name: 'Cómo Jugar',detail:'1- Elegí el partido que quieras Jugar y hace Click en el botón JUGAR .2- Elegí los que crees que van a ser los 3 mejores jugadores del partido.')

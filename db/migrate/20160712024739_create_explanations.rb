@@ -6,5 +6,9 @@ class CreateExplanations < ActiveRecord::Migration
 
       t.timestamps null: false
     end
+    
+    add_index :explanations, :name, unique: true
+     
+     
   end
 end

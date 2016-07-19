@@ -1,4 +1,4 @@
-class RequestStatus < ActiveRecord::Base
+class RegistrationStatus < ActiveRecord::Base
 	
 	validates :name, presence: true, uniqueness: true
 

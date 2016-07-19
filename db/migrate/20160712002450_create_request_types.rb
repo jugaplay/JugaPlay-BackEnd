@@ -5,5 +5,9 @@ class CreateRequestTypes < ActiveRecord::Migration
 
       t.timestamps null: false
     end
+    
+    add_index :request_types, :name, unique: true
+     
+     
   end
 end
