@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
   has_many :rankings, dependent: :destroy
   belongs_to :invited_by, class_name: self.to_s, foreign_key: :invited_by_id
   has_and_belongs_to_many :explanations
+  has_many :requests
   
 
   validates_presence_of :first_name, :last_name

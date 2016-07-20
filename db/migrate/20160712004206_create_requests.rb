@@ -7,8 +7,8 @@ class CreateRequests < ActiveRecord::Migration
       t.timestamps null: false
     end
     
-    add_index :requests, :request_type_id, unique: true
-    add_index :requests, :request_user_id, unique: true
+    add_index :requests, :request_type_id
+    add_index :requests, :request_user_id
      
      
   end
