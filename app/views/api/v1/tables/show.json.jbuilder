@@ -8,9 +8,9 @@ json.start_time @table.start_time.strftime('%d/%m/%Y - %H:%M')
 json.end_time @table.end_time.strftime('%d/%m/%Y - %H:%M')
 json.description @table.description
 
-json.points_for_winners(@table.points_for_winners) do |points|
-  json.points points
-end
+#json.points_for_winners(@table.points_for_winners) do |points|
+#  json.points points
+#end
 
 json.coins_for_winners(@table.prizes) do |prize|
   json.position prize.position
