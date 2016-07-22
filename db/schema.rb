@@ -194,7 +194,7 @@ ActiveRecord::Schema.define(version: 20160720005058) do
     t.inet     "guest_ip"
     t.integer  "registration_status_id", null: false
     t.integer  "request_id",             null: false
-    t.integer  "guest_user_id",          null: false
+    t.integer  "guest_user_id"
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end
