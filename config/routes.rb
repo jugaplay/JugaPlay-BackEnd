@@ -23,7 +23,7 @@ Rails.application.routes.draw do
       end
 
       resources :requests, only: [] do
-        resources :registrations, only: [:create]
+        resources :registrations, only: [:create,:update]
       end
 
       resources :tournaments, only: [] do
