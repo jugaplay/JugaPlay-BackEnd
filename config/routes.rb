@@ -19,7 +19,11 @@ Rails.application.routes.draw do
 
       resources :users, only: [:show, :create, :update] do
       	resources :explanations, only: [:index, :show, :create]
-      	resources :requests, only: [:index, :show, :create]
+      	resources :requests, only: [:index, :create]
+      end
+
+      resources :requests, only: [] do
+        resources :registrations, only: [:create]
       end
 
       resources :tournaments, only: [] do
@@ -43,6 +47,7 @@ Rails.application.routes.draw do
       resources :comments, only: [:create]
 	  resources :guests, only: [:index, :show]
 	  resources :transactions, only: [:show, :create]
+	  
 	
       post '/play' => 'croupier#play'
     end

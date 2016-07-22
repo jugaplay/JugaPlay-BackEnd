@@ -96,7 +96,7 @@ CREATE TABLE registrations
   guest_ip inet,
   registration_status_id integer NOT NULL,
   request_id integer NOT NULL,
-  guest_user_id integer NOT NULL,
+  guest_user_id integer NULL,
   created_at timestamp without time zone NOT NULL,
   updated_at timestamp without time zone NOT NULL,
   CONSTRAINT registrations_pkey PRIMARY KEY (id)
@@ -107,14 +107,6 @@ WITH (
 ALTER TABLE registrations
   OWNER TO ucfdkl13ogoaal;
 
--- Index: index_registrations_on_guest_user_id_and_request_id
-
--- DROP INDEX index_registrations_on_guest_user_id_and_request_id;
-
-CREATE UNIQUE INDEX index_registrations_on_guest_user_id_and_request_id
-  ON registrations
-  USING btree
-  (guest_user_id, request_id);
 
 
 -- Table: request_types

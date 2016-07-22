@@ -8,7 +8,7 @@ class CreateRequests < ActiveRecord::Migration
     end
     
     add_index :requests, :request_type_id
-    add_index :requests, :request_user_id
+    add_index :requests, :host_user_id
      
      
   end
