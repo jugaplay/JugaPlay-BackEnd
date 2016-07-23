@@ -3,5 +3,5 @@ class Registration < ActiveRecord::Base
   belongs_to :request
   belongs_to :guest_user , :class_name => 'User',  required: false
   
-  validates :guest_user, uniqueness: true
+  validates :guest_user, uniqueness: { scope: [:request] }
 end

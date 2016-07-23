@@ -47,6 +47,7 @@ Rails.application.routes.draw do
       resources :comments, only: [:create]
 	  resources :guests, only: [:index, :show]
 	  resources :transactions, only: [:show, :create]
+	  resources :unused_invitations, only: [:index]
 	  
 	
       post '/play' => 'croupier#play'

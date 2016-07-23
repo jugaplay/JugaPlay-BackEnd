@@ -94,6 +94,7 @@ CREATE TABLE registrations
   id serial NOT NULL,
   won_coins integer,
   guest_ip inet,
+  detail string,
   registration_status_id integer NOT NULL,
   request_id integer NOT NULL,
   guest_user_id integer NULL,

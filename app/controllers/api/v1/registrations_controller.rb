@@ -15,8 +15,11 @@ class Api::V1::RegistrationsController < Api::BaseController
 	
 	if params[:guest_user_id].present?
 	 @guest_user = User.find(params[:guest_user_id])
-	 @request.host_user.win_coins!(params[:won_coins])
+	 if params[:won_coins].present?
+    	 @request.host_user.win_coins!(params[:won_coins])
+     end
 	end
+
     
     @registration = Registration.create(registration_status:@registration_status , request: @request, won_coins: params[:won_coins], guest_user: @guest_user, detail: params[:detail])
 	
