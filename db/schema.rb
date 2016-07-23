@@ -64,6 +64,25 @@ ActiveRecord::Schema.define(version: 20160720005058) do
 
   add_index "explanations_users", ["user_id", "explanation_id"], name: "index_explanations_users_on_user_id_and_explanation_id", unique: true, using: :btree
 
+  create_table "invitation_statuses", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "invitation_statuses", ["name"], name: "index_invitation_statuses_on_name", unique: true, using: :btree
+
+  create_table "invitations", force: :cascade do |t|
+    t.integer  "won_coins"
+    t.inet     "guest_ip"
+    t.string   "detail"
+    t.integer  "invitation_status_id", null: false
+    t.integer  "request_id",           null: false
+    t.integer  "guest_user_id"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
   create_table "matches", force: :cascade do |t|
     t.string   "title",           null: false
     t.integer  "local_team_id",   null: false
@@ -180,26 +199,6 @@ ActiveRecord::Schema.define(version: 20160720005058) do
   add_index "rankings", ["tournament_id", "user_id"], name: "index_rankings_on_tournament_id_and_user_id", unique: true, using: :btree
   add_index "rankings", ["tournament_id"], name: "index_rankings_on_tournament_id", using: :btree
   add_index "rankings", ["user_id"], name: "index_rankings_on_user_id", using: :btree
-
-  create_table "registration_statuses", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "registration_statuses", ["name"], name: "index_registration_statuses_on_name", unique: true, using: :btree
-
-  create_table "registrations", force: :cascade do |t|
-    t.integer  "won_coins"
-    t.inet     "guest_ip"
-    t.integer  "registration_status_id", null: false
-    t.integer  "request_id",             null: false
-    t.integer  "guest_user_id"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-  end
-
-  add_index "registrations", ["guest_user_id", "request_id"], name: "index_registrations_on_guest_user_id_and_request_id", unique: true, using: :btree
 
   create_table "request_types", force: :cascade do |t|
     t.string   "name"

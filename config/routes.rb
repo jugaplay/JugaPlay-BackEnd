@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   devise_for :users,
              path: 'api/v1/users',
              controllers: {
-               registrations: 'api/v1/users/registrations',
+               invitations: 'api/v1/users/invitations',
                sessions: 'api/v1/users/sessions',
                confirmations: 'api/v1/users/confirmations',
                passwords: 'api/v1/users/passwords',
@@ -23,7 +23,7 @@ Rails.application.routes.draw do
       end
 
       resources :requests, only: [] do
-        resources :registrations, only: [:create,:update]
+        resources :invitations, only: [:create,:update]
       end
 
       resources :tournaments, only: [] do

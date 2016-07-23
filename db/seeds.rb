@@ -274,16 +274,17 @@ ActiveRecord::Base.transaction do
  ## REQUEST STATUS
  ## Request_Status: Unused - Entered- Registered 
  
- entered = RegistrationStatus.create!(name:'Entered')
- RegistrationStatus.create!(name:'Registered')
+ entered = InvitationStatus.create!(name:'Entered')
+ InvitationStatus.create!(name:'Unused')
+ InvitationStatus.create!(name:'Registered')
  
  ## REQUESTS
  
  request1 = Request.create!(request_type: facebook, host_user: user1)
 
- ## REGISTRATIONS
+ ## invitation
  
- Registration.create!(registration_status: entered, guest_user: user2, request: request1 )
+ Invitation.create!(invitation_status: entered, guest_user: user2, request: request1 )
  
   
  ## EXPLANATIONS

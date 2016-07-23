@@ -1,5 +1,5 @@
-class Registration < ActiveRecord::Base
-  belongs_to :registration_status
+class Invitation < ActiveRecord::Base
+  belongs_to :invitation_status
   belongs_to :request
   belongs_to :guest_user , :class_name => 'User',  required: false
   
