@@ -57,55 +57,55 @@ CREATE UNIQUE INDEX index_explanations_users_on_user_id_and_explanation_id
   (user_id, explanation_id);
 
 
--- Table: registration_statuses
+-- Table: invitation_statuses
 
--- DROP TABLE registration_statuses;
+-- DROP TABLE invitation_statuses;
 
-CREATE TABLE registration_statuses
+CREATE TABLE invitation_statuses
 (
   id serial NOT NULL,
   name character varying,
   created_at timestamp without time zone NOT NULL,
   updated_at timestamp without time zone NOT NULL,
-  CONSTRAINT registration_statuses_pkey PRIMARY KEY (id)
+  CONSTRAINT invitation_statuses_pkey PRIMARY KEY (id)
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE registration_statuses
+ALTER TABLE invitation_statuses
   OWNER TO ucfdkl13ogoaal;
 
--- Index: index_registration_statuses_on_name
+-- Index: index_invitation_statuses_on_name
 
--- DROP INDEX index_registration_statuses_on_name;
+-- DROP INDEX index_invitation_statuses_on_name;
 
-CREATE UNIQUE INDEX index_registration_statuses_on_name
-  ON registration_statuses
+CREATE UNIQUE INDEX index_invitation_statuses_on_name
+  ON invitation_statuses
   USING btree
   (name COLLATE pg_catalog."default");
 
 
--- Table: registrations
+-- Table: invitations
 
--- DROP TABLE registrations;
+-- DROP TABLE invitations;
 
-CREATE TABLE registrations
+CREATE TABLE invitations
 (
   id serial NOT NULL,
   won_coins integer,
   guest_ip inet,
   detail string,
-  registration_status_id integer NOT NULL,
+  invitation_status_id integer NOT NULL,
   request_id integer NOT NULL,
   guest_user_id integer NULL,
   created_at timestamp without time zone NOT NULL,
   updated_at timestamp without time zone NOT NULL,
-  CONSTRAINT registrations_pkey PRIMARY KEY (id)
+  CONSTRAINT invitations_pkey PRIMARY KEY (id)
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE registrations
+ALTER TABLE invitations
   OWNER TO ucfdkl13ogoaal;
 
 

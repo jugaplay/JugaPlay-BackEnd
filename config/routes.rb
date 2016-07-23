@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+  namespace :api do
+  namespace :v1 do
+    get 'mailer/send_request'
+    end
+  end
+
+  get 'mailer/api/v1/send_request'
+
   devise_for :users,
              path: 'api/v1/users',
              controllers: {
