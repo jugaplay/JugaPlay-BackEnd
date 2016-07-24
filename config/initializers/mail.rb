@@ -1,7 +1,6 @@
 if(Rails.env.production?)
 
-  ActionMailer::Base.delivery_method = :smtp
-  ActionMailer::Base.default_charset = "utf-8"  
+  ActionMailer::Base.delivery_method = :smtp 
   ActionMailer::Base.smtp_settings = {
     address:              ENV['MAILGUN_SMTP_SERVER'],
     port:                 ENV['MAILGUN_SMTP_PORT'],
