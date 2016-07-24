@@ -6,9 +6,15 @@
                                                 
   <div class="row"style="width:80%; margin-top:0px; margin-bottom:20px; margin-left:10%; margin-right:10%;text-align:center;color:#FFF;" >
     <p style="font-size:16px; font-family:Arial, Helvetica, sans-serif;">    
-   			<% @user.nickname %> (<% @user.email %>) te ha invitado a participar de JugaPlay </p>
+   			<%= @user.nickname %> (<%= @user.email %>) te ha invitado a participar de JugaPlay </p>
    			 
-	<% @sender_link %>
+	<%= @sender_link %>
+  </div>
+  
+  <div class="row"style="width:80%; margin-top:0px; margin-bottom:20px; margin-left:10%; margin-right:10%;text-align:center;color:#FFF;" >
+    <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;">       			 
+		<%= @content %>
+  </div>
  
   <div class="row" style="width:80%; margin-top:0px; margin-bottom:20px; margin-left:10%; margin-right:10%;text-align:center;color:#FFF;">
     <p style="font-size:16px; font-family:Arial, Helvetica, sans-serif;">Si realmente sabes de futbol, te esperan muchisimos premios.</p>
