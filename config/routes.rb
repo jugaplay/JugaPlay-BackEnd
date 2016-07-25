@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get 'sent_mail/index'
+
+  get 'sent_mail/create'
+
   namespace :api do
   namespace :v1 do
     get 'mailer/send_request'

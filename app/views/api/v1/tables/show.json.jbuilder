@@ -21,20 +21,20 @@ end
 
 if !@table.closed?
 
-json.playing(@table.plays) do |play|
-  json.user_id play.user.id
-  json.user_mail play.user.email
-  json.nickname play.user.nickname
-  if play.user.rankings.first.present?
-	  json.ranking_tournament_points play.user.rankings.first.points
-	  json.ranking_tournament_position play.user.rankings.first.position
-  end
-  
-  json.players(play.players) do |player|
- 	 json.player_id player.id
-  end  
-  
-end
+	json.playing(@table.plays) do |play|
+	  json.user_id play.user.id
+	  json.user_mail play.user.email
+	  json.nickname play.user.nickname
+	  if play.user.rankings.first.present?
+		  json.ranking_tournament_points play.user.rankings.first.points
+		  json.ranking_tournament_position play.user.rankings.first.position
+	  end
+	  
+	  json.players(play.players) do |player|
+	 	 json.player_id player.id
+	  end  
+	  
+	end
 
 end
         

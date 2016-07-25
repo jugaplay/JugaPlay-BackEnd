@@ -94,7 +94,7 @@ CREATE TABLE invitations
   id serial NOT NULL,
   won_coins integer,
   guest_ip inet,
-  detail string,
+  detail character varying,
   invitation_status_id integer NOT NULL,
   request_id integer NOT NULL,
   guest_user_id integer NULL,
@@ -181,8 +181,8 @@ ALTER TABLE users ADD COLUMN push_token character varying;
 
 ALTER TABLE users ADD COLUMN telephone character varying;
 
-
-
+ALTER TABLE matches alter column 
+  datetime type timestamp with time zone;
 
 
 
