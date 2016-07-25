@@ -185,5 +185,33 @@ ALTER TABLE matches alter column
   datetime type timestamp with time zone;
 
 
+ALTER TABLE tables alter column 
+  datetime type timestamp with time zone;
 
+-- Table: sent_mails
+
+-- DROP TABLE sent_mails;
+
+CREATE TABLE sent_mails
+(
+  id serial NOT NULL,
+  "from" character varying,
+  "to" character varying,
+  subject character varying,
+  created_at timestamp without time zone,
+  updated_at timestamp without time zone,
+  CONSTRAINT sent_mails_pkey PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE sent_mails
+  OWNER TO ucfdkl13ogoaal;
+
+
+ALTER TABLE tables alter column 
+  start_time type timestamp with time zone;
+
+ALTER TABLE tables alter column 
+  end_time type timestamp with time zone;
 
