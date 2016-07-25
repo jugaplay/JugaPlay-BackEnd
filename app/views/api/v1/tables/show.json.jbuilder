@@ -21,7 +21,11 @@ json.playing(@table.plays) do |play|
   json.user_id play.user.id
   json.user_mail play.user.email
   json.nickname play.user.nickname
-
+  json.ranking_tournament_points play.user.rankings.first.points
+  json.ranking_tournament_position play.user.rankings.first.position
+  json.players play.players
+  
+  
 end
         
 
