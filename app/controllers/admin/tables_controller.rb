@@ -71,7 +71,7 @@ class Admin::TablesController < Admin::BaseController
     permitted_params[:matches] = Match.where(id: permitted_params.delete(:match_ids))
     permitted_params[:points_for_winners] = PointsForWinners.default
     permitted_params[:start_time] = permitted_params[:matches].map(&:datetime).min
-    permitted_params[:end_time] = permitted_params[:matches].map(&:datetime).max.end_of_day
+    permitted_params[:end_time] =  permitted_params[:matches].map(&:datetime).min + 2.hours
     permitted_params
   end
 
