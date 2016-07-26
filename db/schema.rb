@@ -11,10 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160720005058) do
+ActiveRecord::Schema.define(version: 20160725025600) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "channels", force: :cascade do |t|
+    t.integer  "user_id",                   null: false
+    t.boolean  "mail",       default: true, null: false
+    t.boolean  "sms",        default: true, null: false
+    t.boolean  "whatsapp",   default: true, null: false
+    t.boolean  "push",       default: true, null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
 
   create_table "comments", force: :cascade do |t|
     t.string   "sender_name"
@@ -104,6 +114,26 @@ ActiveRecord::Schema.define(version: 20160720005058) do
 
   add_index "matches_tables", ["match_id"], name: "index_matches_tables_on_match_id", using: :btree
   add_index "matches_tables", ["table_id"], name: "index_matches_tables_on_table_id", using: :btree
+
+  create_table "notification_types", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "notification_type_id"
+    t.string   "title"
+    t.string   "imagen"
+    t.text     "nvarchar"
+    t.text     "action"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "notifications", ["notification_type_id"], name: "index_notifications_on_notification_type_id", using: :btree
+  add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree
 
   create_table "player_stats", force: :cascade do |t|
     t.integer  "player_id",                             null: false
@@ -217,6 +247,14 @@ ActiveRecord::Schema.define(version: 20160720005058) do
 
   add_index "requests", ["host_user_id"], name: "index_requests_on_host_user_id", using: :btree
   add_index "requests", ["request_type_id"], name: "index_requests_on_request_type_id", using: :btree
+
+  create_table "sent_mails", force: :cascade do |t|
+    t.string   "from"
+    t.string   "to"
+    t.string   "subject"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "table_rules", force: :cascade do |t|
     t.integer  "table_id",                                null: false
@@ -348,4 +386,6 @@ ActiveRecord::Schema.define(version: 20160720005058) do
 
   add_index "wallets", ["user_id"], name: "index_wallets_on_user_id", unique: true, using: :btree
 
+  add_foreign_key "notifications", "notification_types"
+  add_foreign_key "notifications", "users"
 end

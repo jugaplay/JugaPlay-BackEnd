@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   devise :omniauthable, omniauth_providers: [:facebook]
 
   has_one :wallet, dependent: :destroy
+  has_one :channel, dependent: :destroy
   has_many :plays, dependent: :destroy
   has_many :rankings, dependent: :destroy
   belongs_to :invited_by, class_name: self.to_s, foreign_key: :invited_by_id

@@ -28,6 +28,7 @@ class Api::V1::UsersController < Api::BaseController
     end
     user_params = params.require(:user).permit(:first_name, :last_name, :email, :nickname, :password, :password_confirmation, :invited_by_id, :uid, :image, :provider)
     user_params[:wallet] = Wallet.new
+    user_params[:channel] = Channel.new
     user_params
   end
 

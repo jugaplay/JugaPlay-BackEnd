@@ -215,3 +215,6 @@ ALTER TABLE tables alter column
 ALTER TABLE tables alter column 
   end_time type timestamp with time zone;
 
+ALTER TABLE sent_mails alter column 
+  created_at type timestamp with time zone;
+

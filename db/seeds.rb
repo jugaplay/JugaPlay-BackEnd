@@ -1,25 +1,24 @@
 ActiveRecord::Base.transaction do
   torneo_verano = Tournament.create!(name: 'Torneo de Verano')
-
-   ## USER WALLET  
-	wallet =  Wallet.new(coins: 10)
-  	
+ 
+ 	
   ## ADMIN
-  admin = User.new(wallet: wallet, email: 'admin@jugaplay.com', password: '12345678', first_name: 'Admin', last_name: 'Admin', nickname: 'Admin')
+  wallet =  Wallet.new(coins: 10)
+  channel1 = Channel.new(whatsapp: true, sms: true, push: true, mail: true)
+  admin = User.new(channel: channel1, wallet: wallet, email: 'admin@jugaplay.com', password: '12345678', first_name: 'Admin', last_name: 'Admin', nickname: 'Admin')
   admin.save!
-    
-     ## USER WALLET  
-	wallet2 =  Wallet.new(coins: 10)
+
    	
   ## USER1
-  user1 = User.new(wallet: wallet2, email: 'user1@jugaplay.com', password: '12345678', first_name: 'User1', last_name: 'User1', nickname: 'User1')
-  user1.save! 
+  wallet2 =  Wallet.new(coins: 10)
+  channel2 = Channel.new(whatsapp: true, sms: true, push: true, mail: true)
+  user1 = User.new(channel: channel2, wallet: wallet2, email: 'user1@jugaplay.com', password: '12345678', first_name: 'User1', last_name: 'User1', nickname: 'User1')
+  user1.save!   
   
-   ## USER WALLET  
-	wallet3 =  Wallet.new(coins: 10)
-  
-  ## USER2
-  user2 = User.new(wallet: wallet3, email: 'user2@jugaplay.com', password: '12345678', first_name: 'User2', last_name: 'User2', nickname: 'User2')
+  ## USER2	
+  wallet3 =  Wallet.new(coins: 10)
+  channel3 = Channel.new(whatsapp: true, sms: true, push: true, mail: true)
+  user2 = User.new(channel: channel3, wallet: wallet3, email: 'user2@jugaplay.com', password: '12345678', first_name: 'User2', last_name: 'User2', nickname: 'User2')
   user2.save! 
   
   
@@ -282,7 +281,7 @@ ActiveRecord::Base.transaction do
  
  request1 = Request.create!(request_type: facebook, host_user: user1)
 
- ## invitation
+ ## INVITATIONS
  
  Invitation.create!(invitation_status: entered, guest_user: user2, request: request1 )
  
@@ -296,5 +295,6 @@ ActiveRecord::Base.transaction do
  
  user1.update!(explanations: [explanation1, explanation2])
  user2.update!(explanations: [explanation2])
+  
   
 end

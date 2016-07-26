@@ -1,23 +1,5 @@
 Rails.application.routes.draw do
-  namespace :api do
-  namespace :v1 do
-    namespace :users do
-      get 'channel/index'
-      end
-    end
-  end
-
-  namespace :api do
-  namespace :v1 do
-    namespace :users do
-      get 'channel/update'
-      end
-    end
-  end
-
-  get 'sent_mail/index'
-
-  get 'sent_mail/create'
+ 
 
   namespace :api do
   namespace :v1 do
@@ -48,7 +30,8 @@ Rails.application.routes.draw do
       resources :users, only: [:show, :create, :update] do
       	resources :explanations, only: [:index, :show, :create]
       	resources :requests, only: [:index, :create]
-      end
+      	resources :channels, only: [:index, :update]
+      end      
 
       resources :requests, only: [] do
         resources :invitations, only: [:create,:update]
@@ -95,7 +78,7 @@ Rails.application.routes.draw do
     resources :users, only: [:index]
     resources :players, only: [:index, :new, :create, :show, :edit, :update, :destroy]
     resources :transactions, only: [:index]
-
+	resources :sent_mails, only: [:index, :create]
 
     resources :teams, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
       member do
