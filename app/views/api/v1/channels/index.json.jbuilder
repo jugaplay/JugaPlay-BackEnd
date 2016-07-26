@@ -1,4 +1,1 @@
-	json.mail @channel.mail
-	json.sms @channel.sms
-	json.whatsapp @channel.whatsapp
-	json.push @channel.push
+json.partial! partial: 'api/v1/channels/channel', collection: @channels, as: :channel
