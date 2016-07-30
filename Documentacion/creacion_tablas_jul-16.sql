@@ -218,3 +218,168 @@ ALTER TABLE tables alter column
 ALTER TABLE sent_mails alter column 
   created_at type timestamp with time zone;
 
+
+-- Table: sent_mails
+
+-- DROP TABLE sent_mails;
+
+CREATE TABLE sent_mails
+(
+  id serial NOT NULL,
+  "from" character varying,
+  "to" character varying,
+  subject character varying,
+  created_at timestamp without time zone,
+  updated_at timestamp without time zone,
+  CONSTRAINT sent_mails_pkey PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE sent_mails
+  OWNER TO florencia;
+
+
+-- Table: channels
+
+-- DROP TABLE channels;
+
+CREATE TABLE channels
+(
+  id serial NOT NULL,
+  user_id integer NOT NULL,
+  mail boolean NOT NULL DEFAULT true,
+  sms boolean NOT NULL DEFAULT true,
+  whatsapp boolean NOT NULL DEFAULT true,
+  push boolean NOT NULL DEFAULT true,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL,
+  CONSTRAINT channels_pkey PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE channels
+  OWNER TO ucfdkl13ogoaal;
+
+
+-- Table: notifications
+
+-- DROP TABLE notifications;
+
+CREATE TABLE notifications
+(
+  id serial NOT NULL,
+  user_id integer,
+  notification_type_id integer,
+  title character varying,
+  image character varying,
+  text text,
+  action text,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL,
+  CONSTRAINT notifications_pkey PRIMARY KEY (id),
+  CONSTRAINT fk_rails_75cdc2096d FOREIGN KEY (notification_type_id)
+      REFERENCES notification_types (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT fk_rails_b080fb4855 FOREIGN KEY (user_id)
+      REFERENCES users (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE notifications
+  OWNER TO ucfdkl13ogoaal;
+
+-- Index: index_notifications_on_notification_type_id
+
+-- DROP INDEX index_notifications_on_notification_type_id;
+
+CREATE INDEX index_notifications_on_notification_type_id
+  ON notifications
+  USING btree
+  (notification_type_id);
+
+-- Index: index_notifications_on_user_id
+
+-- DROP INDEX index_notifications_on_user_id;
+
+CREATE INDEX index_notifications_on_user_id
+  ON notifications
+  USING btree
+  (user_id);
+
+
+
+
+
+INSERT INTO 
+channels(
+user_id, mail, sms, 
+whatsapp, push, created_at, updated_at)
+
+SELECT 
+
+ id,
+
+ CASE WHEN (users.email is not null)
+ THEN true
+ ELSE false
+ END AS mail,
+
+ CASE WHEN (users.telephone is not null)
+ THEN true
+ ELSE false
+ END AS sms,
+
+ CASE WHEN (users.telephone is not null)
+ THEN true
+ ELSE false
+ END AS whatsapp,
+
+ CASE WHEN (users.push_token is not null)
+ THEN true
+ ELSE false
+ END AS push ,
+
+ Now(),
+ Now()
+
+ FROM users 
+;
+
+
+INSERT INTO notification_types (
+name, created_at, updated_at)
+values('result',
+now(),
+now())
+;
+
+
+INSERT INTO notification_types (
+name, created_at, updated_at)
+values('challenge',
+now(),
+now())
+;
+
+INSERT INTO notification_types (
+name, created_at, updated_at)
+values('news',
+now(),
+now())
+;
+
+
+INSERT INTO notification_types (
+name, created_at, updated_at)
+values('personal',
+now(),
+now())
+;
+
+
+
+
