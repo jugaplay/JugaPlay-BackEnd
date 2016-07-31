@@ -32,6 +32,7 @@ json.detail_deposits(@t_deposits) do |t_deposit|
 	
 	json.coins t_deposit.coins
 	json.detail t_deposit.detail
+	json.price t_deposit.price
 	json.date t_deposit.created_at
 	
 end

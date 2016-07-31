@@ -245,7 +245,7 @@ ActiveRecord::Base.transaction do
 
 
   ## MESAS
-  Table.create!(title: 'San Lorenzo vs Independiente', has_password: false,matches: [slo_ind], start_time: slo_ind.datetime, end_time: slo_ind.datetime + 1.day, tournament: torneo_verano,
+  table1 = Table.create!(title: 'San Lorenzo vs Independiente', has_password: false,matches: [slo_ind], start_time: slo_ind.datetime, end_time: slo_ind.datetime + 1.day, tournament: torneo_verano,
                number_of_players: 3, points_for_winners: PointsForWinners.default, description: '-', table_rules: TableRules.create,
                entry_coins_cost: 0)
                
@@ -304,7 +304,7 @@ english = Language.create!(name: 'English')
  
  ## COUNTRIES
  
- Country.create!(name: 'Argentina', language: spanish)
+ arg  = Country.create!(name: 'Argentina', language: spanish)
  Country.create!(name: 'Brazil', language: portuguese)
  Country.create!(name: 'Uruguay', language: spanish)
  Country.create!(name: 'Chile', language: spanish)
@@ -322,4 +322,40 @@ english = Language.create!(name: 'English')
  NotificationType.create!(name: 'news')
  NotificationType.create!(name: 'personal')
   
+## CURRENCY
+
+currency = Currency.create!(name: 'USD')  
+  
+  
+## PAYMENT SERVICE
+
+payment_service = PaymentService.create!(name: 'PayPal')
+  
+## TRANSACTIONS
+
+Transaction.create!(user: admin, coins: 20,detail: 'Un detalle')
+TEntryFee.create!(user: admin, coins: 40, detail: 'Un detalle', table: table1 )
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service)
+TPrize.create!(user: admin, coins: 5, detail: 'Un detalle')
+
+Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
+TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service)
+TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+    
+Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
+TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service)
+TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+    
+Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
+TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service)
+TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+        
+Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
+TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service)
+TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+    
 end

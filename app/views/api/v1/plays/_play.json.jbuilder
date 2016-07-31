@@ -1,6 +1,7 @@
 json.id play.id
 json.points (play.points || 'N/A')
 json.bet_coins play.bet_coins
+json.earn_coins @earn_coins
 
 json.players(play.players) do |player|
   json.id player.id
