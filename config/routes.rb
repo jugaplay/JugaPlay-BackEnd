@@ -75,11 +75,12 @@ Rails.application.routes.draw do
       post '/login' => 'sessions#create'
       get '/logout' => 'sessions#destroy'
     end
-
+    
     resources :users, only: [:index]
     resources :players, only: [:index, :new, :create, :show, :edit, :update, :destroy]
     resources :transactions, only: [:index]
 	resources :sent_mails, only: [:index, :create]
+	resources :explanations, only: [:index, :new, :create, :show, :edit, :update]
 
     resources :teams, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
       member do

@@ -1,0 +1,23 @@
+<h4 class="page-title">Explicaciones</h4>
+
+<div class="match-container">
+  <table class="stripped hoverable tb900">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Detalle</th>
+      </tr>
+    </thead>
+  
+    <tbody>
+    <% @explanations.each do |explanation| %>
+      <tr>
+        <td><%= link_to explanation.name, edit_admin_explanation_path(explanation.id) %></td>
+        <td><%= explanation.detail %></td>    
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= add_floating_button_for new_admin_explanation_path %>
