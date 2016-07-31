@@ -2,10 +2,10 @@ class Api::V1::WalletHistoryController < Api::BaseController
  	  	
     def index
 
-   		 @transactions = Transaction.where(user: current_user)
-   		 @t_entry_fees = TEntryFee.where(user: current_user)
-   		 @t_deposits = TDeposit.where(user: current_user)
-   		 @t_prizes = TPrize.where(user: current_user)
+   		 @transactions = Transaction.where(user: current_user).limit(params[:to]).offset(params[:from])
+   		 @t_entry_fees = TEntryFee.where(user: current_user).limit(params[:to]).offset(params[:from])
+   		 @t_deposits = TDeposit.where(user: current_user).limit(params[:to]).offset(params[:from])
+   		 @t_prizes = TPrize.where(user: current_user).limit(params[:to]).offset(params[:from])
    		 
    		 @total_of_transactions =  Transaction.where(user: current_user).sum("coins")
    		 @total_of_t_entry_fees =  TEntryFee.where(user: current_user).sum("coins")
