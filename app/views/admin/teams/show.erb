@@ -49,7 +49,7 @@
           <ul>
             <li>Fechas de nacimiento: <b>'DD/MM/AAAA'</b></li>
             <li>Posiciones válidas: <b><%= Position::ALL.join(' - ') %></b></li>
-            <li>Nacionalidades válidas: <b><%= Country::ALL.join(' - ') %></b></li>
+            <li>Nacionalidades válidas: <b><%= Country.all.pluck(:name).join(' - ') %></b></li>
             <li>Peso: <b>Numérico o decimal mayor a cero</b></li>
             <li>Altura: <b>Numérico o decimal mayor a cero</b></li>
             <li>Data Factory ID: <b>No admite duplicados</b></li>

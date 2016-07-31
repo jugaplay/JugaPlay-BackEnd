@@ -4,7 +4,7 @@ class CreatePlayers < ActiveRecord::Migration
       t.string :first_name, null: false
       t.string :last_name, null: false
       t.string :position, null: false
-      t.text :description, null: false
+      t.text :description, null: false, default: ''
       t.date :birthday, null: false
       t.string :nationality, null: false
       t.float :weight, null: false
