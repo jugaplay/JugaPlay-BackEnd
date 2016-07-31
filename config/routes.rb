@@ -59,6 +59,7 @@ Rails.application.routes.draw do
       resources :comments, only: [:create]
 	  resources :guests, only: [:index, :show]
 	  resources :transactions, only: [:show, :create]
+	  resources :wallet_history, only: [:index]
 	  resources :unused_invitations, only: [:index]
 	  resources :registered_invitations, only: [:index]
 	  
