@@ -295,6 +295,31 @@ ActiveRecord::Base.transaction do
  
  user1.update!(explanations: [explanation1, explanation2])
  user2.update!(explanations: [explanation2])
-  
+ 
+ ##LANGUAGES
+ 
+spanish = Language.create!(name: 'Spanish')
+portuguese = Language.create!(name: 'Portuguese')
+english = Language.create!(name: 'English')
+ 
+ ## COUNTRIES
+ 
+ Country.create!(name: 'Argentina', language: spanish)
+ Country.create!(name: 'Brazil', language: portuguese)
+ Country.create!(name: 'Uruguay', language: spanish)
+ Country.create!(name: 'Chile', language: spanish)
+ Country.create!(name: 'Venezuela', language: spanish)
+ Country.create!(name: 'Paraguay', language: spanish)
+ Country.create!(name: 'Colombia', language: spanish)
+ Country.create!(name: 'España', language: spanish)
+ Country.create!(name: 'Ecuador', language: spanish)
+ Country.create!(name: 'Perú', language: spanish)
+ 
+ ## NOTIFICATION TYPES
+ 
+ NotificationType.create!(name: 'result')
+ NotificationType.create!(name: 'challenge')
+ NotificationType.create!(name: 'news')
+ NotificationType.create!(name: 'personal')
   
 end

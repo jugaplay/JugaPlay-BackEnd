@@ -9,5 +9,8 @@ class CreateChannels < ActiveRecord::Migration
 
       t.timestamps null: false
     end
+    
+      add_index :channels, :user_id, unique: true
+  
   end
 end
