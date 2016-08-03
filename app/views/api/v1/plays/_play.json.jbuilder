@@ -1,4 +1,5 @@
 json.id play.id
+json.start_time play.table.start_time
 json.points (play.points || 'N/A')
 json.bet_coins play.bet_coins
 json.earn_coins @earn_coins
