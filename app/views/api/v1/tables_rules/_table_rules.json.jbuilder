@@ -1,6 +1,6 @@
 json.id table_rules.id
 json.shots table_rules.shots
-json.shots_on_goal table_rules
+json.shots_on_goal table_rules.shots_on_goal
 json.shots_to_the_post table_rules.shots_to_the_post
 json.shots_outside table_rules.shots_outside
 json.scored_goals table_rules.scored_goals
