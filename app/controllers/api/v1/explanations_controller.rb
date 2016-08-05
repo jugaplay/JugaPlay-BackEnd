@@ -9,8 +9,12 @@ class Api::V1::ExplanationsController < Api::BaseController
  def create
  	@user = User.find(params[:user_id])
     @explanation = Explanation.find(params[:explanation_id])
+
+    return render_json_errors @explanation.errors unless @explanation.save   
+    
     @user.explanations<<(@explanation)
     render :show
+    
   end
 
     
