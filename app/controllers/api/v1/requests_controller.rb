@@ -18,9 +18,9 @@ class Api::V1::RequestsController < Api::BaseController
     	end
     	
     	begin
-		 	@request_type = RequestType.find(params[:request_type_id])
+		 	@request_type = RequestType.where(name: params[:request_type_name]).first()
 	 	rescue ActiveRecord::RecordNotFound => e
-    		return render_json_errors "request_type_id not found"
+    		return render_json_errors "request_type_name not found"
     	end
     		
 	    @request = Request.create(request_type: @request_type, host_user: @user)
