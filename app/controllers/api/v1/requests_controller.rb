@@ -11,25 +11,13 @@ class Api::V1::RequestsController < Api::BaseController
   
   def create
   	
-  		begin
-		 	@user = User.find(params[:user_id])
-	 	rescue ActiveRecord::RecordNotFound => e
-    		return render_json_errors "user_id not found"
-    	end
-    	
-    	begin
-		 	@request_type = RequestType.where(name: params[:request_type_name]).first()
-	 	rescue ActiveRecord::RecordNotFound => e
-    		return render_json_errors "request_type_name not found"
-    	end
-    		
-	    @request = Request.create(request_type: @request_type, host_user: @user)
-	    
+		@user = User.where(id: params[:user_id]).first()
+	 	@request_type = RequestType.where(name: params[:request_type_name]).first()    	
+	    @request = Request.new(request_type: @request_type, host_user: @user)	
+	
 	    return render_json_errors @request.errors unless @request.save
 	    render :show
 	    
-    
   end
-
   
 end
