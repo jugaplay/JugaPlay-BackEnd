@@ -1,14 +1,6 @@
 Rails.application.routes.draw do
  
 
-  namespace :api do
-  namespace :v1 do
-    get 'mailer/send_request'
-    end
-  end
-
-  get 'mailer/api/v1/send_request'
-
   devise_for :users,
              path: 'api/v1/users',
              controllers: {
@@ -26,6 +18,9 @@ Rails.application.routes.draw do
         post 'login' => 'users/sessions#create'
         delete 'logout' => 'users/sessions#destroy'
       end
+      
+          get 'mailer/send_request'
+          post 'mailer/send_request'
 
       resources :users, only: [:show, :create, :update] do
       	resources :explanations, only: [:index, :show, :create]
