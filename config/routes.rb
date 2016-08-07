@@ -23,11 +23,13 @@ Rails.application.routes.draw do
           post 'mailer/send_request'
 
       resources :users, only: [:show, :create, :update] do
-      	resources :explanations, only: [:index, :show, :create]
       	resources :requests, only: [:index, :create]
       	resources :channels, only: [:index, :update]
       	resources :notifications, only: [:index, :create]
       end      
+
+	  resources :explanations, only: [:index, :show, :create]
+
 
       resources :requests, only: [] do
         resources :invitations, only: [:create,:update]
