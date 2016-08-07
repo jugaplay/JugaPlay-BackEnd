@@ -28,7 +28,7 @@ class Api::V1::InvitationsController < ApplicationController
     if params[:guest_user_id].present?
 	 @guest_user = User.find(params[:guest_user_id])
 	 if params[:won_coins].present?
-    	 @request.host_user.win_coins!(params[:won_coins])
+    	 @invitation.request.host_user.win_coins!(params[:won_coins])
      end
      @invitation.status = InvitationStatus.where(name: "Registered").first()
 	end
