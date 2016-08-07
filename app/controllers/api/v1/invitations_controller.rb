@@ -1,4 +1,4 @@
-class Api::V1::InvitationsController < Api::BaseController
+class Api::V1::InvitationsController < ApplicationController
 
   def index
     @requests = Request.where(host_user_id: params[:user_id])
@@ -10,29 +10,31 @@ class Api::V1::InvitationsController < Api::BaseController
   
   def create
 
-	@request = Request.find(params[:request_id])
-	@invitation_status = InvitationStatus.find(params[:invitation_status_id])
+	@request = Request.where(id: params[:request_id]).first()
+	@invitation_status = InvitationStatus.where(name: params[:invitation_status]).first()
+    @invitation = Invitation.new(invitation_status:@invitation_status , request: @request, won_coins: params[:won_coins], guest_user: @guest_user, detail: params[:detail])
 	
-	if params[:guest_user_id].present?
-	 @guest_user = User.find(params[:guest_user_id])
-	 if params[:won_coins].present?
-    	 @request.host_user.win_coins!(params[:won_coins])
-     end
-	end
-
-    
-    @invitation = Invitation.create(invitation_status:@invitation_status , request: @request, won_coins: params[:won_coins], guest_user: @guest_user, detail: params[:detail])
-	
-    	return render :show if(@invitation.valid?)
-        render_json_errors @invitation.errors   
+    	return render :show if @invitation.save
+        render json: { errors: @invitation.errors }
   
   end
 
   def update
   # TODO patron de estados - solo debe permitir pasar de estado unused -> entered -> registered
+    
     @invitation = Invitation.find(params[:id])
+    
+    if params[:guest_user_id].present?
+	 @guest_user = User.find(params[:guest_user_id])
+	 if params[:won_coins].present?
+    	 @request.host_user.win_coins!(params[:won_coins])
+     end
+     @invitation.status = InvitationStatus.where(name: "Registered").first()
+	end
+	
     return render :show if @invitation.update(update_invitation_params)
     render_json_errors @invitation.errors
+    
   end
   
   

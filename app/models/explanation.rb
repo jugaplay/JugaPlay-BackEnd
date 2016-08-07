@@ -7,5 +7,4 @@ class Explanation < ActiveRecord::Base
   validates :detail, presence:true
   validates :name, presence:true, uniqueness: { scope: [:users] } 
   
-
 end
