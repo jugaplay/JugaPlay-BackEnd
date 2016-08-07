@@ -4,6 +4,7 @@
   <table class="stripped hoverable tb900">
     <thead>
       <tr>
+        <th>ID</th>
         <th>Nombre</th>
         <th>Detalle</th>
       </tr>
@@ -12,6 +13,7 @@
     <tbody>
     <% @explanations.each do |explanation| %>
       <tr>
+        <td><%= explanation.id %></td>    
         <td><%= link_to explanation.name, edit_admin_explanation_path(explanation.id) %></td>
         <td><%= explanation.detail %></td>    
       </tr>
