@@ -25,21 +25,20 @@ class Api::V1::InvitationsController < ApplicationController
     
     if(@invitation.present?)
     
-    if params[:guest_user_id].present?
-	 @guest_user = User.find(params[:guest_user_id])
-	 if params[:won_coins].present?
-    	 @invitation.request.host_user.win_coins!(params[:won_coins])
-     end
-     @invitation.invitation_status = InvitationStatus.where(name: "Registered").first()
-	end
-	
-    return render :show if @invitation.update(update_invitation_params)
+	    if params[:guest_user_id].present?
+		 @guest_user = User.find(params[:guest_user_id])
+		 if params[:won_coins].present?
+	    	 @invitation.request.host_user.win_coins!(params[:won_coins])
+	     end
+	     @invitation.invitation_status = InvitationStatus.where(name: "Registered").first()
+		end
+		
+	    return render :show if @invitation.update(update_invitation_params)    
+        render json: { errors: @invitation.errors }
     
-    render_json_errors @invitation.errors
     else
     
         render json: { errors: 'Invalid invitation_id' }
-    
     
     end
     
