@@ -30,7 +30,7 @@ class Api::V1::InvitationsController < ApplicationController
 	 if params[:won_coins].present?
     	 @invitation.request.host_user.win_coins!(params[:won_coins])
      end
-     @invitation.status = InvitationStatus.where(name: "Registered").first()
+     @invitation.invitation_status = InvitationStatus.where(name: "Registered").first()
 	end
 	
     return render :show if @invitation.update(update_invitation_params)
