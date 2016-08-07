@@ -20,9 +20,10 @@ class Api::V1::InvitationsController < ApplicationController
   end
 
   def update
-  # TODO patron de estados - solo debe permitir pasar de estado unused -> entered -> registered
     
-    @invitation = Invitation.find(params[:id])
+    @invitation = Invitation.where(id: params[:id]).first()
+    
+    if(@invitation.present?)
     
     if params[:guest_user_id].present?
 	 @guest_user = User.find(params[:guest_user_id])
@@ -33,7 +34,15 @@ class Api::V1::InvitationsController < ApplicationController
 	end
 	
     return render :show if @invitation.update(update_invitation_params)
+    
     render_json_errors @invitation.errors
+    else
+    
+        render json: { errors: 'Invalid invitation_id' }
+    
+    
+    end
+    
     
   end
   
@@ -42,7 +51,7 @@ class Api::V1::InvitationsController < ApplicationController
 private
 
   def update_invitation_params
-    params.require(:invitation).permit(:won_coins, :detail, :guest_ip, :guest_user_id, :invitation_status_id)
+    params.permit(:won_coins, :detail, :guest_ip, :guest_user_id, :invitation_status_id)
   end
   
 end

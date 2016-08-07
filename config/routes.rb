@@ -29,11 +29,13 @@ Rails.application.routes.draw do
       end      
 
 	  resources :explanations, only: [:index, :show, :create]
+      resources :invitations, only: [:create,:update]
 
 
       resources :requests, only: [] do
-        resources :invitations, only: [:create,:update]
+            resources :invitations, only: [:create]
       end
+
 
       resources :tournaments, only: [] do
         resources :rankings, only: [:index]
