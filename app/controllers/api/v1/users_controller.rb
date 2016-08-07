@@ -33,7 +33,7 @@ class Api::V1::UsersController < Api::BaseController
   end
 
   def update_user_params
-    params.require(:user).permit(:first_name, :last_name, :email, :nickname, :password, :telephone, :push_token)
+    params.require(:user).permit(:first_name, :last_name, :email, :nickname, :password, :telephone, :push_token, :explanations)
   end
 
   def build_base_nickname
