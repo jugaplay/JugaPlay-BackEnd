@@ -163,3 +163,25 @@ ON (winners.table_id  = prizes.table_id AND winners.position  = prizes.position)
 
 INNER JOIN tables
 ON tables.id = winners.table_id 
+
+
+
+
+INSERT INTO request_types(
+            name, created_at, updated_at)
+    VALUES ('Facebook', now(), now());
+
+INSERT INTO request_types(
+            name, created_at, updated_at)
+    VALUES ('Whatsapp', now(), now());
+
+
+INSERT INTO request_types(
+            name, created_at, updated_at)
+    VALUES ('SMS', now(), now());
+
+INSERT INTO request_types(
+            name, created_at, updated_at)
+    VALUES ('Mail', now(), now());
+
+

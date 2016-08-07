@@ -164,10 +164,17 @@ ALTER TABLE requests
 
 -- DROP INDEX index_requests_on_request_type_id;
 
-CREATE UNIQUE INDEX index_requests_on_request_type_id
+CREATE INDEX index_requests_on_request_type_id
   ON requests
   USING btree
   (request_type_id);
+
+
+
+CREATE INDEX index_requests_on_host_user_id
+  ON requests
+  USING btree
+  (host_user_id);
 
 
 -- Column: push_token
@@ -263,6 +270,38 @@ WITH (
 );
 ALTER TABLE channels
   OWNER TO ucfdkl13ogoaal;
+
+
+
+
+-- Table: notification_types
+
+-- DROP TABLE notification_types;
+
+CREATE TABLE notification_types
+(
+  id serial NOT NULL,
+  name character varying,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL,
+  CONSTRAINT notification_types_pkey PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE notification_types
+  OWNER TO florencia;
+
+-- Index: index_notification_types_on_name
+
+-- DROP INDEX index_notification_types_on_name;
+
+CREATE UNIQUE INDEX index_notification_types_on_name
+  ON notification_types
+  USING btree
+  (name COLLATE pg_catalog."default");
+
+
 
 
 -- Table: notifications

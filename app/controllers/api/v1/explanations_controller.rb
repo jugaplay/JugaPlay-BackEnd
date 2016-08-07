@@ -2,14 +2,14 @@ class Api::V1::ExplanationsController < Api::BaseController
   skip_before_filter :authenticate_user!, only: [:create]
 
   def index
-    @explanations = Explanation.where(id: current_user)
+    @explanations = Explanation.joins(:users).where(users: {id: current_user})
   end
 
 
  def create
  
  	@user = User.find(current_user)
-    @explanation = Explanation.find(params[:id])
+    @explanation = Explanation.where(id: params[:id]).first()
 
     if @explanation.present? and @user.present?   
 	    @user.explanations<<(@explanation)
