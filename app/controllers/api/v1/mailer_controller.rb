@@ -13,10 +13,10 @@ class Api::V1::MailerController < ApplicationController
 				SentMail.create!(from: params[:from], to: to, subject: @subject)
 		    end
 	    else
-	   		render json: { errors: 'Parameter :to is invalid' }
+	   		return	render json: { errors: 'Parameter :to is invalid' }
 	    end
 	else
-		   		render json: { errors: 'Parameter :from_user_id is invalid' }
+		  return 		render json: { errors: 'Parameter :from_user_id is invalid' }
 	
 	end
 	    
