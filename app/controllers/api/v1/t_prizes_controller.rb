@@ -10,5 +10,9 @@ class Api::V1::TPrizesController < Api::BaseController
   		  render_json_errors @t_prize.errors
     
 	end
+	
+	def index
+   		 @t_prizes = TPrize.all.limit(params[:to]).offset(params[:from])
+	end 
 	  		
 end

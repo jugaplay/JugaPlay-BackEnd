@@ -11,5 +11,9 @@ class Api::V1::TEntryFeesController < Api::BaseController
   		  render_json_errors @t_entry_fee.errors
     
 	end
+	
+	def index
+   		 @t_entry_fees = TEntryFee.all.limit(params[:to]).offset(params[:from])
+	end 
 	  		
 end

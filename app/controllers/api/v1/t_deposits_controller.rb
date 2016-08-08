@@ -16,5 +16,9 @@ class Api::V1::TDepositsController < Api::BaseController
   		  render_json_errors @t_deposit.errors
     
 	end
+	
+	def index
+   		 @t_deposits = TDeposit.all.limit(params[:to]).offset(params[:from])
+	end 
 	  		
 end

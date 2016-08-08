@@ -1,0 +1,1 @@
+json.partial! partial: 'api/v1/t_deposits/t_deposit', collection: @t_deposits, as: :t_deposit
