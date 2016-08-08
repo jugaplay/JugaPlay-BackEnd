@@ -5,7 +5,7 @@ class InvitationsMailer < ActionMailer::Base
 			
   def send_mail(to, from, content, from_user_id, sender_link, subject)
  
-    @user = User.find(from_user_id)
+    @user = User.find_by_id(from_user_id)
 	@sender_link = sender_link
 	@params = content
 	
