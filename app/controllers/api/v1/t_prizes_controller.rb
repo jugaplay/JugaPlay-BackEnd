@@ -12,7 +12,7 @@ class Api::V1::TPrizesController < Api::BaseController
 	end
 	
 	def index
-   		 @t_prizes = TPrize.all.limit(params[:to]).offset(params[:from])
+   		 @t_prizes = TPrize.where(user: current_user).limit(params[:to]).offset(params[:from])
 	end 
 	  		
 end

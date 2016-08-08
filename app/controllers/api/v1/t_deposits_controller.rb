@@ -18,7 +18,7 @@ class Api::V1::TDepositsController < Api::BaseController
 	end
 	
 	def index
-   		 @t_deposits = TDeposit.all.limit(params[:to]).offset(params[:from])
+   		 @t_deposits = TDeposit.where(user: current_user).limit(params[:to]).offset(params[:from])
 	end 
 	  		
 end

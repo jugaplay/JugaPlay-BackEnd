@@ -14,7 +14,7 @@ class Api::V1::TWithdrawsController < Api::BaseController
 	end
 	
 	def index
-   		 @t_withdraws = Transaction.all.limit(params[:to]).offset(params[:from])
+   		 @t_withdraws = Transaction.where(user: current_user).limit(params[:to]).offset(params[:from])
 	end 
 	
 	  		

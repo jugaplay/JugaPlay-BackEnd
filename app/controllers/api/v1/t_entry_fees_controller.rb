@@ -13,7 +13,7 @@ class Api::V1::TEntryFeesController < Api::BaseController
 	end
 	
 	def index
-   		 @t_entry_fees = TEntryFee.all.limit(params[:to]).offset(params[:from])
+   		 @t_entry_fees = TEntryFee.where(user: current_user).limit(params[:to]).offset(params[:from])
 	end 
 	  		
 end
