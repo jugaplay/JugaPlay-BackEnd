@@ -1,5 +1,4 @@
-json.user_id t_deposit.user_id
-json.user_email t_deposit.user.email
+json.id t_deposit.id
 json.coins t_deposit.coins
 json.currency t_deposit.currency.name
 json.country t_deposit.country.name
