@@ -61,6 +61,7 @@ Rails.application.routes.draw do
 	  resources :t_entry_fees, only: [:create]
 	  resources :t_deposits, only: [:create]
 	  resources :t_withdraws, only: [:create]
+	  resources :t_prizes, only: [:create]
 	  resources :wallet_history, only: [:index]
 	  resources :unused_invitations, only: [:index]
 	  resources :registered_invitations, only: [:index]
