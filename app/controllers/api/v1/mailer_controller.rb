@@ -19,9 +19,7 @@ class Api::V1::MailerController < ApplicationController
 		   		render json: { errors: 'Parameter :from_user_id is invalid' }
 	
 	end
-	
-	render json: 'OK'
-    
+	    
   end
   
   
