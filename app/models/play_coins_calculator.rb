@@ -30,8 +30,7 @@ class PlayCoinsCalculator
   	user.win_coins!(@prize.coins) 
   	
   	# Creacion de transaccion en t_prizes
-  	TPrizes.create!(detail: 'Premio por puesto ' + index + '  + en mesa' + @table.name
-  	, prize: @prize, user: user, coins: @prize.coins)
+  	TPrizes.create!(detail: 'Premio por puesto ' + index + '  + en mesa' + @table.title, prize: @prize, user: user, coins: @prize.coins)
   	 	
   	
   end
