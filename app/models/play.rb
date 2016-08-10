@@ -16,7 +16,7 @@ class Play < ActiveRecord::Base
   
  	def prizes_of_player(user)
 
-		TPrize.where("user_id = ? AND prize_id IN ?", user.id, play.table.prizes.pluck(:id)).sum("coins")
+		TPrize.where("user_id = ? AND prize_id IN ?", user.id, table.prizes.pluck(:id)).sum("coins")
 	
 	end
 
