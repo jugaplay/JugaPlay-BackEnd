@@ -14,7 +14,7 @@ class ResultsMailer < ActionMailer::Base
     @play = play
     @user = play.user
     @points_calculator = PlayPointsCalculator.new
-	@t_prize = TPrize.joins(:prize).where("user= ? AND t_prize.table_id = ?", @user, @table.id).first()
+	@t_prize = TPrize.joins(:prize).where("user= ? AND prize.table_id = ?", @user, @table.id).first()
 			
     mail to: @user.email, from: INFO_MAIL, subject: "Resultados de #{table.title}!" do |format|
       format.html { render 'mailer/results_mailer/send_results_message' }
