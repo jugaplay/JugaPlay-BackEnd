@@ -29,21 +29,7 @@ class ResultsMailer < ActionMailer::Base
     end
     
    	Notification.create!(notification_type: @notification_type, user: @user, title: @title )
-   	
-   	
-   	
-    <% @play.players.each do |player| %>
-      <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;"> 
-      <%= "#{player.name}, sumo: #{@points_calculator.call_for_player(@play, player) } PTS"%>
-      </p>
-    <% end %>
-    <p><b style="font-size:16px; font-family:Arial, Helvetica, sans-serif;">TOTAL: <%= @play.points %> PTS</b></p></td>
-                </tr>
-    
-                
-   	
-   	
-   	mensaje similar al del mail, titulo mesa, ya estan los resultados ganaste x monedas)
+   
     
   end
 end
