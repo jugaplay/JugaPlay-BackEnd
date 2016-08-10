@@ -4,7 +4,11 @@ json.points (play.points || 'N/A')
 json.bet_coins play.bet_coins
 
 json.earn_coins (play.table.prizes) do |prize|
-	json.earn_coins prize.t_prize.coins
+
+	if prize.t_prize.user_id = play.user_id
+		json.earn_coins prize.t_prize.coins
+	end
+	
 end
 
 json.players(play.players) do |player|
