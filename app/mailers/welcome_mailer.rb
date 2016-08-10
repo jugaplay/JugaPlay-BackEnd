@@ -9,11 +9,13 @@ class WelcomeMailer < ActionMailer::Base
       format.html { render 'mailer/welcome_mailer/send_welcome_message' }
     end
      
-    @notification_type = NotificationType.where(name: 'friend-invitation').first()
-   
-    @title = @user.nickname + ' se ha unido a a JugaPlay gracias a tu invitación'
-   	@text = 'Has ganado ' + Wallet::COINS_PER_INVITATION + ' monedas!'
-   	Notification.create!(notification_type: @notification_type, user: @user, title: @title , text: @text )
-    
+    if(user.invited_by.present?)
+	    @notification_type = NotificationType.where(name: 'friend-invitation').first()
+	   
+	    @title = user.nickname + ' se ha unido a a JugaPlay gracias a tu invitación'
+	   	@text = 'Has ganado ' + Wallet::COINS_PER_INVITATION.to_s + ' monedas!'
+	   	Notification.create!(notification_type: @notification_type, user:  user.invited_by , title: @title , text: @text )
+	end
+	
   end
 end
