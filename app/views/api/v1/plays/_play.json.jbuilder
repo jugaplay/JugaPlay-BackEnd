@@ -2,19 +2,8 @@ json.id play.id
 json.start_time play.table.start_time
 json.points (play.points || 'N/A')
 json.bet_coins play.bet_coins
+json.ear_coins play.prizes_of_player(@current_user)
 
-
-
-json.earn_coins (play.table.prizes) do |prize|
-
-json.user prize.t_prize.user_id
-json.user2 @current_user.id
-
-	if prize.t_prize.user_id = @current_user.id
-		json.earn_coins prize.t_prize.coins
-	end
-	
-end
 
 json.players(play.players) do |player|
   json.id player.id
