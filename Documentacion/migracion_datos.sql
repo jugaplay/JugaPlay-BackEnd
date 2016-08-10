@@ -36,36 +36,6 @@ SELECT
 ;
 
 
-INSERT INTO notification_types (
-name, created_at, updated_at)
-values('result',
-now(),
-now())
-;
-
-
-INSERT INTO notification_types (
-name, created_at, updated_at)
-values('challenge',
-now(),
-now())
-;
-
-INSERT INTO notification_types (
-name, created_at, updated_at)
-values('news',
-now(),
-now())
-;
-
-
-INSERT INTO notification_types (
-name, created_at, updated_at)
-values('personal',
-now(),
-now())
-;
-
 
 INSERT INTO languages(
             name, created_at, updated_at)
@@ -171,6 +141,7 @@ INSERT INTO request_types(
             name, created_at, updated_at)
     VALUES ('Facebook', now(), now());
 
+
 INSERT INTO request_types(
             name, created_at, updated_at)
     VALUES ('Whatsapp', now(), now());
@@ -183,5 +154,61 @@ INSERT INTO request_types(
 INSERT INTO request_types(
             name, created_at, updated_at)
     VALUES ('Mail', now(), now());
+
+
+
+INSERT INTO invitation_statuses(
+            name, created_at, updated_at)
+    VALUES ('Unused', now(), now());
+
+
+INSERT INTO invitation_statuses(
+            name, created_at, updated_at)
+    VALUES ('Entered', now(), now());
+
+
+INSERT INTO invitation_statuses(
+            name, created_at, updated_at)
+    VALUES ('Registred', now(), now());
+
+
+INSERT INTO notification_types(
+             name, 
+            created_at,
+             updated_at)
+    VALUES ('challenge', now(), now());
+
+INSERT INTO notification_types(
+             name, 
+            created_at,
+             updated_at)
+    VALUES ('result', now(), now());
+
+INSERT INTO notification_types(
+             name, 
+            created_at,
+             updated_at)
+    VALUES ('new', now(), now());
+
+
+INSERT INTO notification_types(
+             name, 
+            created_at,
+             updated_at)
+    VALUES ('personal', now(), now());
+
+INSERT INTO notification_types(
+             name, 
+            created_at,
+             updated_at)
+    VALUES ('exchange-ready', now(), now());
+
+INSERT INTO notification_types(
+             name, 
+            created_at,
+             updated_at)
+    VALUES ('friend-invitation', now(), now());
+            
+
 
 

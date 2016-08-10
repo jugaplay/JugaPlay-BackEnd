@@ -25,7 +25,7 @@ Rails.application.routes.draw do
       resources :users, only: [:show, :create, :update] do
       	resources :requests, only: [:index, :create]
       	resources :channels, only: [:index, :update]
-      	resources :notifications, only: [:index, :create]
+      	resources :notifications, only: [:index, :update]
       end      
 
 	  resources :explanations, only: [:index, :show, :create]

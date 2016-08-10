@@ -10,6 +10,7 @@ class ResultsMailer < ActionMailer::Base
   end
 
   def send_results_message(table, play)
+  
     @table = table
     @play = play
     @user = play.user
@@ -21,14 +22,16 @@ class ResultsMailer < ActionMailer::Base
     end
     
     @notification_type = NotificationType.where(name: 'challenge').first()
+    
 	if @t_prize.present?
     	@title = 'Ya están los resultados de ' + @table.title + '. Ganaste ' + @t_prize.coins + ' monedas. Felicitaciones!' 
     else
   		@title = 'Ya están los resultados de ' + @table.title + '. Ganaste 0 monedas. Suerte para la próxima!' 
     end
     
-   	Notification.create!(notification_type: @notification_type, user: @user, title: @title )
+   	Notification.create!(notification_type: @notification_type, user: @user, title: @table.title, text: @title )
    
     
   end
+  
 end

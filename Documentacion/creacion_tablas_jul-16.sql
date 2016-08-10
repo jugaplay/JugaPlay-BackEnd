@@ -597,4 +597,101 @@ CREATE INDEX index_t_prizes_on_user_id
 
 
 
+-- Table: t_entry_fees
+
+-- DROP TABLE t_entry_fees;
+
+CREATE TABLE t_entry_fees
+(
+  id serial NOT NULL,
+  coins integer,
+  user_id integer,
+  detail character varying,
+  tournament_id integer,
+  table_id integer,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL,
+  CONSTRAINT t_entry_fees_pkey PRIMARY KEY (id),
+  CONSTRAINT fk_rails_102cddc74a FOREIGN KEY (table_id)
+      REFERENCES tables (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT fk_rails_573c73b2bb FOREIGN KEY (tournament_id)
+      REFERENCES tournaments (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT fk_rails_fce709b1bf FOREIGN KEY (user_id)
+      REFERENCES users (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE t_entry_fees
+  OWNER TO ucfdkl13ogoaal;
+
+-- Index: index_t_entry_fees_on_table_id
+
+-- DROP INDEX index_t_entry_fees_on_table_id;
+
+CREATE INDEX index_t_entry_fees_on_table_id
+  ON t_entry_fees
+  USING btree
+  (table_id);
+
+-- Index: index_t_entry_fees_on_tournament_id
+
+-- DROP INDEX index_t_entry_fees_on_tournament_id;
+
+CREATE INDEX index_t_entry_fees_on_tournament_id
+  ON t_entry_fees
+  USING btree
+  (tournament_id);
+
+-- Index: index_t_entry_fees_on_user_id
+
+-- DROP INDEX index_t_entry_fees_on_user_id;
+
+CREATE INDEX index_t_entry_fees_on_user_id
+  ON t_entry_fees
+  USING btree
+  (user_id);
+
+
+-- Table: t_promotions
+
+-- DROP TABLE t_promotions;
+
+CREATE TABLE t_promotions
+(
+  id serial NOT NULL,
+  coins integer,
+  detail character varying,
+  promotion_type character varying,
+  user_id integer,
+  created_at timestamp without time zone NOT NULL,
+  updated_at timestamp without time zone NOT NULL,
+  CONSTRAINT t_promotions_pkey PRIMARY KEY (id),
+  CONSTRAINT fk_rails_3ffe22c594 FOREIGN KEY (user_id)
+      REFERENCES users (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE t_promotions
+  OWNER TO ucfdkl13ogoaal;
+
+-- Index: index_t_promotions_on_user_id
+
+-- DROP INDEX index_t_promotions_on_user_id;
+
+CREATE INDEX index_t_promotions_on_user_id
+  ON t_promotions
+  USING btree
+  (user_id);
+
+
+
+
+
+
 
