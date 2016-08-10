@@ -15,7 +15,7 @@ class Play < ActiveRecord::Base
   
   
  	def prizes_of_player(user)
-		@t_prize = Prize.joins(:t_prize).where(table_id: self.table.id).pluck("t_prizes.id")
+		@t_prize = Prize.joins(:t_prize).where("table_id= ? AND user_id= ?", self.table.id,user.id).pluck("t_prizes.id")
 		if @t_prize.present?
 			TPrize.where("user_id = ? AND prize_id = ?", user.id, @t_prize.id).sum("coins")
 		else
