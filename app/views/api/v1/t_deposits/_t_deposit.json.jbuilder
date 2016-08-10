@@ -6,6 +6,6 @@ json.payment_service t_deposit.payment_service.name
 json.transaction_id t_deposit.transaction_id
 json.price t_deposit.price
 json.operator t_deposit.operator
-json.type t_deposit.type
+json.type t_deposit.deposit_type
 json.detail t_deposit.detail
 json.date t_deposit.created_at

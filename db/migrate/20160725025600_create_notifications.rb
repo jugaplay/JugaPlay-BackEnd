@@ -7,6 +7,7 @@ class CreateNotifications < ActiveRecord::Migration
       t.string :image
       t.text :text
       t.text :action
+      t.boolean :read, null:false, default:false
 
       t.timestamps null: false
     end

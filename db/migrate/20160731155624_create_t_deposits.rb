@@ -10,7 +10,7 @@ class CreateTDeposits < ActiveRecord::Migration
       t.string :transaction_id
       t.float :price
       t.string :operator
-      t.string :type
+      t.string :deposit_type
       t.string :detail
 
       t.timestamps null: false

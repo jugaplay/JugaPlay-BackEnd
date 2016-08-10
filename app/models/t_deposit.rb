@@ -12,7 +12,7 @@ class TDeposit < ActiveRecord::Base
   validates :payment_service, presence: true
   validates :transaction_id, presence: true
   validates :operator, presence: true
-  validates :type, presence: true
+  validates :deposit_type, presence: true
 
   validates :detail, presence: true, length: { maximum: 500 }, allow_blank: false
     

@@ -30,8 +30,6 @@ class Croupier
   end
 
 
-
-
   private
   
   attr_reader :table, :points_calculator,  :coins_calculator, :winners_calculator, :play_ids_to_update, :play_data_to_update
@@ -68,8 +66,6 @@ class Croupier
   end
   
   
-  
-
   def plays
     Play.where(table: table) # Todas las jugadas de la mesa 
   end
