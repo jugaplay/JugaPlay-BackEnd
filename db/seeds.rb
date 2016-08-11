@@ -335,27 +335,31 @@ payment_service = PaymentService.create!(name: 'PayPal')
 
 Transaction.create!(user: admin, coins: 20,detail: 'Un detalle')
 TEntryFee.create!(user: admin, coins: 40, detail: 'Un detalle', table: table1 )
-TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service)
-TPrize.create!(user: admin, coins: 5, detail: 'Un detalle')
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
+#TPrize.create!(user: admin, coins: 5, detail: 'Un detalle')
 
 Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
 TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
-TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service)
-TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
+#TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
     
 Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
 TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
-TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service)
-TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
+#TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
     
 Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
 TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
-TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service)
-TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
+#TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
         
 Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
 TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
-TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service)
-TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
+#TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+    
+    
+
+    
     
 end
