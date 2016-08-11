@@ -1,3 +1,4 @@
+json.id notification.id
 json.type_name notification.notification_type.name
 json.title notification.title
 json.image notification.image
