@@ -11,6 +11,9 @@ class Api::V1::UsersController < Api::BaseController
     	@invitation.update(:won_coins => Wallet::COINS_PER_INVITATION,:guest_user_id => @user.id, :guest_ip => request.remote_ip, :invitation_status => InvitationStatus.find_by_name('Registered') ) if @invitation.present?
     	TPromotion.create!(coins: Wallet::COINS_PER_INVITATION, user: @user.invited_by, detail: 'Invitación a ' + @user.nickname, promotion_type: 'friend-invitation')
     end
+
+    	TPromotion.create!(coins: Wallet::COINS_PER_REGISTRATION, user: @user, detail: 'Bienvenida a JugaPlay', promotion_type: 'registration')
+
     WelcomeMailer.send_welcome_message(@user).deliver_now
     render :show
   end
