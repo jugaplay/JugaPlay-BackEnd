@@ -1,5 +1,3 @@
-
-
 json.total_withdraws @total_of_transactions
 json.last_month_withdraws @last_month_transactions
 
@@ -46,5 +44,19 @@ json.detail_prizes(@t_prizes) do |t_prize|
 	json.detail t_prize.detail
 	json.prize_id t_prize.prize_id
 	json.date t_prize.created_at
+	
+end
+
+
+
+json.total_promotions @total_of_t_promotions
+json.last_month_promotions @last_month_t_promotions
+
+json.detail_promotions(@t_promotions) do |t_promotion|
+
+	json.coins t_promotion.coins
+	json.detail t_promotion.detail
+	json.promotion_type t_promotion.promotion_type
+	json.date t_promotion.created_at
 	
 end

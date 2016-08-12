@@ -29,7 +29,7 @@ Rails.application.routes.draw do
       end      
 
 	  resources :explanations, only: [:index, :show, :create]
-      resources :invitations, only: [:create,:update]
+      resources :invitations, only: [:create]
 
 
       resources :requests, only: [] do
@@ -61,7 +61,7 @@ Rails.application.routes.draw do
 	  resources :t_entry_fees, only: [:index, :create]
 	  resources :t_deposits, only: [:index, :create]
 	  resources :t_withdraws, only: [:index, :create]
-	  resources :t_prizes, only: [:index, :create]
+	  resources :t_prizes, only: [:create]
 	  resources :wallet_history, only: [:index]
 	  resources :unused_invitations, only: [:index]
 	  resources :registered_invitations, only: [:index]
