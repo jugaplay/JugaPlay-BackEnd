@@ -21,7 +21,7 @@ class ResultsMailer < ActionMailer::Base
       format.html { render 'mailer/results_mailer/send_results_message' }
     end
     
-    @notification_type = NotificationType.where(name: 'challenge').first()
+    @notification_type = NotificationType.where(name: 'result').first()
     
 	if @t_prize.present?
     	@title = 'Saliste ' + @table.position(@user).to_s   + '° en ' +  @table.title  + '. Ganaste ' + @t_prize.coins.to_s  + ' monedas.' 
