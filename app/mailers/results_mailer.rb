@@ -24,12 +24,13 @@ class ResultsMailer < ActionMailer::Base
     @notification_type = NotificationType.where(name: 'challenge').first()
     
 	if @t_prize.present?
-    	@title = 'Ya están los resultados de ' + @table.title + '. Ganaste ' + @t_prize.coins + ' monedas. Felicitaciones!' 
+    	@title = 'Saliste ' + @table.position(@user).to_s   + '° en ' +  @table.title  + '. Ganaste ' + @t_prize.coins.to_s  + ' monedas.' 
     else
-  		@title = 'Ya están los resultados de ' + @table.title + '. Ganaste 0 monedas. Suerte para la próxima!' 
+  		@title =  'Saliste ' + @table.position(@user).to_s   + '° en '  + @table.title + '. Ganaste 0 monedas. Suerte para la próxima!' 
     end
+       
     
-   	Notification.create!(notification_type: @notification_type, user: @user, title: @table.title, text: @title )
+   	Notification.create!(notification_type: @notification_type, user: @user, title: @table.title, text: @title , action: %q[window.location='history.html';])
    
     
   end

@@ -2,7 +2,7 @@ class Api::V1::NotificationsController < Api::BaseController
   skip_before_filter :authenticate_user!, only: [:create]
 
   def index
-    @notifications = Notification.where(user_id: params[:user_id]).limit(params[:to]).offset(params[:from])
+    @notifications = Notification.where(user_id: params[:user_id]).limit(params[:to]).offset(params[:from]).order('created_at DESC' )
   end
 
 
