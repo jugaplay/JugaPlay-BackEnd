@@ -154,6 +154,14 @@ INSERT INTO request_types(
 INSERT INTO request_types(
             name, created_at, updated_at)
     VALUES ('Mail', now(), now());
+    
+INSERT INTO request_types(
+            name, created_at, updated_at)
+    VALUES ('Twitter', now(), now());
+
+INSERT INTO request_types(
+            name, created_at, updated_at)
+    VALUES ('Link', now(), now());    
 
 
 
