@@ -107,7 +107,7 @@ t_prizes  (coins, user_id, detail, prize_id, created_at, updated_at)
 SELECT 
 coins as coins, 
 user_id as user_id, 
-'Premio en mesa: '|| title as detail,
+'Premio en : '|| title as detail,
 prize_id as prize_id,
 Now(),
 Now()
