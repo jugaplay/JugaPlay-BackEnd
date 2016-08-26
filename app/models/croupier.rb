@@ -89,8 +89,8 @@ class Croupier
   end
 
   def validate_is_opened(table)  
-    fail  TableIsClosed unless (table.opened) # TODO falta agregar condicion de si ya finalizo el partido
-    fail  MatchHasStart unless (table.start_time > (Time.now - 182.minutes))  # El servidor esta atrasado 3 horas desde argentina
+    fail  TableIsClosed unless (table.opened && (table.start_time > (Time.now - 182.minutes))) # TODO falta agregar condicion de si ya finalizo el partido
+    #fail  MatchHasStart unless (table.start_time > (Time.now - 182.minutes))   El servidor esta atrasado 3 horas desde argentina
   end
   
   def validate_all_players(players)
