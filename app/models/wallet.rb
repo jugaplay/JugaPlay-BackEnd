@@ -1,5 +1,5 @@
 class Wallet < ActiveRecord::Base
-  COINS_PER_INVITATION = 5
+  COINS_PER_INVITATION = 10
   COINS_PER_REGISTRATION = 10
 
   belongs_to :user
