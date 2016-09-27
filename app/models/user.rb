@@ -5,15 +5,22 @@ class User < ActiveRecord::Base
   devise :omniauthable, omniauth_providers: [:facebook]
 
   has_one :wallet, dependent: :destroy
+  has_one :channel, dependent: :destroy
   has_many :plays, dependent: :destroy
   has_many :rankings, dependent: :destroy
   belongs_to :invited_by, class_name: self.to_s, foreign_key: :invited_by_id
+  has_and_belongs_to_many :explanations, :before_add => :validates_explanation_alredy_exist
+  
+  has_many :requests
+  has_many :notifications
+  
 
   validates_presence_of :first_name, :last_name
   validates :nickname, uniqueness: true, presence: true
   validates :email, uniqueness: true, if: proc { email.present? }
   validates :uid, uniqueness: { scope: :provider }, if: proc { uid.present? && provider.present? }
   validate :validate_not_invited_by_itself, on: :update
+
 
   scope :ordered, -> { order(created_at: :asc) }
 
@@ -90,4 +97,10 @@ class User < ActiveRecord::Base
   def validate_not_invited_by_itself
     errors.add(:invited_by, 'Can not invite itself') if id.eql? invited_by_id
   end
+  
+  def validates_explanation_alredy_exist(explanation)
+   	raise ActiveRecord::Rollback if self.explanations.include? explanation
+  end
+
+
 end

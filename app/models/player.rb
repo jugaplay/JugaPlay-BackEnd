@@ -6,12 +6,11 @@ class Player < ActiveRecord::Base
 
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :description, presence: true
   validates :birthday, presence: true
   validates :weight, presence: true, numericality: { greater_than: 0 }
   validates :height, presence: true, numericality: { greater_than: 0 }
   validates :position, presence: true, inclusion: { in: Position::ALL }
-  validates :nationality, presence: true, inclusion: { in: Country::ALL }
+  validates :nationality, presence: true
   validates :team, uniqueness: { scope: [:first_name, :last_name, :position] }
 
   def name

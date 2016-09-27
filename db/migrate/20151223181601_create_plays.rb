@@ -4,6 +4,7 @@ class CreatePlays < ActiveRecord::Migration
       t.references :user, null: false
       t.references :table, null: false
       t.float :points, default: nil
+      t.float :coins, default: nil
 
       t.timestamps
     end

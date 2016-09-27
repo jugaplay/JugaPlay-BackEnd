@@ -1,25 +1,24 @@
 ActiveRecord::Base.transaction do
   torneo_verano = Tournament.create!(name: 'Torneo de Verano')
-
-   ## USER WALLET  
-	wallet =  Wallet.new(coins: 10)
-  	
+ 
+ 	
   ## ADMIN
-  admin = User.new(wallet: wallet, email: 'admin@jugaplay.com', password: '12345678', first_name: 'Admin', last_name: 'Admin', nickname: 'Admin')
+  wallet =  Wallet.new(coins: 10)
+  channel1 = Channel.new(whatsapp: true, sms: true, push: true, mail: true)
+  admin = User.new(channel: channel1, wallet: wallet, email: 'admin@jugaplay.com', password: '12345678', first_name: 'Admin', last_name: 'Admin', nickname: 'Admin')
   admin.save!
-    
-     ## USER WALLET  
-	wallet2 =  Wallet.new(coins: 10)
+
    	
   ## USER1
-  user1 = User.new(wallet: wallet2, email: 'user1@jugaplay.com', password: '12345678', first_name: 'User1', last_name: 'User1', nickname: 'User1')
-  user1.save! 
+  wallet2 =  Wallet.new(coins: 10)
+  channel2 = Channel.new(whatsapp: true, sms: true, push: true, mail: true)
+  user1 = User.new(channel: channel2, wallet: wallet2, email: 'user1@jugaplay.com', password: '12345678', first_name: 'User1', last_name: 'User1', nickname: 'User1')
+  user1.save!   
   
-   ## USER WALLET  
-	wallet3 =  Wallet.new(coins: 10)
-  
-  ## USER2
-  user2 = User.new(wallet: wallet3, email: 'user2@jugaplay.com', password: '12345678', first_name: 'User2', last_name: 'User2', nickname: 'User2')
+  ## USER2	
+  wallet3 =  Wallet.new(coins: 10)
+  channel3 = Channel.new(whatsapp: true, sms: true, push: true, mail: true)
+  user2 = User.new(channel: channel3, wallet: wallet3, email: 'user2@jugaplay.com', password: '12345678', first_name: 'User2', last_name: 'User2', nickname: 'User2')
   user2.save! 
   
   
@@ -246,7 +245,7 @@ ActiveRecord::Base.transaction do
 
 
   ## MESAS
-  Table.create!(title: 'San Lorenzo vs Independiente', has_password: false,matches: [slo_ind], start_time: slo_ind.datetime, end_time: slo_ind.datetime + 1.day, tournament: torneo_verano,
+  table1 = Table.create!(title: 'San Lorenzo vs Independiente', has_password: false,matches: [slo_ind], start_time: slo_ind.datetime, end_time: slo_ind.datetime + 1.day, tournament: torneo_verano,
                number_of_players: 3, points_for_winners: PointsForWinners.default, description: '-', table_rules: TableRules.create,
                entry_coins_cost: 0)
                
@@ -262,5 +261,105 @@ ActiveRecord::Base.transaction do
   )
  
  
+ ## REQUEST TYPES
+ ## Request_Type: Facebook - Whatsapp - SMS - Mail
+
+ facebook = RequestType.create!(name:'Facebook')
+ RequestType.create!(name:'Whatsapp')
+ RequestType.create!(name:'SMS')
+ RequestType.create!(name:'Mail')
+
+
+ ## REQUEST STATUS
+ ## Request_Status: Unused - Entered- Registered 
  
+ entered = InvitationStatus.create!(name:'Entered')
+ InvitationStatus.create!(name:'Unused')
+ InvitationStatus.create!(name:'Registered')
+ 
+ ## REQUESTS
+ 
+ request1 = Request.create!(request_type: facebook, host_user: user1)
+
+ ## INVITATIONS
+ 
+ Invitation.create!(invitation_status: entered, guest_user: user2, request: request1 )
+ 
+  
+ ## EXPLANATIONS
+ 
+ explanation1 = Explanation.create!(name: 'Cómo Jugar',detail:'1- Elegí el partido que quieras Jugar y hace Click en el botón JUGAR .2- Elegí los que crees que van a ser los 3 mejores jugadores del partido.')
+ explanation2 = Explanation.create!(name: 'Cómo Ganar Monedas',detail:'El usuario que suma más puntos gana el partido.')
+ 
+ ## USER EXPLANATION
+ 
+ user1.update!(explanations: [explanation1, explanation2])
+ user2.update!(explanations: [explanation2])
+ 
+ ##LANGUAGES
+ 
+spanish = Language.create!(name: 'Spanish')
+portuguese = Language.create!(name: 'Portuguese')
+english = Language.create!(name: 'English')
+ 
+ ## COUNTRIES
+ 
+ arg  = Country.create!(name: 'Argentina', language: spanish)
+ Country.create!(name: 'Brazil', language: portuguese)
+ Country.create!(name: 'Uruguay', language: spanish)
+ Country.create!(name: 'Chile', language: spanish)
+ Country.create!(name: 'Venezuela', language: spanish)
+ Country.create!(name: 'Paraguay', language: spanish)
+ Country.create!(name: 'Colombia', language: spanish)
+ Country.create!(name: 'España', language: spanish)
+ Country.create!(name: 'Ecuador', language: spanish)
+ Country.create!(name: 'Perú', language: spanish)
+ 
+ ## NOTIFICATION TYPES
+ 
+ NotificationType.create!(name: 'result')
+ NotificationType.create!(name: 'challenge')
+ NotificationType.create!(name: 'news')
+ NotificationType.create!(name: 'personal')
+  
+## CURRENCY
+
+currency = Currency.create!(name: 'USD')  
+  
+  
+## PAYMENT SERVICE
+
+payment_service = PaymentService.create!(name: 'PayPal')
+  
+## TRANSACTIONS
+
+Transaction.create!(user: admin, coins: 20,detail: 'Un detalle')
+TEntryFee.create!(user: admin, coins: 40, detail: 'Un detalle', table: table1 )
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
+#TPrize.create!(user: admin, coins: 5, detail: 'Un detalle')
+
+Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
+TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
+#TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+    
+Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
+TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
+#TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+    
+Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
+TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
+#TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+        
+Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
+TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
+TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
+#TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+    
+    
+
+    
+    
 end

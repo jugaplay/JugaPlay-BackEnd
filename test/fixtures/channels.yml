@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  mail: false
+  sms: false
+  whatsapp: false
+  push: false
+
+two:
+  mail: false
+  sms: false
+  whatsapp: false
+  push: false

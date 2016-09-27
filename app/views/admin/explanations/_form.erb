@@ -1,0 +1,17 @@
+<%= form_for explanation, url: url, method: method, html: { class: 'explanation-form col s12 m8 l6 offset-m2 offset-l3' } do |f| %>
+    
+    <div class="input-field col s12">
+      <%= f.text_field :name, class: 'validate', required: true %>
+      <%= f.label :name, 'Nombre' %>
+    </div>
+  
+    <div class="input-field col s12">
+      <%= f.text_field :detail, class: 'validate', required: true %>
+      <%= f.label :name, 'Detalle' %>
+    </div>
+
+    <div class="input-field col s12">
+      <%= submit_button_for 'Guardar' %>
+    </div>
+    
+<% end %>

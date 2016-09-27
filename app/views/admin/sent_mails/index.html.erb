@@ -1,0 +1,26 @@
+ <h5 class="page-title">Mensajes enviados</h5>
+     
+    
+  <div class="table-container">
+  <table class="stripped hoverable tb900">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Emisor</th>
+        <th>Destino</th>
+        <th>Asunto</th>
+      </tr>
+    </thead>
+  
+    <tbody>
+    <% @sent_mails.order("created_at asc").each do |mail| %>
+      <tr>
+        <td><%= mail.created_at %></td>
+        <td><%= mail.from %></td>
+        <td><%= mail.to %></td>
+        <td><%= mail.subject %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>

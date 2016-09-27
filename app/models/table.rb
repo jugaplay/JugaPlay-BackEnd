@@ -27,6 +27,10 @@ class Table < ActiveRecord::Base
  	Prize.where(table_id: self.id)
   end
 
+  def pot_prize
+ 	Prize.where(table_id: self.id).sum("coins")
+  end
+
   def can_play_with_amount_of_players?(players)
     number_of_players == players.count
   end

@@ -13,6 +13,7 @@ class Croupier
   def play(user:, players:, password:, bet: false)
     bet_coins = bet ? table.entry_coins_cost : 0
     validate_user(user)
+    validate_is_opened(table)
 	if table.has_password
 	    validate_password(table,user,password)
 	end
@@ -29,14 +30,14 @@ class Croupier
   end
 
 
-
-
   private
   
   attr_reader :table, :points_calculator,  :coins_calculator, :winners_calculator, :play_ids_to_update, :play_data_to_update
 
   def create_play(players, user, bet_coins)
     user.pay_coins!(bet_coins)
+    @detail = 'Entrada a : ' + table.title
+    TEntryFee.create!(user: user, coins: bet_coins, detail: @detail, table: table ) if bet_coins > 0
     Play.create!(user: user, table: table, players: players, bet_coins: bet_coins)
   end
 
@@ -67,8 +68,6 @@ class Croupier
   end
   
   
-  
-
   def plays
     Play.where(table: table) # Todas las jugadas de la mesa 
   end
@@ -87,6 +86,11 @@ class Croupier
 
   def validate_password(table,user, password)  
     fail  IncorrectPasswordToPlay unless (((user.id + 500) * (table.id + 500) * table.id * user.id).to_s(32).upcase) .eql? password
+  end
+
+  def validate_is_opened(table)  
+    fail  TableIsClosed unless (table.opened && (table.start_time > (Time.now - 182.minutes))) # TODO falta agregar condicion de si ya finalizo el partido
+    #fail  MatchHasStart unless (table.start_time > (Time.now - 182.minutes))   El servidor esta atrasado 3 horas desde argentina
   end
   
   def validate_all_players(players)

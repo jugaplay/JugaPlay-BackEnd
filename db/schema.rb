@@ -11,10 +11,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160329014236) do
+ActiveRecord::Schema.define(version: 20160731155624) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "channels", force: :cascade do |t|
+    t.integer  "user_id",                   null: false
+    t.boolean  "mail",       default: true, null: false
+    t.boolean  "sms",        default: true, null: false
+    t.boolean  "whatsapp",   default: true, null: false
+    t.boolean  "push",       default: true, null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "channels", ["user_id"], name: "index_channels_on_user_id", unique: true, using: :btree
 
   create_table "comments", force: :cascade do |t|
     t.string   "sender_name"
@@ -22,6 +34,22 @@ ActiveRecord::Schema.define(version: 20160329014236) do
     t.text     "content",      null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "countries", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "language_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "countries", ["language_id"], name: "index_countries_on_language_id", using: :btree
+  add_index "countries", ["name"], name: "index_countries_on_name", unique: true, using: :btree
+
+  create_table "currencies", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "data_factory_players_mappings", force: :cascade do |t|
@@ -46,6 +74,52 @@ ActiveRecord::Schema.define(version: 20160329014236) do
   add_index "directors", ["first_name"], name: "index_directors_on_first_name", using: :btree
   add_index "directors", ["last_name"], name: "index_directors_on_last_name", using: :btree
 
+  create_table "explanations", force: :cascade do |t|
+    t.string   "name"
+    t.text     "detail"
+    t.boolean  "active",     default: true, null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "explanations", ["name"], name: "index_explanations_on_name", unique: true, using: :btree
+
+  create_table "explanations_users", force: :cascade do |t|
+    t.integer  "user_id",        null: false
+    t.integer  "explanation_id", null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "explanations_users", ["user_id", "explanation_id"], name: "index_explanations_users_on_user_id_and_explanation_id", unique: true, using: :btree
+
+  create_table "invitation_statuses", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "invitation_statuses", ["name"], name: "index_invitation_statuses_on_name", unique: true, using: :btree
+
+  create_table "invitations", force: :cascade do |t|
+    t.integer  "won_coins"
+    t.inet     "guest_ip"
+    t.string   "detail"
+    t.integer  "invitation_status_id", null: false
+    t.integer  "request_id",           null: false
+    t.integer  "guest_user_id"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  create_table "languages", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "languages", ["name"], name: "index_languages_on_name", unique: true, using: :btree
+
   create_table "matches", force: :cascade do |t|
     t.string   "title",           null: false
     t.integer  "local_team_id",   null: false
@@ -67,6 +141,36 @@ ActiveRecord::Schema.define(version: 20160329014236) do
 
   add_index "matches_tables", ["match_id"], name: "index_matches_tables_on_match_id", using: :btree
   add_index "matches_tables", ["table_id"], name: "index_matches_tables_on_table_id", using: :btree
+
+  create_table "notification_types", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "notification_types", ["name"], name: "index_notification_types_on_name", unique: true, using: :btree
+
+  create_table "notifications", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "notification_type_id"
+    t.string   "title",                null: false
+    t.string   "image"
+    t.text     "text"
+    t.text     "action"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "notifications", ["notification_type_id"], name: "index_notifications_on_notification_type_id", using: :btree
+  add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree
+
+  create_table "payment_services", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "payment_services", ["name"], name: "index_payment_services_on_name", unique: true, using: :btree
 
   create_table "player_stats", force: :cascade do |t|
     t.integer  "player_id",                             null: false
@@ -101,14 +205,14 @@ ActiveRecord::Schema.define(version: 20160329014236) do
   add_index "player_stats", ["player_id", "match_id"], name: "index_player_stats_on_player_id_and_match_id", unique: true, using: :btree
 
   create_table "players", force: :cascade do |t|
-    t.string  "first_name",  null: false
-    t.string  "last_name",   null: false
-    t.string  "position",    null: false
-    t.text    "description", null: false
-    t.date    "birthday",    null: false
-    t.string  "nationality", null: false
-    t.float   "weight",      null: false
-    t.float   "height",      null: false
+    t.string  "first_name",               null: false
+    t.string  "last_name",                null: false
+    t.string  "position",                 null: false
+    t.text    "description", default: "", null: false
+    t.date    "birthday",                 null: false
+    t.string  "nationality",              null: false
+    t.float   "weight",                   null: false
+    t.float   "height",                   null: false
     t.integer "team_id"
   end
 
@@ -130,6 +234,7 @@ ActiveRecord::Schema.define(version: 20160329014236) do
     t.integer  "user_id",                null: false
     t.integer  "table_id",               null: false
     t.float    "points"
+    t.float    "coins"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "bet_coins",  default: 0, null: false
@@ -161,6 +266,78 @@ ActiveRecord::Schema.define(version: 20160329014236) do
   add_index "rankings", ["tournament_id", "user_id"], name: "index_rankings_on_tournament_id_and_user_id", unique: true, using: :btree
   add_index "rankings", ["tournament_id"], name: "index_rankings_on_tournament_id", using: :btree
   add_index "rankings", ["user_id"], name: "index_rankings_on_user_id", using: :btree
+
+  create_table "request_types", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "request_types", ["name"], name: "index_request_types_on_name", unique: true, using: :btree
+
+  create_table "requests", force: :cascade do |t|
+    t.integer  "request_type_id", null: false
+    t.integer  "host_user_id",    null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "requests", ["host_user_id"], name: "index_requests_on_host_user_id", using: :btree
+  add_index "requests", ["request_type_id"], name: "index_requests_on_request_type_id", using: :btree
+
+  create_table "sent_mails", force: :cascade do |t|
+    t.string   "from"
+    t.string   "to"
+    t.string   "subject"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "t_deposits", force: :cascade do |t|
+    t.integer  "coins"
+    t.integer  "user_id"
+    t.string   "detail"
+    t.integer  "currency_id"
+    t.integer  "country_id"
+    t.integer  "payment_service_id"
+    t.string   "transaction_id"
+    t.float    "price"
+    t.string   "operator"
+    t.string   "type"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+  end
+
+  add_index "t_deposits", ["country_id"], name: "index_t_deposits_on_country_id", using: :btree
+  add_index "t_deposits", ["currency_id"], name: "index_t_deposits_on_currency_id", using: :btree
+  add_index "t_deposits", ["payment_service_id"], name: "index_t_deposits_on_payment_service_id", using: :btree
+  add_index "t_deposits", ["user_id"], name: "index_t_deposits_on_user_id", using: :btree
+
+  create_table "t_entry_fees", force: :cascade do |t|
+    t.integer  "coins"
+    t.integer  "user_id"
+    t.string   "detail"
+    t.integer  "tournament_id"
+    t.integer  "table_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "t_entry_fees", ["table_id"], name: "index_t_entry_fees_on_table_id", using: :btree
+  add_index "t_entry_fees", ["tournament_id"], name: "index_t_entry_fees_on_tournament_id", using: :btree
+  add_index "t_entry_fees", ["user_id"], name: "index_t_entry_fees_on_user_id", using: :btree
+
+  create_table "t_prizes", force: :cascade do |t|
+    t.integer  "coins"
+    t.integer  "user_id"
+    t.string   "detail"
+    t.integer  "prize_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "t_prizes", ["prize_id"], name: "index_t_prizes_on_prize_id", using: :btree
+  add_index "t_prizes", ["user_id"], name: "index_t_prizes_on_user_id", using: :btree
 
   create_table "table_rules", force: :cascade do |t|
     t.integer  "table_id",                                null: false
@@ -272,6 +449,8 @@ ActiveRecord::Schema.define(version: 20160329014236) do
     t.text     "image"
     t.string   "nickname",                            null: false
     t.integer  "invited_by_id"
+    t.string   "telephone"
+    t.string   "push_token"
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
@@ -290,4 +469,16 @@ ActiveRecord::Schema.define(version: 20160329014236) do
 
   add_index "wallets", ["user_id"], name: "index_wallets_on_user_id", unique: true, using: :btree
 
+  add_foreign_key "countries", "languages"
+  add_foreign_key "notifications", "notification_types"
+  add_foreign_key "notifications", "users"
+  add_foreign_key "t_deposits", "countries"
+  add_foreign_key "t_deposits", "currencies"
+  add_foreign_key "t_deposits", "payment_services"
+  add_foreign_key "t_deposits", "users"
+  add_foreign_key "t_entry_fees", "tables"
+  add_foreign_key "t_entry_fees", "tournaments"
+  add_foreign_key "t_entry_fees", "users"
+  add_foreign_key "t_prizes", "prizes"
+  add_foreign_key "t_prizes", "users"
 end

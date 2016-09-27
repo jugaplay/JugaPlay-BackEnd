@@ -11,7 +11,6 @@ class PlayCoinsCalculator
 
 
 
-
   private
     
   def users_plays
@@ -23,13 +22,16 @@ class PlayCoinsCalculator
  
   
   end
-  
-  
     
   
   def assign_coins(user, index)
+  	
   	@prize = @table.prizes.find_by_position(index)
   	user.win_coins!(@prize.coins) 
+  	
+  	# Creacion de transaccion en t_prizes
+  	TPrize.create!(detail: 'Premio en: '+@table.title, prize: @prize, user: user, coins: @prize.coins) 	
+  	
   end
   
   
