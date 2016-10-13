@@ -36,9 +36,20 @@
                             </tr>
                         </table>
                          <p><%= @user.nickname %> (<%= @user.email %>) te ha invitado a participar de JugaPlay, el juego que esta revolucionando el futbol.</p>
-                         <p><%= @sender_link %></p>
-                         <p>Entra apretando el link para que <%= @user.nickname %> (<%= @user.email %>) sume monedas para el juego. </p>
-			    <p><%= @sender_link %> </p>
+                         <p>Entra apretando el botón para que <%= @user.nickname %> (<%= @user.email %>) sume monedas para el juego. </p>
+			    <a href="<%= @sender_link %>"
+                                                                style="
+                                                                color:#333;
+                                                                font-size:12px;
+                                                                font-weight:bold;
+                                                                text-align:center;
+                                                                text-decoration:none;
+                                                                font-family:Arial, sans-serif;
+                                                                -webkit-text-size-adjust:none;
+								    background-color: green;   
+								       ">
+                                                                        Ir al sitio
+                                                                </a>
                          
                          </td>
                 </tr>
