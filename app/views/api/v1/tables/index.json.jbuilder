@@ -1,7 +1,7 @@
 json.array! @tables do |table|
   json.id table.id
   json.title table.title
-  json.has_password table.has_password
+  json.has_password false # TODO: sacar esto
   json.entry_coins_cost table.entry_coins_cost
   json.number_of_players table.number_of_players
   json.pot_prize table.pot_prize  

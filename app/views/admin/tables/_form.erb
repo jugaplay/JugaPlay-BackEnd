@@ -1,50 +1,38 @@
 <%= form_for table, url: url, method: method, html: { class: 'col s12 m8 l6 offset-m2 offset-l3' } do |f| %>
-    <div class="input-field col s12">
-      <%= f.text_field :title, class: 'validate', required: true %>
-      <%= f.label :title, 'Titulo' %>
-    </div>
-
-    <div class="input-field col s12">
-      <%= f.number_field :number_of_players, class: 'validate', required: true %>
-      <%= f.label :number_of_players, 'Numero de jugadores' %>
-    </div>
-
-    <div class="input-field col s12">
-      <%= f.number_field :entry_coins_cost, class: 'validate', required: true %>
-      <%= f.label :entry_coins_cost, 'Costo de entrada' %>
-    </div>
-
-    <div class="input-field col s12">
-      <%= f.label :tournament_id, 'Torneo' %>
-      <%= f.collection_select :tournament_id, Tournament.all, :id, :name, { include_blank: false }, { class: 'validate', required: true } %>
-    </div>
-
-    <div class="input-field col s12">
-      <%= f.label :match_ids, 'Partidos' %>
-      <%= f.select :match_ids, [], {}, { multiple: true, required: true } %>
-      <ul id="matches_by_tournaments" style="display: none">
-        <% Tournament.all.each do |tournament| %>
-          <li data-tournament-id="<%= tournament.id %>">
-            <% tournament.matches.not_played_yet.each do |match| %>
-              <option value="<%= match.id %>"><%= match.description %></option>
-            <% end %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-
-    <div class="input-field col s12">
-      <%= f.text_field :description, class: 'validate', required: true %>
-      <%= f.label :description, 'Descripcion' %>
-    </div>
-    
-    <div class="input-field col s12">
-      <%= f.check_box :has_password %>
-      <%= f.label :has_password, 'Tiene password?' %>
-  	</div>
-  
-
-    <div class="input-field col s12">
-      <%= submit_button_for 'Guardar' %>
-    </div>
+  <div class="input-field col s12">
+    <%= f.text_field :title, class: 'validate', required: true %>
+    <%= f.label :title, 'Titulo' %>
+  </div>
+  <div class="input-field col s12">
+    <%= f.number_field :number_of_players, class: 'validate', required: true %>
+    <%= f.label :number_of_players, 'Numero de jugadores' %>
+  </div>
+  <div class="input-field col s12">
+    <%= f.number_field :entry_coins_cost, class: 'validate', required: true %>
+    <%= f.label :entry_coins_cost, 'Costo de entrada' %>
+  </div>
+  <div class="input-field col s12">
+    <%= f.label :tournament_id, 'Torneo' %>
+    <%= f.collection_select :tournament_id, Tournament.all, :id, :name, { include_blank: false }, { class: 'validate', required: true } %>
+  </div>
+  <div class="input-field col s12">
+    <%= f.label :match_ids, 'Partidos' %>
+    <%= f.select :match_ids, [], {}, { multiple: true, required: true } %>
+    <ul id="matches_by_tournaments" style="display: none">
+      <% Tournament.all.each do |tournament| %>
+        <li data-tournament-id="<%= tournament.id %>">
+          <% tournament.matches.not_played_yet.each do |match| %>
+            <option value="<%= match.id %>"><%= match.description %></option>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+  <div class="input-field col s12">
+    <%= f.text_field :description, class: 'validate', required: true %>
+    <%= f.label :description, 'Descripcion' %>
+  </div>
+  <div class="input-field col s12">
+    <%= submit_button_for 'Guardar' %>
+  </div>
 <% end %>
