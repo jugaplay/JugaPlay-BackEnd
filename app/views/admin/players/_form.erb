@@ -21,7 +21,7 @@
 
     <div class="input-field col s12">
       <%= f.label :nationality, 'País' %>
-      <%= f.collection_select :nationality, Country.all, :id, :name, { include_blank: false }, { class: 'validate', required: true } %>
+      <%= f.collection_select :nationality, Country::ALL, :itself, :itself, { include_blank: false }, { class: 'validate', required: true } %>
     </div>
 
     <div class="input-field col s12">

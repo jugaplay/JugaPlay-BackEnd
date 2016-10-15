@@ -438,7 +438,7 @@ CREATE TABLE t_deposits
   user_id integer,
   detail character varying,
   currency_id integer,
-  country_id integer,
+  country character varying,
   payment_service_id integer,
   transaction_id character varying,
   price double precision,
@@ -449,9 +449,6 @@ CREATE TABLE t_deposits
   CONSTRAINT t_deposits_pkey PRIMARY KEY (id),
   CONSTRAINT fk_rails_3bb17d497f FOREIGN KEY (user_id)
       REFERENCES users (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT fk_rails_74201ea829 FOREIGN KEY (country_id)
-      REFERENCES countries (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT fk_rails_bbfcd38b97 FOREIGN KEY (payment_service_id)
       REFERENCES payment_services (id) MATCH SIMPLE
@@ -465,15 +462,6 @@ WITH (
 );
 ALTER TABLE t_deposits
   OWNER TO ucfdkl13ogoaal;
-
--- Index: index_t_deposits_on_country_id
-
--- DROP INDEX index_t_deposits_on_country_id;
-
-CREATE INDEX index_t_deposits_on_country_id
-  ON t_deposits
-  USING btree
-  (country_id);
 
 -- Index: index_t_deposits_on_currency_id
 
