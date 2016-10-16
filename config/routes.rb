@@ -1,4 +1,4 @@
-Rails.application.routes.draw do
+ Rails.application.routes.draw do
  
 
   devise_for :users,
@@ -19,8 +19,8 @@ Rails.application.routes.draw do
         delete 'logout' => 'users/sessions#destroy'
       end
       
-          get 'mailer/send_request'
-          post 'mailer/send_request'
+      get 'mailer/send_request'
+      post 'mailer/send_request'
 
       resources :users, only: [:show, :create, :update] do
       	resources :requests, only: [:index, :create]
@@ -28,14 +28,12 @@ Rails.application.routes.draw do
       	resources :notifications, only: [:index, :update]
       end      
 
-	  resources :explanations, only: [:index, :show, :create]
+	    resources :explanations, only: [:index, :show, :create]
       resources :invitations, only: [:create]
 
-
       resources :requests, only: [] do
-            resources :invitations, only: [:create]
+        resources :invitations, only: [:create]
       end
-
 
       resources :tournaments, only: [] do
         resources :rankings, only: [:index]
@@ -56,19 +54,19 @@ Rails.application.routes.draw do
       resources :teams, only: [:show]
       resources :plays, only: [:index]
       resources :comments, only: [:create]
-	  resources :guests, only: [:index, :show]
-	  resources :transactions, only: [:index, :show, :create]
-	  resources :t_entry_fees, only: [:index, :create]
-	  resources :t_deposits, only: [:index, :create]
-	  resources :t_withdraws, only: [:index, :create]
-	  resources :t_prizes, only: [:index, :create]
-	  resources :t_prizes, only: [:index, :create]
-	  resources :t_promotions, only: [:index, :create]
-	  resources :wallet_history, only: [:index]
-	  resources :unused_invitations, only: [:index]
-	  resources :registered_invitations, only: [:index]
-	  
-	
+
+      resources :user_prizes, only: [:index, :create]
+
+      resources :guests, only: [:index, :show]
+      resources :transactions, only: [:index, :show, :create]
+      resources :t_entry_fees, only: [:index, :create]
+      resources :t_deposits, only: [:index, :create]
+      resources :t_withdraws, only: [:index, :create]
+      resources :t_promotions, only: [:index, :create]
+      resources :wallet_history, only: [:index]
+      resources :unused_invitations, only: [:index]
+      resources :registered_invitations, only: [:index]
+
       post '/play' => 'croupier#play'
     end
   end
@@ -81,12 +79,12 @@ Rails.application.routes.draw do
       post '/login' => 'sessions#create'
       get '/logout' => 'sessions#destroy'
     end
-    
+
     resources :users, only: [:index]
     resources :players, only: [:index, :new, :create, :show, :edit, :update, :destroy]
     resources :transactions, only: [:index]
-	resources :sent_mails, only: [:index, :create]
-	resources :explanations, only: [:index, :new, :create, :show, :edit, :update]
+	  resources :sent_mails, only: [:index, :create]
+	  resources :explanations, only: [:index, :new, :create, :show, :edit, :update]
 
     resources :teams, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
       member do
@@ -104,10 +102,6 @@ Rails.application.routes.draw do
       member do
         post 'close' => 'tables#close', as: :close
       end
-    
-      resources :prizes, only: [:index, :new, :create, :edit, :update]
-      
     end
-    
   end
 end
