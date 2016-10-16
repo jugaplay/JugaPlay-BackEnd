@@ -53,7 +53,7 @@ describe Table do
       match_from_same_tournament = FactoryGirl.create(:match, tournament: tournament)
       match_from_another_tournament = FactoryGirl.create(:match, tournament: another_tournament)
 
-      expect { FactoryGirl.create(:table, tournament: tournament, matches: [match_from_same_tournament, match_from_another_tournament]) }.to raise_error ActiveRecord::RecordInvalid, /Mathes do not belong to given tournament/
+      expect { FactoryGirl.create(:table, tournament: tournament, matches: [match_from_same_tournament, match_from_another_tournament]) }.to raise_error ActiveRecord::RecordInvalid, /Matches do not belong to given tournament/
     end
   end
   

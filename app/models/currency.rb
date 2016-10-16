@@ -1,5 +1,6 @@
-class Currency < ActiveRecord::Base
-
-	validates :name, presence: true, uniqueness: true
-
+class Currency
+	USD = 'USD'
+	ARS = 'ARS'
+	CHL = 'CHL'
+	ALL = [USD, ARS, CHL]
 end

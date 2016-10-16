@@ -306,10 +306,6 @@ ActiveRecord::Base.transaction do
   NotificationType.create!(name: 'personal')
 
 
-  ## CURRENCY
-  currency = Currency.create!(name: 'USD')
-
-
   ## PAYMENT SERVICE
   payment_service = PaymentService.create!(name: 'PayPal')
 
@@ -317,26 +313,26 @@ ActiveRecord::Base.transaction do
   ## TRANSACTIONS
   Transaction.create!(user: admin, coins: 20,detail: 'Un detalle')
   TEntryFee.create!(user: admin, coins: 40, detail: 'Un detalle', table: table1 )
-  TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
+  TDeposit.create!(user: admin, coins: 10, detail: 'Un detalle', currency: Currency::USD, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
   #TPrize.create!(user: admin, coins: 5, detail: 'Un detalle')
 
   Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
   TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
-  TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
+  TDeposit.create!(user: admin, coins: 10, detail: 'Un detalle', currency: Currency::USD, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
   #TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
 
   Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
   TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
-  TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
+  TDeposit.create!(user: admin, coins: 10, detail: 'Un detalle', currency: Currency::USD, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
   #TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
 
   Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
   TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
-  TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
+  TDeposit.create!(user: admin, coins: 10, detail: 'Un detalle', currency: Currency::USD, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
   #TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
 
   Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
   TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
-  TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
+  TDeposit.create!(user: admin, coins: 10, detail: 'Un detalle', currency: Currency::USD, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
   #TPrize.create!(user: admin, coins: 10, detail: 'Un detalle'
 end

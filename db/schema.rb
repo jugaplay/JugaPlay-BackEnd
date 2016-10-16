@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161016003823) do
+ActiveRecord::Schema.define(version: 20161016042152) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,12 +34,6 @@ ActiveRecord::Schema.define(version: 20161016003823) do
     t.text     "content",      null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "currencies", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "data_factory_players_mappings", force: :cascade do |t|
@@ -272,7 +266,6 @@ ActiveRecord::Schema.define(version: 20161016003823) do
     t.integer  "coins"
     t.integer  "user_id"
     t.string   "detail"
-    t.integer  "currency_id"
     t.integer  "payment_service_id"
     t.string   "transaction_id"
     t.float    "price"
@@ -281,9 +274,9 @@ ActiveRecord::Schema.define(version: 20161016003823) do
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
     t.string   "country",            null: false
+    t.string   "currency",           null: false
   end
 
-  add_index "t_deposits", ["currency_id"], name: "index_t_deposits_on_currency_id", using: :btree
   add_index "t_deposits", ["payment_service_id"], name: "index_t_deposits_on_payment_service_id", using: :btree
   add_index "t_deposits", ["user_id"], name: "index_t_deposits_on_user_id", using: :btree
 
@@ -455,7 +448,6 @@ ActiveRecord::Schema.define(version: 20161016003823) do
 
   add_foreign_key "notifications", "notification_types"
   add_foreign_key "notifications", "users"
-  add_foreign_key "t_deposits", "currencies"
   add_foreign_key "t_deposits", "payment_services"
   add_foreign_key "t_deposits", "users"
   add_foreign_key "t_entry_fees", "tables"
