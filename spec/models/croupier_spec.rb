@@ -139,12 +139,12 @@ describe Croupier do
 
   describe '#assign_scores' do
     let(:tournament) { table.tournament }
-    let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [200, 100]) }
+    let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [200, 100], coins_for_winners: [50, 20]) }
     let(:table_rules) { FactoryGirl.create(:table_rules, scored_goals: points_for_goal, right_passes: points_for_passes) }
     let(:points_for_passes) { 0 }
 
     context 'when there is just one user playing' do
-      let(:user) { FactoryGirl.create(:user) }
+      let(:user) { FactoryGirl.create(:user, :without_coins) }
 
       context 'when the table pays 2 points for each goal' do
         let(:points_for_goal) { 2 }
@@ -165,6 +165,41 @@ describe Croupier do
               expect(play.points).to eq 0
               expect(table).to be_closed
             end
+
+            it 'gives 50 coins to the user' do
+              croupier.assign_scores(players_stats: [player_stats])
+              prize = UserPrize.last
+
+              expect(user.reload.coins).to eq 50
+              expect(UserPrize.count).to eq 1
+              expect(prize.coins).to eq 50
+              expect(prize.user).to eq user
+              expect(prize.table).to eq table
+            end
+
+            context 'when the user has no current ranking' do
+              it 'creates a tournament ranking for the user and assigns 200 points' do
+                croupier.assign_scores(players_stats: [player_stats])
+
+                expect(user.ranking_on_tournament(tournament).points).to eq 200
+                expect(table.winners).to have(1).item
+                expect(table.winners.first.user).to eq user
+                expect(table.winners.first.position).to eq 1
+              end
+            end
+
+            context 'when the user has a ranking' do
+              let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
+
+              it 'updates the current ranking adding 200 points' do
+                croupier.assign_scores(players_stats: [player_stats])
+
+                expect(ranking.reload.points).to eq 300
+                expect(table.winners).to have(1).item
+                expect(table.winners.first.user).to eq user
+                expect(table.winners.first.position).to eq 1
+              end
+            end
           end
 
           context 'when the user plays for a player that scores 3 goals' do
@@ -176,6 +211,17 @@ describe Croupier do
 
               expect(play.points).to eq 6
               expect(table).to be_closed
+            end
+
+            it 'gives 50 coins to the user' do
+              croupier.assign_scores(players_stats: [player_stats])
+              prize = UserPrize.last
+
+              expect(user.reload.coins).to eq 50
+              expect(UserPrize.count).to eq 1
+              expect(prize.coins).to eq 50
+              expect(prize.user).to eq user
+              expect(prize.table).to eq table
             end
 
             context 'when the user has no current ranking' do
@@ -209,6 +255,13 @@ describe Croupier do
               play = PlaysHistory.new.made_by(user).of_table(table).last
 
               expect(play.points).to be_nil
+            end
+
+            it 'raises an error and does not give coins to the user' do
+              expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+
+              expect(user.reload.coins).to eq 0
+              expect(UserPrize.count).to eq 0
             end
 
             context 'when the user has no current ranking' do
@@ -261,6 +314,8 @@ describe Croupier do
 
               expect(first_user_play.points).to eq 4
               expect(second_user_play.points).to eq 3.5
+              expect(first_user.reload.coins).to eq 60
+              expect(second_user.reload.coins).to eq 30
             end
           end
 
@@ -276,6 +331,8 @@ describe Croupier do
 
               expect(first_user_play.points).to eq 1.3
               expect(second_user_play.points).to eq 2.6
+              expect(first_user.reload.coins).to eq 30
+              expect(second_user.reload.coins).to eq 60
             end
           end
         end

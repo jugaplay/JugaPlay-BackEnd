@@ -1,5 +1,4 @@
 class TableWinnersCalculator
-
   def initialize(table)
     fail ArgumentError, 'A table must be given' if table.nil?
     @table, @winners = table, []

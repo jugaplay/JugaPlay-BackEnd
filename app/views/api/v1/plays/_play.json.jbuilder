@@ -2,8 +2,7 @@ json.id play.id
 json.start_time play.table.start_time
 json.points (play.points || 'N/A')
 json.bet_coins play.bet_coins
-json.earn_coins play.prizes_of_player(@current_user)
-
+json.earn_coins play.earned_coins
 
 json.players(play.players) do |player|
   json.id player.id

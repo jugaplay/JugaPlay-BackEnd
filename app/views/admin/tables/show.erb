@@ -40,11 +40,7 @@
     </div>
     <div class="row col s12">
       <h5>Premios</h5>
-      <ul>
-        <% @table.prizes.each do |prize| %>
-          <li>Posición <%= prize.position %> = <%= prize.coins %> monedas</li>
-        <% end %>
-      </ul>
+      <%= @table.coins_for_winners.join(', ') %>
     </div>
   </div>
 </div>
