@@ -3,7 +3,6 @@ class Admin::ExplanationsController < Admin::BaseController
   UPDATE_SUCCESS_MESSAGE = 'Explicación actualizada'
   DESTROY_SUCCESS_MESSAGE = 'Explicación eliminada'
   
-  
   def index
   	@explanations = Explanation.where(active: true).order(name: :asc)
   end
@@ -37,14 +36,10 @@ class Admin::ExplanationsController < Admin::BaseController
     render 'admin/explanations/show'
   end
 
-
   private
 
   def explanation_params
     explanation_params = params.require(:explanation).permit(:name, :detail)
     explanation_params
   end
-  
-  
-  
 end

@@ -1,5 +1,4 @@
 class Api::V1::CroupierController < Api::BaseController
-
   def play
     play = croupier.play(user: current_user, players: players, bet: bet?)
     render partial: 'api/v1/plays/play', locals: { play: play }
