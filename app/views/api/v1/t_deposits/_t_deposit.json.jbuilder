@@ -1,6 +1,6 @@
 json.id t_deposit.id
 json.coins t_deposit.coins
-json.currency t_deposit.currency.name
+json.currency t_deposit.currency
 json.country t_deposit.country
 json.payment_service t_deposit.payment_service.name
 json.transaction_id t_deposit.transaction_id
