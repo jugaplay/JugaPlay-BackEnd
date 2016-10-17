@@ -352,36 +352,6 @@ CREATE INDEX index_notifications_on_user_id
   (user_id);
 
 
-
--- Table: languages
-
--- DROP TABLE languages;
-
-CREATE TABLE languages
-(
-  id serial NOT NULL,
-  name character varying,
-  created_at timestamp without time zone NOT NULL,
-  updated_at timestamp without time zone NOT NULL,
-  CONSTRAINT languages_pkey PRIMARY KEY (id)
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE languages
-  OWNER TO ucfdkl13ogoaal;
-
--- Index: index_languages_on_name
-
--- DROP INDEX index_languages_on_name;
-
-CREATE UNIQUE INDEX index_languages_on_name
-  ON languages
-  USING btree
-  (name COLLATE pg_catalog."default");
-
-
-
 -- Table: countries
 
 -- DROP TABLE countries;
@@ -390,28 +360,13 @@ CREATE TABLE countries
 (
   id serial NOT NULL,
   name character varying,
-  language_id integer,
   created_at timestamp without time zone NOT NULL,
   updated_at timestamp without time zone NOT NULL,
   CONSTRAINT countries_pkey PRIMARY KEY (id),
-  CONSTRAINT fk_rails_6f479b409c FOREIGN KEY (language_id)
-      REFERENCES languages (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE countries
-  OWNER TO ucfdkl13ogoaal;
-
--- Index: index_countries_on_language_id
-
--- DROP INDEX index_countries_on_language_id;
-
-CREATE INDEX index_countries_on_language_id
-  ON countries
-  USING btree
-  (language_id);
 
 -- Index: index_countries_on_name
 
