@@ -25,7 +25,7 @@ module JugaplayApi
 
     config.middleware.insert_before 0, 'Rack::Cors', debug: true, logger: (-> { Rails.logger }) do
       allow do
-        origins 'www.miclubhouse.com.ar', 'www.jugaplay.com', 'miclubhouse.com.ar', 'jugaplay.com' , 'm.jugaplay.com' , 'test.jugaplay.com' , 'develop.jugaplay.com', 'develop-front-jp.herokuapp.com'
+        origins 'www.miclubhouse.com.ar', 'www.jugaplay.com', 'miclubhouse.com.ar', 'jugaplay.com' , 'm.jugaplay.com' , 'test.jugaplay.com' , 'develop.jugaplay.com', 'develop-front-jp.herokuapp.com', 'localhost', 'jugaplay.dev'
         resource '*',
                  headers: %w(Origin Content-Type Accept Authorization X-CSRF-Token X-Prototype-Version X-Requested-With),
                  methods: [:get, :post, :delete, :put, :patch, :options, :head],
