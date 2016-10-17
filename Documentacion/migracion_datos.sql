@@ -36,63 +36,46 @@ SELECT
 ;
 
 
-
-INSERT INTO languages(
+INSERT INTO countries(
             name, created_at, updated_at)
-    VALUES ('Spanish', now(), now());
+     VALUES ('Argentina', now(), now());
 
-INSERT INTO languages(
+INSERT INTO countries(
             name, created_at, updated_at)
-    VALUES ('English', now(), now());
+     VALUES ('Brazil', now(), now());
 
-INSERT INTO languages(
+
+INSERT INTO countries(
             name, created_at, updated_at)
-    VALUES ('Portuguese', now(), now());
-
-
-
+     VALUES ('Uruguay', now(), now());
 
 INSERT INTO countries(
-            name, language_id, created_at, updated_at)
-     SELECT 'Argentina', ID , now(), now() FROM languages where name = 'Spanish' ;
-
-
-INSERT INTO countries(
-            name, language_id, created_at, updated_at)
-     SELECT 'Brazil', ID , now(), now() FROM languages where name = 'Portuguese' ;
-
+            name, created_at, updated_at)
+     VALUES ('Paraguay', now(), now());
 
 INSERT INTO countries(
-            name, language_id, created_at, updated_at)
-     SELECT 'Uruguay', ID , now(), now() FROM languages where name = 'Spanish' ;
+            name, created_at, updated_at)
+     VALUES ('Colombia', now(), now());
 
 INSERT INTO countries(
-            name, language_id, created_at, updated_at)
-     SELECT 'Paraguay', ID , now(), now() FROM languages where name = 'Spanish' ;
+            name, created_at, updated_at)
+     VALUES ('España', now(), now());
 
 INSERT INTO countries(
-            name, language_id, created_at, updated_at)
-     SELECT 'Colombia', ID , now(), now() FROM languages where name = 'Spanish' ;
+            name, created_at, updated_at)
+     VALUES ('Ecuador', now(), now());
 
 INSERT INTO countries(
-            name, language_id, created_at, updated_at)
-     SELECT 'España', ID , now(), now() FROM languages where name = 'Spanish' ;
+            name, created_at, updated_at)
+     VALUES ('Chile', now(), now());
 
 INSERT INTO countries(
-            name, language_id, created_at, updated_at)
-     SELECT 'Ecuador', ID , now(), now() FROM languages where name = 'Spanish' ;
+            name, created_at, updated_at)
+     VALUES ('Perú', now(), now());
 
 INSERT INTO countries(
-            name, language_id, created_at, updated_at)
-     SELECT 'Chile', ID , now(), now() FROM languages where name = 'Spanish' ;    
-
-INSERT INTO countries(
-            name, language_id, created_at, updated_at)
-     SELECT 'Perú', ID , now(), now() FROM languages where name = 'Spanish' ;    
-
-INSERT INTO countries(
-            name, language_id, created_at, updated_at)
-     SELECT 'Venezuela', ID , now(), now() FROM languages where name = 'Spanish' ;    
+            name, created_at, updated_at)
+     VALUES ('Venezuela', now(), now());
 
 
 alter table players alter column description SET  default '';

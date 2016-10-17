@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160731155624) do
+ActiveRecord::Schema.define(version: 20161015205641) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,12 +38,10 @@ ActiveRecord::Schema.define(version: 20160731155624) do
 
   create_table "countries", force: :cascade do |t|
     t.string   "name"
-    t.integer  "language_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  add_index "countries", ["language_id"], name: "index_countries_on_language_id", using: :btree
   add_index "countries", ["name"], name: "index_countries_on_name", unique: true, using: :btree
 
   create_table "currencies", force: :cascade do |t|
@@ -111,14 +109,6 @@ ActiveRecord::Schema.define(version: 20160731155624) do
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end
-
-  create_table "languages", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "languages", ["name"], name: "index_languages_on_name", unique: true, using: :btree
 
   create_table "matches", force: :cascade do |t|
     t.string   "title",           null: false
@@ -303,7 +293,7 @@ ActiveRecord::Schema.define(version: 20160731155624) do
     t.string   "transaction_id"
     t.float    "price"
     t.string   "operator"
-    t.string   "type"
+    t.string   "deposit_type"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
   end
@@ -338,6 +328,17 @@ ActiveRecord::Schema.define(version: 20160731155624) do
 
   add_index "t_prizes", ["prize_id"], name: "index_t_prizes_on_prize_id", using: :btree
   add_index "t_prizes", ["user_id"], name: "index_t_prizes_on_user_id", using: :btree
+
+  create_table "t_promotions", force: :cascade do |t|
+    t.integer  "coins"
+    t.string   "detail"
+    t.string   "promotion_type"
+    t.integer  "user_id"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "t_promotions", ["user_id"], name: "index_t_promotions_on_user_id", using: :btree
 
   create_table "table_rules", force: :cascade do |t|
     t.integer  "table_id",                                null: false
@@ -469,7 +470,6 @@ ActiveRecord::Schema.define(version: 20160731155624) do
 
   add_index "wallets", ["user_id"], name: "index_wallets_on_user_id", unique: true, using: :btree
 
-  add_foreign_key "countries", "languages"
   add_foreign_key "notifications", "notification_types"
   add_foreign_key "notifications", "users"
   add_foreign_key "t_deposits", "countries"
@@ -481,4 +481,5 @@ ActiveRecord::Schema.define(version: 20160731155624) do
   add_foreign_key "t_entry_fees", "users"
   add_foreign_key "t_prizes", "prizes"
   add_foreign_key "t_prizes", "users"
+  add_foreign_key "t_promotions", "users"
 end
