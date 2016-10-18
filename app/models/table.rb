@@ -38,6 +38,10 @@ class Table < ActiveRecord::Base
     update_attributes(opened: false)
   end
 
+  def coins_with_positions
+    coins_for_winners.map.with_index { |coins, index| [index + 1, coins] }
+  end
+
   def can_play_with_amount_of_players?(players)
     number_of_players == players.count
   end

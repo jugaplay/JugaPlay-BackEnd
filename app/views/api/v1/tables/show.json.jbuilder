@@ -8,9 +8,9 @@ json.start_time @table.start_time.strftime('%d/%m/%Y - %H:%M')
 json.end_time @table.end_time.strftime('%d/%m/%Y - %H:%M')
 json.description @table.description
 
-json.prizes! @table.coins_for_winners.each_with_index do |(coins, index)|
-  json.position index
-  json.coins coins
+json.prizes(@table.coins_with_positions) do |coins_with_position|
+  json.position coins_with_position.first
+  json.coins coins_with_position.second
 end
 
 unless @table.closed?
