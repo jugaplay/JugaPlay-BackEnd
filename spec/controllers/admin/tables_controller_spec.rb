@@ -85,6 +85,8 @@ describe Admin::TablesController do
           expect(new_table.tournament).to eq Tournament.first
           expect(new_table.table_rules).not_to be_nil
           expect(new_table.matches).to include river_slo
+          expect(new_table.points_for_winners).to eq PointsForWinners.default
+          expect(new_table.coins_for_winners).to be_empty
           expect(response).to redirect_to admin_tables_path
         end
       end
