@@ -12,8 +12,10 @@ class RefactorTablePrizes < ActiveRecord::Migration
       coins_for_winners = prizes_data.map { |d| d['coins'].to_i }
       table.update_attributes(coins_for_winners: coins_for_winners)
 
-      where_clause = prizes_data.map { |d| "id = #{d['id'].to_i}" }.join(' OR ')
-      ActiveRecord::Base.connection.execute("UPDATE user_prizes SET table_id = #{table.id} WHERE #{where_clause}")
+      unless coins_for_winners.empty?
+        where_clause = prizes_data.map { |d| "id = #{d['id'].to_i}" }.join(' OR ')
+        ActiveRecord::Base.connection.execute("UPDATE user_prizes SET table_id = #{table.id} WHERE #{where_clause}")
+      end
     end
 
     change_column :user_prizes, :table_id, :integer, null: false
