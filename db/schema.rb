@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161015212637) do
+ActiveRecord::Schema.define(version: 20161015223514) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -372,18 +372,17 @@ ActiveRecord::Schema.define(version: 20161015212637) do
   end
 
   create_table "tables", force: :cascade do |t|
-    t.string   "title",                              null: false
-    t.boolean  "has_password",       default: false, null: false
-    t.integer  "number_of_players",  default: 1,     null: false
-    t.datetime "start_time",                         null: false
-    t.datetime "end_time",                           null: false
-    t.text     "description",                        null: false
-    t.text     "points_for_winners",                 null: false
+    t.string   "title",                             null: false
+    t.integer  "number_of_players",  default: 1,    null: false
+    t.datetime "start_time",                        null: false
+    t.datetime "end_time",                          null: false
+    t.text     "description",                       null: false
+    t.text     "points_for_winners",                null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "tournament_id",                      null: false
-    t.boolean  "opened",             default: true,  null: false
-    t.integer  "entry_coins_cost",   default: 0,     null: false
+    t.integer  "tournament_id",                     null: false
+    t.boolean  "opened",             default: true, null: false
+    t.integer  "entry_coins_cost",   default: 0,    null: false
   end
 
   add_index "tables", ["title", "start_time", "end_time"], name: "index_tables_on_title_and_start_time_and_end_time", unique: true, using: :btree

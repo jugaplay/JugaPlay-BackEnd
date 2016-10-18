@@ -64,7 +64,7 @@ describe Croupier do
                   context 'when the user bets the table' do
                     let(:bet) { true }
 
-                    context 'when the given amount of coins is invalid' do
+                    context 'when the given amount of coins is valid' do
                       before { table.update_attributes(entry_coins_cost: user.coins) }
 
                       context 'when the user has enough coins to play' do
@@ -75,7 +75,7 @@ describe Croupier do
                           expect(play.user).to eq user
                           expect(play.players).to have(2).items
                           expect(play.players).to match_array(players)
-                          expect(play.bet_coins).to eq 40
+                          expect(play.bet_coins).to eq 10
                           expect(user.coins).to eq 0
                         end
                       end
