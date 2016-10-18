@@ -1,13 +1,11 @@
 ActiveRecord::Base.transaction do
   torneo_verano = Tournament.create!(name: 'Torneo de Verano')
- 
- 	
+
   ## ADMIN
   wallet =  Wallet.new(coins: 10)
   channel1 = Channel.new(whatsapp: true, sms: true, push: true, mail: true)
   admin = User.new(channel: channel1, wallet: wallet, email: 'admin@jugaplay.com', password: '12345678', first_name: 'Admin', last_name: 'Admin', nickname: 'Admin')
   admin.save!
-
    	
   ## USER1
   wallet2 =  Wallet.new(coins: 10)
@@ -228,8 +226,6 @@ ActiveRecord::Base.transaction do
   gimnasia = Team.create!(name: 'Gimnasia LP', director: gimnasia_director, players: gimnasia_players, description: 'El Lobo', short_name: 'GIM')
 
 
-
-
   ## PARTIDOS
   slo_ind = Match.create!(tournament: torneo_verano, title: 'San Lorenzo vs Independiente', local_team: san_lorenzo, visitor_team: independiente, datetime: DateTime.strptime('12/1/16 22:10', '%d/%m/%y %H:%M'))
   est_rac = Match.create!(tournament: torneo_verano, title: 'Estudiantes LP vs Racing', local_team: estudiantes, visitor_team: racing, datetime: DateTime.strptime('14/1/16 22:10', '%d/%m/%y %H:%M'))
@@ -243,117 +239,94 @@ ActiveRecord::Base.transaction do
   est_gim = Match.create!(tournament: torneo_verano, title: 'Estudiantes LP vs Gimnasia LP', local_team: estudiantes, visitor_team: gimnasia, datetime: DateTime.strptime('31/1/16 22:10', '%d/%m/%y %H:%M'))
 
 
-
   ## MESAS
   table1 = Table.create!(title: 'San Lorenzo vs Independiente', has_password: false,matches: [slo_ind], start_time: slo_ind.datetime, end_time: slo_ind.datetime + 1.day, tournament: torneo_verano,
                number_of_players: 3, points_for_winners: PointsForWinners.default, description: '-', table_rules: TableRules.create,
                entry_coins_cost: 0)
-               
+
+
   ## PLAYER STATS
-  
   bonnin = Player.find_by(first_name: 'Yair', last_name: 'Bonnin', team: gimnasia)
   PlayerStats.create!(player: bonnin, match: slo_ind,
-  shots: 0, shots_on_goal: 0, shots_to_the_post: 0, shots_outside: 0, 
-  scored_goals: 0, goalkeeper_scored_goals:0, defender_scored_goals: 0, free_kick_goal:0,
-  right_passes: 10, recoveries:0, assists: 0, undefeated_defense: 0, wrong_passes:0, 
-  saves: 0, saved_penalties:0,missed_saves:0,undefeated_goal: 0,  
-  red_cards: 0, yellow_cards: 0, offside: 0, faults: 0, missed_penalties: 0, winner_team: 0
+    shots: 0, shots_on_goal: 0, shots_to_the_post: 0, shots_outside: 0,
+    scored_goals: 0, goalkeeper_scored_goals:0, defender_scored_goals: 0, free_kick_goal:0,
+    right_passes: 10, recoveries:0, assists: 0, undefeated_defense: 0, wrong_passes:0,
+    saves: 0, saved_penalties:0,missed_saves:0,undefeated_goal: 0,
+    red_cards: 0, yellow_cards: 0, offside: 0, faults: 0, missed_penalties: 0, winner_team: 0
   )
  
- 
- ## REQUEST TYPES
- ## Request_Type: Facebook - Whatsapp - SMS - Mail
 
- facebook = RequestType.create!(name:'Facebook')
- RequestType.create!(name:'Whatsapp')
- RequestType.create!(name:'SMS')
- RequestType.create!(name:'Mail')
+  ## REQUEST TYPES
+  ## Request_Type: Facebook - Whatsapp - SMS - Mail
+  facebook = RequestType.create!(name:'Facebook')
+  RequestType.create!(name:'Whatsapp')
+  RequestType.create!(name:'SMS')
+  RequestType.create!(name:'Mail')
 
 
- ## REQUEST STATUS
- ## Request_Status: Unused - Entered- Registered 
- 
- entered = InvitationStatus.create!(name:'Entered')
- InvitationStatus.create!(name:'Unused')
- InvitationStatus.create!(name:'Registered')
- 
- ## REQUESTS
- 
- request1 = Request.create!(request_type: facebook, host_user: user1)
+  ## REQUEST STATUS
+  ## Request_Status: Unused - Entered- Registered
+  entered = InvitationStatus.create!(name:'Entered')
+  InvitationStatus.create!(name:'Unused')
+  InvitationStatus.create!(name:'Registered')
 
- ## INVITATIONS
- 
- Invitation.create!(invitation_status: entered, guest_user: user2, request: request1 )
- 
-  
- ## EXPLANATIONS
- 
- explanation1 = Explanation.create!(name: 'Cómo Jugar',detail:'1- Elegí el partido que quieras Jugar y hace Click en el botón JUGAR .2- Elegí los que crees que van a ser los 3 mejores jugadores del partido.')
- explanation2 = Explanation.create!(name: 'Cómo Ganar Monedas',detail:'El usuario que suma más puntos gana el partido.')
- 
- ## USER EXPLANATION
- 
- user1.update!(explanations: [explanation1, explanation2])
- user2.update!(explanations: [explanation2])
- 
- ## COUNTRIES
- 
- arg  = Country.create!(name: 'Argentina')
- Country.create!(name: 'Brazil')
- Country.create!(name: 'Uruguay')
- Country.create!(name: 'Chile')
- Country.create!(name: 'Venezuela')
- Country.create!(name: 'Paraguay')
- Country.create!(name: 'Colombia')
- Country.create!(name: 'España')
- Country.create!(name: 'Ecuador')
- Country.create!(name: 'Perú')
- 
- ## NOTIFICATION TYPES
- 
- NotificationType.create!(name: 'result')
- NotificationType.create!(name: 'challenge')
- NotificationType.create!(name: 'news')
- NotificationType.create!(name: 'personal')
-  
-## CURRENCY
 
-currency = Currency.create!(name: 'USD')  
-  
-  
-## PAYMENT SERVICE
+  ## REQUESTS
+  request1 = Request.create!(request_type: facebook, host_user: user1)
 
-payment_service = PaymentService.create!(name: 'PayPal')
-  
-## TRANSACTIONS
 
-Transaction.create!(user: admin, coins: 20,detail: 'Un detalle')
-TEntryFee.create!(user: admin, coins: 40, detail: 'Un detalle', table: table1 )
-TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
-#TPrize.create!(user: admin, coins: 5, detail: 'Un detalle')
+  ## INVITATIONS
+  Invitation.create!(invitation_status: entered, guest_user: user2, request: request1 )
 
-Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
-TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
-TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
-#TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
-    
-Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
-TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
-TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
-#TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
-    
-Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
-TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
-TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
-#TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
-        
-Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
-TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
-TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: arg, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
-#TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
-    
-    
 
-    
-    
+  ## EXPLANATIONS
+  explanation1 = Explanation.create!(name: 'Cómo Jugar',detail:'1- Elegí el partido que quieras Jugar y hace Click en el botón JUGAR .2- Elegí los que crees que van a ser los 3 mejores jugadores del partido.')
+  explanation2 = Explanation.create!(name: 'Cómo Ganar Monedas',detail:'El usuario que suma más puntos gana el partido.')
+
+
+  ## USER EXPLANATION
+  user1.update!(explanations: [explanation1, explanation2])
+  user2.update!(explanations: [explanation2])
+
+
+  ## NOTIFICATION TYPES
+  NotificationType.create!(name: 'result')
+  NotificationType.create!(name: 'challenge')
+  NotificationType.create!(name: 'news')
+  NotificationType.create!(name: 'personal')
+
+
+  ## CURRENCY
+  currency = Currency.create!(name: 'USD')
+
+
+  ## PAYMENT SERVICE
+  payment_service = PaymentService.create!(name: 'PayPal')
+
+
+  ## TRANSACTIONS
+  Transaction.create!(user: admin, coins: 20,detail: 'Un detalle')
+  TEntryFee.create!(user: admin, coins: 40, detail: 'Un detalle', table: table1 )
+  TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
+  #TPrize.create!(user: admin, coins: 5, detail: 'Un detalle')
+
+  Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
+  TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
+  TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
+  #TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+
+  Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
+  TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
+  TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
+  #TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+
+  Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
+  TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
+  TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50,deposit_type: 'Visa')
+  #TPrize.create!(user: admin, coins: 10, detail: 'Un detalle')
+
+  Transaction.create!(user: admin, coins: 10,detail: 'Un detalle')
+  TEntryFee.create!(user: user1, coins: 10, detail: 'Un detalle', table: table1 )
+  TDeposit.create!(user: admin, coins: 10,detail: 'Un detalle', currency: currency, country: Country::ARGENTINA, payment_service: payment_service, operator: 'Operador', transaction_id: '328471943178', price: 50, deposit_type: 'Visa')
+  #TPrize.create!(user: admin, coins: 10, detail: 'Un detalle'
 end

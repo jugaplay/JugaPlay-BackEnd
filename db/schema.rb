@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161015205641) do
+ActiveRecord::Schema.define(version: 20161015212637) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,14 +35,6 @@ ActiveRecord::Schema.define(version: 20161015205641) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  create_table "countries", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "countries", ["name"], name: "index_countries_on_name", unique: true, using: :btree
 
   create_table "currencies", force: :cascade do |t|
     t.string   "name"
@@ -143,12 +135,13 @@ ActiveRecord::Schema.define(version: 20161015205641) do
   create_table "notifications", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "notification_type_id"
-    t.string   "title",                null: false
+    t.string   "title",                                null: false
     t.string   "image"
     t.text     "text"
     t.text     "action"
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.boolean  "read",                 default: false, null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
   end
 
   add_index "notifications", ["notification_type_id"], name: "index_notifications_on_notification_type_id", using: :btree
@@ -288,7 +281,6 @@ ActiveRecord::Schema.define(version: 20161015205641) do
     t.integer  "user_id"
     t.string   "detail"
     t.integer  "currency_id"
-    t.integer  "country_id"
     t.integer  "payment_service_id"
     t.string   "transaction_id"
     t.float    "price"
@@ -296,9 +288,9 @@ ActiveRecord::Schema.define(version: 20161015205641) do
     t.string   "deposit_type"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
+    t.string   "country",            null: false
   end
 
-  add_index "t_deposits", ["country_id"], name: "index_t_deposits_on_country_id", using: :btree
   add_index "t_deposits", ["currency_id"], name: "index_t_deposits_on_currency_id", using: :btree
   add_index "t_deposits", ["payment_service_id"], name: "index_t_deposits_on_payment_service_id", using: :btree
   add_index "t_deposits", ["user_id"], name: "index_t_deposits_on_user_id", using: :btree
@@ -472,7 +464,6 @@ ActiveRecord::Schema.define(version: 20161015205641) do
 
   add_foreign_key "notifications", "notification_types"
   add_foreign_key "notifications", "users"
-  add_foreign_key "t_deposits", "countries"
   add_foreign_key "t_deposits", "currencies"
   add_foreign_key "t_deposits", "payment_services"
   add_foreign_key "t_deposits", "users"

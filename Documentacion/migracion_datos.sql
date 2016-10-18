@@ -35,57 +35,9 @@ SELECT
  FROM users 
 ;
 
-
-INSERT INTO countries(
-            name, created_at, updated_at)
-     VALUES ('Argentina', now(), now());
-
-INSERT INTO countries(
-            name, created_at, updated_at)
-     VALUES ('Brazil', now(), now());
-
-
-INSERT INTO countries(
-            name, created_at, updated_at)
-     VALUES ('Uruguay', now(), now());
-
-INSERT INTO countries(
-            name, created_at, updated_at)
-     VALUES ('Paraguay', now(), now());
-
-INSERT INTO countries(
-            name, created_at, updated_at)
-     VALUES ('Colombia', now(), now());
-
-INSERT INTO countries(
-            name, created_at, updated_at)
-     VALUES ('España', now(), now());
-
-INSERT INTO countries(
-            name, created_at, updated_at)
-     VALUES ('Ecuador', now(), now());
-
-INSERT INTO countries(
-            name, created_at, updated_at)
-     VALUES ('Chile', now(), now());
-
-INSERT INTO countries(
-            name, created_at, updated_at)
-     VALUES ('Perú', now(), now());
-
-INSERT INTO countries(
-            name, created_at, updated_at)
-     VALUES ('Venezuela', now(), now());
-
-
 alter table players alter column description SET  default '';
 
-
-
-
-
-INSERT INTO
-t_prizes  (coins, user_id, detail, prize_id, created_at, updated_at)
+INSERT INTO t_prizes  (coins, user_id, detail, prize_id, created_at, updated_at)
 
 SELECT 
 coins as coins, 
