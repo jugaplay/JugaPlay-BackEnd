@@ -13,6 +13,7 @@ class RefactorTablePrizes < ActiveRecord::Migration
       table.update_attributes(coins_for_winners: coins_for_winners)
 
       unless coins_for_winners.empty?
+        puts "Actualizando los premios de la mesa #{table.id}"
         where_clause = prizes_data.map { |d| "id = #{d['id'].to_i}" }.join(' OR ')
         ActiveRecord::Base.connection.execute("UPDATE user_prizes SET table_id = #{table.id} WHERE #{where_clause}")
       end
