@@ -22,7 +22,6 @@ class RefactorTablePrizes < ActiveRecord::Migration
     change_column :user_prizes, :table_id, :integer, null: false
     change_column :user_prizes, :user_id, :integer, null: false
     change_column :user_prizes, :coins, :integer, null: false
-    add_index :user_prizes, [:table_id, :user_id], unique: true
     remove_reference :user_prizes, :prize
     drop_table :prizes
   end
