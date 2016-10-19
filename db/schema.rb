@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161016042152) do
+ActiveRecord::Schema.define(version: 20161016134351) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -141,14 +141,6 @@ ActiveRecord::Schema.define(version: 20161016042152) do
   add_index "notifications", ["notification_type_id"], name: "index_notifications_on_notification_type_id", using: :btree
   add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree
 
-  create_table "payment_services", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "payment_services", ["name"], name: "index_payment_services_on_name", unique: true, using: :btree
-
   create_table "player_stats", force: :cascade do |t|
     t.integer  "player_id",                             null: false
     t.integer  "match_id",                              null: false
@@ -266,18 +258,17 @@ ActiveRecord::Schema.define(version: 20161016042152) do
     t.integer  "coins"
     t.integer  "user_id"
     t.string   "detail"
-    t.integer  "payment_service_id"
     t.string   "transaction_id"
     t.float    "price"
     t.string   "operator"
     t.string   "deposit_type"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
-    t.string   "country",            null: false
-    t.string   "currency",           null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.string   "country",         null: false
+    t.string   "currency",        null: false
+    t.string   "payment_service", null: false
   end
 
-  add_index "t_deposits", ["payment_service_id"], name: "index_t_deposits_on_payment_service_id", using: :btree
   add_index "t_deposits", ["user_id"], name: "index_t_deposits_on_user_id", using: :btree
 
   create_table "t_entry_fees", force: :cascade do |t|
@@ -448,7 +439,6 @@ ActiveRecord::Schema.define(version: 20161016042152) do
 
   add_foreign_key "notifications", "notification_types"
   add_foreign_key "notifications", "users"
-  add_foreign_key "t_deposits", "payment_services"
   add_foreign_key "t_deposits", "users"
   add_foreign_key "t_entry_fees", "tables"
   add_foreign_key "t_entry_fees", "tournaments"

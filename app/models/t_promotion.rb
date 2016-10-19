@@ -5,7 +5,4 @@ class TPromotion < ActiveRecord::Base
   validates :user, presence: true
   validates :detail, presence: true, length: { maximum: 500 }, allow_blank: false
   validates :promotion_type, presence: true, allow_blank: false
-      
-      
-      
 end

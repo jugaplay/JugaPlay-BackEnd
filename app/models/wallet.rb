@@ -14,5 +14,4 @@ class Wallet < ActiveRecord::Base
   def add_coins!(amount_of_coins)
     update_attributes!(coins: coins + amount_of_coins)
   end
-  
 end

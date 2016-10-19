@@ -1,11 +1,10 @@
 class TDeposit < ActiveRecord::Base
   belongs_to :user
-  belongs_to :payment_service
-  
+
   validates :user, presence: true
-  validates :currency, presence: true
-  validates :country, presence: true
-  validates :payment_service, presence: true
+  validates :country, presence: true, inclusion: { in: Country::ALL }
+  validates :currency, presence: true, inclusion: { in: Currency::ALL }
+  validates :payment_service, presence: true, inclusion: { in: PaymentService::ALL }
   validates :transaction_id, presence: true
   validates :operator, presence: true
   validates :deposit_type, presence: true
