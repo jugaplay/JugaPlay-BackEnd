@@ -11,27 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161018210243) do
+ActiveRecord::Schema.define(version: 20161016004000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "address_books", force: :cascade do |t|
-    t.integer  "user_id",    null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "address_books", ["user_id"], name: "index_address_books_on_user_id", unique: true, using: :btree
-
-  create_table "address_books_users", force: :cascade do |t|
-    t.integer  "address_book_id", null: false
-    t.integer  "user_id",         null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "address_books_users", ["address_book_id", "user_id"], name: "index_address_books_users_on_address_book_id_and_user_id", unique: true, using: :btree
 
   create_table "channels", force: :cascade do |t|
     t.integer  "user_id",                   null: false
@@ -51,6 +34,12 @@ ActiveRecord::Schema.define(version: 20161018210243) do
     t.text     "content",      null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "currencies", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "data_factory_players_mappings", force: :cascade do |t|
@@ -157,6 +146,14 @@ ActiveRecord::Schema.define(version: 20161018210243) do
 
   add_index "notifications", ["notification_type_id"], name: "index_notifications_on_notification_type_id", using: :btree
   add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree
+
+  create_table "payment_services", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "payment_services", ["name"], name: "index_payment_services_on_name", unique: true, using: :btree
 
   create_table "player_stats", force: :cascade do |t|
     t.integer  "player_id",                             null: false
@@ -275,17 +272,19 @@ ActiveRecord::Schema.define(version: 20161018210243) do
     t.integer  "coins"
     t.integer  "user_id"
     t.string   "detail"
+    t.integer  "currency_id"
+    t.integer  "payment_service_id"
     t.string   "transaction_id"
     t.float    "price"
     t.string   "operator"
     t.string   "deposit_type"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-    t.string   "country",         null: false
-    t.string   "currency",        null: false
-    t.string   "payment_service", null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.string   "country",            null: false
   end
 
+  add_index "t_deposits", ["currency_id"], name: "index_t_deposits_on_currency_id", using: :btree
+  add_index "t_deposits", ["payment_service_id"], name: "index_t_deposits_on_payment_service_id", using: :btree
   add_index "t_deposits", ["user_id"], name: "index_t_deposits_on_user_id", using: :btree
 
   create_table "t_entry_fees", force: :cascade do |t|
@@ -430,7 +429,7 @@ ActiveRecord::Schema.define(version: 20161018210243) do
     t.string   "unlock_token"
     t.datetime "locked_at"
     t.string   "provider"
-    t.string   "facebook_id"
+    t.string   "uid"
     t.text     "image"
     t.string   "nickname",                            null: false
     t.integer  "invited_by_id"
@@ -440,10 +439,10 @@ ActiveRecord::Schema.define(version: 20161018210243) do
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["facebook_id"], name: "index_users_on_facebook_id", using: :btree
   add_index "users", ["nickname"], name: "index_users_on_nickname", unique: true, using: :btree
   add_index "users", ["provider"], name: "index_users_on_provider", using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+  add_index "users", ["uid"], name: "index_users_on_uid", using: :btree
 
   create_table "wallets", force: :cascade do |t|
     t.integer  "user_id"
@@ -456,6 +455,8 @@ ActiveRecord::Schema.define(version: 20161018210243) do
 
   add_foreign_key "notifications", "notification_types"
   add_foreign_key "notifications", "users"
+  add_foreign_key "t_deposits", "currencies"
+  add_foreign_key "t_deposits", "payment_services"
   add_foreign_key "t_deposits", "users"
   add_foreign_key "t_entry_fees", "tables"
   add_foreign_key "t_entry_fees", "tournaments"

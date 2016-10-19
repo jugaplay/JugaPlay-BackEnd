@@ -52,12 +52,9 @@ class Admin::TablesController < Admin::BaseController
 
   def close
     @table = Table.find(params[:id]) 
-    croupier.assign_scores(players_stats: create_player_stats) # Se asignan los puntos a los jugadores de futbol
-
+    croupier.assign_scores(players_stats: create_player_stats)
     RankingSorter.new(@table.tournament).call
     ResultsMailer.for_table(@table)
-    
-
     redirect_with_success_message to_be_closed_admin_tables_path, CLOSE_SUCCESS_MESSAGE
   rescue ArgumentError, ActiveRecord::RecordInvalid => error
     redirect_with_error_message to_be_closed_admin_tables_path, error

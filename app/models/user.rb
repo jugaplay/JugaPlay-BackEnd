@@ -52,15 +52,17 @@ class User < ActiveRecord::Base
   end
 
   def earned_coins_in_table(table)
-    prize_of_table(table).map(&:coins).sum
+    return_block = proc { return 0 }
+    prize_of_table(table, &return_block).coins
   end
 
-  def prize_of_table(table)
-    user_prizes.select { |prize| prize.comes_from_table?(table) }
+  def prize_of_table(table, &if_none_block)
+    user_prizes.detect(if_none_block) { |prize| prize.comes_from_table?(table) }
   end
 
-  def play_of_table(table)
-    plays.detect { |play| play.table == table }
+  def bet_coins_in_table(table, &if_none_block)
+    return_block = proc { return if_none_block.call }
+    plays.detect(return_block) { |play| play.table.eql? table }.bet_coins
   end
 
   def self.from_omniauth(auth,params)

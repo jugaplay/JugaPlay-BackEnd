@@ -32,7 +32,7 @@ json.winners(@table.winners) do |winner|
   json.user_id winner.user_id
   json.user_email winner.user.email
   json.nickname winner.user.nickname
-  json.bet_coins winner.user.play_of_table(@table).bet_coins
+  json.bet_coins winner.user.bet_coins_in_table(@table) { 0 }
   json.position winner.position
   json.points @table.points_for_winners[winner.position - 1]
 end
