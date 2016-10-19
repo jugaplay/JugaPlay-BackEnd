@@ -11,10 +11,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161016134351) do
+ActiveRecord::Schema.define(version: 20161017005630) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "address_books", force: :cascade do |t|
+    t.integer  "user_id",    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "address_books", ["user_id"], name: "index_address_books_on_user_id", unique: true, using: :btree
+
+  create_table "address_books_users", force: :cascade do |t|
+    t.integer  "address_book_id", null: false
+    t.integer  "user_id",         null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "address_books_users", ["address_book_id", "user_id"], name: "index_address_books_users_on_address_book_id_and_user_id", unique: true, using: :btree
 
   create_table "channels", force: :cascade do |t|
     t.integer  "user_id",                   null: false
