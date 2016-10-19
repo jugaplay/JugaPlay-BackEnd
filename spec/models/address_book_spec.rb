@@ -10,7 +10,7 @@ describe AddressBook do
       expect { FactoryGirl.create(:address_book, user: user) }.to raise_error ActiveRecord::RecordInvalid, /User has already been taken/
     end
 
-    it 'can a list of contacts without duplication' do
+    it 'can have a list of contacts without duplication' do
       first_contact = FactoryGirl.create(:user)
       second_contact = FactoryGirl.create(:user)
 

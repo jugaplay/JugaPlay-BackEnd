@@ -25,10 +25,13 @@ describe Api::V1::UsersController do
           expect(new_user.nickname).to eq user_params[:user][:nickname]
           expect(new_user.email).to eq user_params[:user][:email]
           expect(new_user.encrypted_password).to be_present
-          expect(new_user.coins).to be >= 0
-          expect(new_user.uid).to be_nil
+          expect(new_user.facebook_id).to be_nil
           expect(new_user.image).to be_nil
           expect(new_user.provider).to be_nil
+          expect(new_user.wallet).not_to be_nil
+          expect(new_user.coins).to be >= 0
+          expect(new_user.address_book).not_to be_nil
+          expect(new_user.address_book.contacts).to be_empty
 
           expect(response).to render_template :show
           expect(response.status).to eq 200
@@ -74,7 +77,7 @@ describe Api::V1::UsersController do
             expect(new_user.last_name).to eq user_params[:user][:last_name]
             expect(new_user.nickname).to eq user_params[:user][:nickname]
             expect(new_user.email).to eq user_params[:user][:email]
-            expect(new_user.uid).to eq user_params[:user][:uid]
+            expect(new_user.facebook_id).to eq user_params[:user][:uid]
             expect(new_user.image).to eq user_params[:user][:image]
             expect(new_user.provider).to eq 'facebook'
             expect(new_user.encrypted_password).to be_present
@@ -174,7 +177,7 @@ describe Api::V1::UsersController do
           expect(new_user.encrypted_password).to be_present
           expect(new_user.coins).to be >= 0
           expect(new_user.invited_by).to eq existing_user
-          expect(new_user.uid).to be_nil
+          expect(new_user.facebook_id).to be_nil
           expect(new_user.image).to be_nil
           expect(new_user.provider).to be_nil
           expect(existing_user.reload.coins).to eq existing_user_initial_coins + Wallet::COINS_PER_INVITATION

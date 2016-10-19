@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
   validates :last_name, presence: true
   validates :nickname, uniqueness: true, presence: true
   validates :email, uniqueness: true, if: proc { email.present? }
-  validates :uid, uniqueness: { scope: :provider }, if: proc { uid.present? && provider.present? }
+  validates :facebook_id, uniqueness: { scope: :provider }, if: proc { facebook_id.present? && provider.present? }
   validate :validate_not_invited_by_itself, on: :update
 
   scope :ordered, -> { order(created_at: :asc) }
@@ -81,7 +81,7 @@ class User < ActiveRecord::Base
     end
 
     return user_by_email if user_by_email.present?
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+    where(provider: auth.provider, facebook_id: auth.uid).first_or_create do |user|
       user.first_name = auth.info.first_name
       user.last_name = auth.info.last_name
       user.email = auth.info.email
@@ -93,6 +93,7 @@ class User < ActiveRecord::Base
       user.password = Devise.friendly_token[0,20]
       user.image = auth.info.image
       user.wallet = Wallet.new
+      user.address_book = AddressBook.new
       if params['invited_by'].present?
         user.invited_by_id = @host_user.id
       end
