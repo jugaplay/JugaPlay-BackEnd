@@ -1,5 +1,4 @@
 class PlayPointsCalculator
-
   def call_for_player(play, player)
     table_rules = play.table.table_rules
     matches_ids = table_rules.table.matches.map(&:id)

@@ -1,12 +1,10 @@
 class RankingPointsUpdater
-
   def initialize(tournament:, users:, points_for_winners:)
     validate_arguments(tournament, users, points_for_winners)
     @tournament, @users, @points_for_winners = tournament, users, points_for_winners
     @ranking_ids_to_update, @ranking_points_to_update = [], []
   end
 
-  
   def call
     Ranking.transaction do
       users.each_with_index { |user, i| create_ranking_or_build_points_for_update(user.id, points_for_winners[i] || 0) }
