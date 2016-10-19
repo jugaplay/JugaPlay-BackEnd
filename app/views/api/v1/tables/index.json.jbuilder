@@ -1,10 +1,10 @@
 json.array! @tables do |table|
   json.id table.id
   json.title table.title
-  json.has_password table.has_password
+  json.has_password false # TODO: sacar esto
   json.entry_coins_cost table.entry_coins_cost
   json.number_of_players table.number_of_players
-  json.pot_prize table.pot_prize  
+  json.pot_prize table.expending_coins # TODO: renombrar esto
   json.start_time table.start_time.strftime('%d/%m/%Y - %H:%M')
   json.end_time table.end_time.strftime('%d/%m/%Y - %H:%M')
   json.description table.description

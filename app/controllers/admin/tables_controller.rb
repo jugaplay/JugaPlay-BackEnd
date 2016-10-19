@@ -52,12 +52,9 @@ class Admin::TablesController < Admin::BaseController
 
   def close
     @table = Table.find(params[:id]) 
-    croupier.assign_scores(players_stats: create_player_stats) # Se asignan los puntos a los jugadores de futbol
-
+    croupier.assign_scores(players_stats: create_player_stats)
     RankingSorter.new(@table.tournament).call
     ResultsMailer.for_table(@table)
-    
-
     redirect_with_success_message to_be_closed_admin_tables_path, CLOSE_SUCCESS_MESSAGE
   rescue ArgumentError, ActiveRecord::RecordInvalid => error
     redirect_with_error_message to_be_closed_admin_tables_path, error
@@ -69,7 +66,7 @@ class Admin::TablesController < Admin::BaseController
   private
 
   def table_params
-    permitted_params = params.require(:table).permit(:title, :entry_coins_cost, :has_password, :number_of_players, :description, :tournament_id, match_ids: [])
+    permitted_params = params.require(:table).permit(:title, :entry_coins_cost, :number_of_players, :description, :tournament_id, match_ids: [])
     permitted_params[:matches] = Match.where(id: permitted_params.delete(:match_ids))
     permitted_params[:points_for_winners] = PointsForWinners.default
     permitted_params[:start_time] = permitted_params[:matches].map(&:datetime).min

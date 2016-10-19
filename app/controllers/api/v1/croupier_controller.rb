@@ -1,10 +1,10 @@
 class Api::V1::CroupierController < Api::BaseController
 
   def play
-    play = croupier.play(user: current_user, players: players, password: params[:password],  bet: bet?)
+    play = croupier.play(user: current_user, players: players, bet: bet?)
     render partial: 'api/v1/plays/play', locals: { play: play }
   rescue ActiveRecord::RecordNotFound, PlayWithDuplicatedPlayer, PlayerDoesNotBelongToTable,
-         UserDoesNotHaveEnoughCoins, UserHasAlreadyPlayedInThisTable, IncorrectPasswordToPlay, CanNotPlayWithNumberOfPlayers => error
+         UserDoesNotHaveEnoughCoins, UserHasAlreadyPlayedInThisTable, CanNotPlayWithNumberOfPlayers => error
     render_json_errors error.message
   end
 

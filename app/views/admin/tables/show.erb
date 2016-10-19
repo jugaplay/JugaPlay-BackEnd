@@ -6,12 +6,10 @@
       <h5>Numero de jugadores</h5>
       <%= @table.number_of_players %>
     </div>
-
     <div class="row col s12">
       <h5>Costo de entrada</h5>
       <%= @table.entry_coins_cost %> coins
     </div>
-
     <div class="row col s12">
       <h5>Partidos</h5>
       <ul>
@@ -20,27 +18,18 @@
         <% end %>
       </ul>
     </div>
-
     <div class="row col s12">
       <h5>Inicio</h5>
       <%= @table.start_time.strftime('%d/%m/%Y - %H:%M') %>
     </div>
-
     <div class="row col s12">
       <h5>Fin</h5>
       <%= @table.end_time.strftime('%d/%m/%Y - %H:%M') %>
     </div>
-
     <div class="row col s12">
       <h5>Descripcion</h5>
       <%= @table.description %>
     </div>
-    
-    <div class="row col s12">
-      <h5>Tiene Password</h5>
-      <%=  @table.has_password? ? 'Si' : 'No' %>
-    </div>    
-
     <div class="row col s12">
       <h5>Participantes</h5>
       <ul>
@@ -49,17 +38,9 @@
         <% end %>
       </ul>
     </div>
-    
-    
     <div class="row col s12">
       <h5>Premios</h5>
-      <ul>
-        <% @table.prizes.each do |prize| %>
-          <li>Posición <%= prize.position %> = <%= prize.coins %> monedas</li>
-        <% end %>
-      </ul>
-    </div>      
-        
-    
+      <%= @table.coins_for_winners.join(', ') %>
+    </div>
   </div>
 </div>

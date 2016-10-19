@@ -22,8 +22,8 @@ describe Wallet do
       expect { Wallet.create!(user: user) }.to raise_error ActiveRecord::RecordInvalid, /User has already been taken/
     end
 
-    it 'has 40 coins by default' do
-      expect(user.wallet.coins).to eq 40
+    it 'has 10 coins by default' do
+      expect(user.wallet.coins).to eq 10
     end
   end
 end

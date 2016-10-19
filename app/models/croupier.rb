@@ -1,38 +1,29 @@
-class Croupier 
-
+class Croupier
   def initialize(table)
     @table = table
     @points_calculator = PlayPointsCalculator.new
-    @coins_calculator = PlayCoinsCalculator.new(table)
     @winners_calculator = TableWinnersCalculator.new(table)
   end
 
-	
-# Guardar jugada que efectua un participante en una mesa:
-
-  def play(user:, players:, password:, bet: false)
+  def play(user:, players:, bet: false)
     bet_coins = bet ? table.entry_coins_cost : 0
     validate_user(user)
     validate_is_opened(table)
-	if table.has_password
-	    validate_password(table,user,password)
-	end
     validate_all_players(players)
     validate_bet_coins(user, bet_coins)
     create_play(players, user, bet_coins)
   end
 
-# Asignar puntos y monedas a los participantes una vez que se cierra la mesa:
-
   def assign_scores(players_stats:)
-    validate_players_stats(players_stats) # Valida que todos los jugadores de futbol pertenezcan a la mesa
-    assign_points(players_stats) 
+    validate_players_stats(players_stats)
+    calculate_play_points(players_stats)
+    ranking_points_updater.call
+    coins_dispenser.call
+    table.close!
   end
 
-
   private
-  
-  attr_reader :table, :points_calculator,  :coins_calculator, :winners_calculator, :play_ids_to_update, :play_data_to_update
+  attr_reader :table, :points_calculator, :winners_calculator, :play_ids_to_update, :play_data_to_update
 
   def create_play(players, user, bet_coins)
     user.pay_coins!(bet_coins)
@@ -41,24 +32,11 @@ class Croupier
     Play.create!(user: user, table: table, players: players, bet_coins: bet_coins)
   end
 
-  def assign_points(players_stats)
-    
-    # Se asignan puntos
+  def calculate_play_points(players_stats)
     @play_ids_to_update, @play_data_to_update = [], []
     plays.find_each { |play| update_data_for_play_with(play, players_stats) }
-    Play.update(play_ids_to_update, play_data_to_update) 
-    
-    # Se actualiza el ranking de usuarios de JugaPlay
-    ranking_points_updater.call
-    table.update_attributes(opened: false)
-    
-    # Se asignan monedas
-    coins_calculator.call
-    
+    Play.update(play_ids_to_update, play_data_to_update)
   end
-
-
-# Asigna los puntos ganados en cada jugada
 
   def update_data_for_play_with(play, players_stats)
     applicable_stats = players_stats.select { |player_stats| play.involves_player? (player_stats.player) }
@@ -66,26 +44,25 @@ class Croupier
     play_ids_to_update << play.id
     play_data_to_update << { points: points_calculator.call(table.table_rules, applicable_stats)}
   end
-  
-  
-  def plays
-    Play.where(table: table) # Todas las jugadas de la mesa 
+
+  def coins_dispenser
+    @coins_dispenser ||= CoinsDispenser.new(table: table, users: winner_users)
   end
 
   def ranking_points_updater
-    @ranking_points_updater ||= RankingPointsUpdater.new(
-      tournament: table.tournament,
-      points_for_winners: table.points_for_winners,
-      users: winners_calculator.call
-    )
+    @ranking_points_updater ||= RankingPointsUpdater.new(tournament: table.tournament, points_for_winners: table.points_for_winners, users: winner_users)
+  end
+
+  def winner_users
+    @winner_users ||= winners_calculator.call
+  end
+
+  def plays
+    Play.where(table: table)
   end
 
   def validate_user(user)
     fail UserHasAlreadyPlayedInThisTable unless table.can_play_user?(user)
-  end
-
-  def validate_password(table,user, password)  
-    fail  IncorrectPasswordToPlay unless (((user.id + 500) * (table.id + 500) * table.id * user.id).to_s(32).upcase) .eql? password
   end
 
   def validate_is_opened(table)  
