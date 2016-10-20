@@ -11,10 +11,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161016134351) do
+ActiveRecord::Schema.define(version: 20161018210243) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "address_books", force: :cascade do |t|
+    t.integer  "user_id",    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "address_books", ["user_id"], name: "index_address_books_on_user_id", unique: true, using: :btree
+
+  create_table "address_books_users", force: :cascade do |t|
+    t.integer  "address_book_id", null: false
+    t.integer  "user_id",         null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "address_books_users", ["address_book_id", "user_id"], name: "index_address_books_users_on_address_book_id_and_user_id", unique: true, using: :btree
 
   create_table "channels", force: :cascade do |t|
     t.integer  "user_id",                   null: false
@@ -413,7 +430,7 @@ ActiveRecord::Schema.define(version: 20161016134351) do
     t.string   "unlock_token"
     t.datetime "locked_at"
     t.string   "provider"
-    t.string   "uid"
+    t.string   "facebook_id"
     t.text     "image"
     t.string   "nickname",                            null: false
     t.integer  "invited_by_id"
@@ -423,10 +440,10 @@ ActiveRecord::Schema.define(version: 20161016134351) do
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["facebook_id"], name: "index_users_on_facebook_id", using: :btree
   add_index "users", ["nickname"], name: "index_users_on_nickname", unique: true, using: :btree
   add_index "users", ["provider"], name: "index_users_on_provider", using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
-  add_index "users", ["uid"], name: "index_users_on_uid", using: :btree
 
   create_table "wallets", force: :cascade do |t|
     t.integer  "user_id"

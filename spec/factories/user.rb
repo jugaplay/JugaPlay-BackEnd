@@ -21,5 +21,12 @@ FactoryGirl.define do
       last_name { 'Admin' }
       email { User::ADMIN_EMAIL }
     end
+
+    trait :with_an_address_book_with_two_contacts do
+      after :create do |user|
+        contacts = [FactoryGirl.create(:user), FactoryGirl.create(:user)]
+        AddressBook.create!(contacts: contacts, user: user)
+      end
+    end
   end
 end

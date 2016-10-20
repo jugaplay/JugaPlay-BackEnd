@@ -26,7 +26,7 @@
       	resources :requests, only: [:index, :create]
       	resources :channels, only: [:index, :update]
       	resources :notifications, only: [:index, :update]
-      end      
+      end
 
 	    resources :explanations, only: [:index, :show, :create]
       resources :invitations, only: [:create]
@@ -56,6 +56,13 @@
       resources :comments, only: [:create]
 
       resources :user_prizes, only: [:index, :create]
+
+      resources :address_books, only: [] do
+        collection do
+          post 'synch' => 'address_books#synch', as: :synch
+          get '/' => 'address_books#show', as: :show
+        end
+      end
 
       resources :guests, only: [:index, :show]
       resources :transactions, only: [:index, :show, :create]

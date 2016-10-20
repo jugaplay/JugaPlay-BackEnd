@@ -5,20 +5,23 @@ class User < ActiveRecord::Base
   devise :omniauthable, omniauth_providers: [:facebook]
 
   has_one :wallet, dependent: :destroy
+  has_one :address_book, dependent: :destroy
+  has_one :channel, dependent: :destroy
+
   has_many :plays, dependent: :destroy
   has_many :rankings, dependent: :destroy
-  belongs_to :invited_by, class_name: self.to_s, foreign_key: :invited_by_id
   has_many :user_prizes
-
-  has_one :channel, dependent: :destroy
   has_many :requests
   has_many :notifications
-  has_and_belongs_to_many :explanations, :before_add => :validates_explanation_alredy_exist
+  has_and_belongs_to_many :explanations, before_add: :validates_explanation_already_exist
 
-  validates_presence_of :first_name, :last_name
+  belongs_to :invited_by, class_name: self.to_s, foreign_key: :invited_by_id
+
+  validates :first_name, presence: true
+  validates :last_name, presence: true
   validates :nickname, uniqueness: true, presence: true
   validates :email, uniqueness: true, if: proc { email.present? }
-  validates :uid, uniqueness: { scope: :provider }, if: proc { uid.present? && provider.present? }
+  validates :facebook_id, uniqueness: { scope: :provider }, if: proc { facebook_id.present? && provider.present? }
   validate :validate_not_invited_by_itself, on: :update
 
   scope :ordered, -> { order(created_at: :asc) }
@@ -66,6 +69,7 @@ class User < ActiveRecord::Base
   end
 
   def self.from_omniauth(auth,params)
+    # TODO: rename `uid` to `facebook_id`
     # TODO: Move all this shit outta here
     user_by_email = find_by(email: auth.info.email)
 
@@ -77,7 +81,7 @@ class User < ActiveRecord::Base
     end
 
     return user_by_email if user_by_email.present?
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+    where(provider: auth.provider, facebook_id: auth.uid).first_or_create do |user|
       user.first_name = auth.info.first_name
       user.last_name = auth.info.last_name
       user.email = auth.info.email
@@ -89,6 +93,7 @@ class User < ActiveRecord::Base
       user.password = Devise.friendly_token[0,20]
       user.image = auth.info.image
       user.wallet = Wallet.new
+      user.address_book = AddressBook.new
       if params['invited_by'].present?
         user.invited_by_id = @host_user.id
       end
@@ -105,7 +110,7 @@ class User < ActiveRecord::Base
     errors.add(:invited_by, 'Can not invite itself') if id.eql? invited_by_id
   end
 
-  def validates_explanation_alredy_exist(explanation)
+  def validates_explanation_already_exist(explanation)
     raise ActiveRecord::Rollback if self.explanations.include? explanation
   end
 end
