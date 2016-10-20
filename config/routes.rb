@@ -28,6 +28,10 @@
       	resources :notifications, only: [:index, :update]
       end
 
+      resources :groups, only: [:show, :create, :update] do
+
+      end
+
 	    resources :explanations, only: [:index, :show, :create]
       resources :invitations, only: [:create]
 

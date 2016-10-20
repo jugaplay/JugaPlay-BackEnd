@@ -42,6 +42,10 @@ class Api::BaseController < ApplicationController
     render_json_error 'You need to sign in or sign up before continuing.', 401
   end
 
+  def render_not_found_error(error_message)
+    render_json_errors [error_message], 422
+  end
+
   # def render_json_rails_errors(rails_errors, status = 400)
   #   render_json_errors rails_errors.full_messages, status
   # end
