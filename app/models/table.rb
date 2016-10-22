@@ -1,6 +1,7 @@
 class Table < ActiveRecord::Base
   has_many :plays
   has_one :table_rules
+  belongs_to :group
   belongs_to :tournament
   has_many :users, through: :plays
   has_many :winners, class_name: 'TableWinner'
@@ -36,6 +37,10 @@ class Table < ActiveRecord::Base
 
   def close!
     update_attributes(opened: false)
+  end
+
+  def private?
+    group.present?
   end
 
   def coins_with_positions
