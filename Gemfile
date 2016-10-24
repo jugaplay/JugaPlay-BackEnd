@@ -7,6 +7,7 @@ gem 'rack-cors'
 gem 'airbrake', '~> 4.3'
 gem 'devise', '~> 3.5.3'
 gem 'omniauth-facebook'
+gem 'fb_graph2'
 
 gem 'jbuilder'
 gem 'date_validator'
