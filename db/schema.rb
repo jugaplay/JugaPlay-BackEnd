@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161022153000) do
+ActiveRecord::Schema.define(version: 20161022154000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -385,6 +385,7 @@ ActiveRecord::Schema.define(version: 20161022153000) do
     t.boolean  "opened",             default: true,       null: false
     t.integer  "entry_coins_cost",   default: 0,          null: false
     t.text     "coins_for_winners",  default: "--- []\n"
+    t.integer  "group_id"
   end
 
   add_index "tables", ["title", "start_time", "end_time"], name: "index_tables_on_title_and_start_time_and_end_time", unique: true, using: :btree

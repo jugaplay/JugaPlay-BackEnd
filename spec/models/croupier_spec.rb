@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Croupier do
-  let(:croupier) { Croupier.new(table) }
+  let(:croupier) { Croupier.for(table) }
   let(:table) { FactoryGirl.create(:table) }
 
   describe '#play' do
@@ -139,146 +139,210 @@ describe Croupier do
 
   describe '#assign_scores' do
     let(:tournament) { table.tournament }
-    let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [200, 100], coins_for_winners: [50, 20]) }
     let(:table_rules) { FactoryGirl.create(:table_rules, scored_goals: points_for_goal, right_passes: points_for_passes) }
     let(:points_for_passes) { 0 }
 
-    context 'when there is just one user playing' do
-      let(:user) { FactoryGirl.create(:user, :without_coins) }
+    describe 'for public tables' do
+      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [200, 100], coins_for_winners: [50, 20]) }
 
-      context 'when the table pays 2 points for each goal' do
-        let(:points_for_goal) { 2 }
+      context 'when there is just one user playing' do
+        let(:user) { FactoryGirl.create(:user, :without_coins) }
 
-        context 'when the user plays with one player' do
-          let(:player) { table.matches.last.local_team.players.last }
-          let(:player_stats) { FactoryGirl.create(:player_stats, player: player, scored_goals: player_goals) }
+        context 'when the table pays 2 points for each goal' do
+          let(:points_for_goal) { 2 }
 
-          before { croupier.play(user: user, players: [player]) }
+          context 'when the user plays with one player' do
+            let(:player) { table.matches.last.local_team.players.last }
+            let(:player_stats) { FactoryGirl.create(:player_stats, player: player, scored_goals: player_goals) }
 
-          context 'when the user plays for a player that does not score any goal' do
-            let(:player_goals) { 0 }
+            before { croupier.play(user: user, players: [player]) }
 
-            it 'assigns 0 points to that play' do
-              croupier.assign_scores(players_stats: [player_stats])
-              play = PlaysHistory.new.made_by(user).of_table(table).last
+            context 'when the user plays for a player that does not score any goal' do
+              let(:player_goals) { 0 }
 
-              expect(play.points).to eq 0
-              expect(table).to be_closed
-            end
-
-            it 'gives 50 coins to the user' do
-              croupier.assign_scores(players_stats: [player_stats])
-              prize = UserPrize.last
-
-              expect(user.reload.coins).to eq 50
-              expect(UserPrize.count).to eq 1
-              expect(prize.coins).to eq 50
-              expect(prize.user).to eq user
-              expect(prize.table).to eq table
-            end
-
-            context 'when the user has no current ranking' do
-              it 'creates a tournament ranking for the user and assigns 200 points' do
+              it 'closes the table, assigns 0 points to that play and places the user in the first position' do
                 croupier.assign_scores(players_stats: [player_stats])
+                play = PlaysHistory.new.made_by(user).of_table(table).last
 
-                expect(user.ranking_on_tournament(tournament).points).to eq 200
+                expect(table).to be_closed
+                expect(play.points).to eq 0
                 expect(table.winners).to have(1).item
                 expect(table.winners.first.user).to eq user
                 expect(table.winners.first.position).to eq 1
               end
+
+              it 'gives 50 coins to the user' do
+                croupier.assign_scores(players_stats: [player_stats])
+                prize = UserPrize.last
+
+                expect(user.reload.coins).to eq 50
+                expect(UserPrize.count).to eq 1
+                expect(prize.coins).to eq 50
+                expect(prize.user).to eq user
+                expect(prize.table).to eq table
+              end
+
+              context 'when the user has no current ranking' do
+                it 'creates a tournament ranking for the user and assigns 200 points' do
+                  croupier.assign_scores(players_stats: [player_stats])
+
+                  expect(user.ranking_on_tournament(tournament).points).to eq 200
+                end
+              end
+
+              context 'when the user has a ranking' do
+                let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
+
+                it 'updates the current ranking adding 200 points' do
+                  croupier.assign_scores(players_stats: [player_stats])
+
+                  expect(ranking.reload.points).to eq 300
+                end
+              end
             end
 
-            context 'when the user has a ranking' do
-              let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
+            context 'when the user plays for a player that scores 3 goals' do
+              let(:player_goals) { 3 }
 
-              it 'updates the current ranking adding 200 points' do
+              it 'closes the table, assigns 6 points to that play and places the user in the first position' do
                 croupier.assign_scores(players_stats: [player_stats])
+                play = PlaysHistory.new.made_by(user).of_table(table).last
 
-                expect(ranking.reload.points).to eq 300
+                expect(table).to be_closed
+                expect(play.points).to eq 6
                 expect(table.winners).to have(1).item
                 expect(table.winners.first.user).to eq user
                 expect(table.winners.first.position).to eq 1
+              end
+
+              it 'gives 50 coins to the user' do
+                croupier.assign_scores(players_stats: [player_stats])
+                prize = UserPrize.last
+
+                expect(user.reload.coins).to eq 50
+                expect(UserPrize.count).to eq 1
+                expect(prize.coins).to eq 50
+                expect(prize.user).to eq user
+                expect(prize.table).to eq table
+              end
+
+              context 'when the user has no current ranking' do
+                it 'creates a ranking on the tournament and assigns points for the winners' do
+                  croupier.assign_scores(players_stats: [player_stats])
+
+                  expect(user.ranking_on_tournament(tournament).points).to eq 200
+                end
+              end
+
+              context 'when the user has a ranking' do
+                let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
+
+                it 'updates the current ranking adding 200 points' do
+                  croupier.assign_scores(players_stats: [player_stats])
+
+                  expect(ranking.reload.points).to eq 300
+                end
+              end
+            end
+
+            context 'when there are no stats for that player' do
+              it 'raises an error and does not assign points' do
+                expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+                play = PlaysHistory.new.made_by(user).of_table(table).last
+
+                expect(play.points).to be_nil
+              end
+
+              it 'raises an error and does not give coins to the user' do
+                expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+
+                expect(user.reload.coins).to eq 0
+                expect(UserPrize.count).to eq 0
+              end
+
+              context 'when the user has no current ranking' do
+                it 'does not create a ranking on the tournament' do
+                  expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+
+                  expect(user.ranking_on_tournament(tournament)).to be_nil
+                end
+              end
+
+              context 'when the user has a ranking' do
+                let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
+
+                it 'does not update the current ranking' do
+                  expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+
+                  expect(ranking.reload.points).to eq 100
+                end
               end
             end
           end
+        end
+      end
 
-          context 'when the user plays for a player that scores 3 goals' do
-            let(:player_goals) { 3 }
+      context 'when there are two users playing' do
+        let(:first_user) { FactoryGirl.create(:user) }
+        let(:second_user) { FactoryGirl.create(:user) }
 
-            it 'assigns 6 points to that play' do
-              croupier.assign_scores(players_stats: [player_stats])
-              play = PlaysHistory.new.made_by(user).of_table(table).last
+        context 'when the first user plays for a player that scores 3 goals and 2 passes' do
+          let(:player_of_the_first_user) { table.matches.last.local_team.players.last }
+          let(:first_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_first_user, scored_goals: 3, right_passes: 2) }
 
-              expect(play.points).to eq 6
-              expect(table).to be_closed
-            end
+          before { croupier.play(user: first_user, players: [player_of_the_first_user]) }
 
-            it 'gives 50 coins to the user' do
-              croupier.assign_scores(players_stats: [player_stats])
-              prize = UserPrize.last
+          context 'when the second user plays for a player that scores 1 goals and 5 passes' do
+            let(:player_of_the_second_user) { table.matches.first.visitor_team.players.first }
+            let(:second_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_second_user, scored_goals: 1, right_passes: 5) }
 
-              expect(user.reload.coins).to eq 50
-              expect(UserPrize.count).to eq 1
-              expect(prize.coins).to eq 50
-              expect(prize.user).to eq user
-              expect(prize.table).to eq table
-            end
+            before { croupier.play(user: second_user, players: [player_of_the_second_user]) }
 
-            context 'when the user has no current ranking' do
-              it 'creates a ranking on the tournament and assigns points for the winners' do
-                croupier.assign_scores(players_stats: [player_stats])
+            context 'when the table pays 1 point for each goal and .5 for each pass' do
+              let(:points_for_goal) { 1 }
+              let(:points_for_passes) { 0.5 }
 
-                expect(user.ranking_on_tournament(tournament).points).to eq 200
-                expect(table.winners).to have(1).item
-                expect(table.winners.first.user).to eq user
+              it 'closes the table and updates the total points for each user' do
+                croupier.assign_scores(players_stats: [first_player_stats, second_player_stats])
+
+                first_user_play = PlaysHistory.new.made_by(first_user).of_table(table).last
+                second_user_play = PlaysHistory.new.made_by(second_user).of_table(table).last
+
+                expect(table).to be_closed
+                expect(first_user_play.points).to eq 4
+                expect(second_user_play.points).to eq 3.5
+                expect(first_user.reload.coins).to eq 60
+                expect(second_user.reload.coins).to eq 30
+
+                expect(table.winners).to have(2).item
+                expect(table.winners.first.user).to eq first_user
                 expect(table.winners.first.position).to eq 1
+                expect(table.winners.second.user).to eq second_user
+                expect(table.winners.second.position).to eq 2
               end
             end
 
-            context 'when the user has a ranking' do
-              let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
+            context 'when the table pays 0.1 point for each goal and .5 for each pass' do
+              let(:points_for_goal) { 0.1 }
+              let(:points_for_passes) { 0.5 }
 
-              it 'updates the current ranking adding 200 points' do
-                croupier.assign_scores(players_stats: [player_stats])
+              it 'closes the table and updates the total points for each user' do
+                croupier.assign_scores(players_stats: [first_player_stats, second_player_stats])
 
-                expect(ranking.reload.points).to eq 300
-                expect(table.winners).to have(1).item
-                expect(table.winners.first.user).to eq user
+                first_user_play = PlaysHistory.new.made_by(first_user).of_table(table).last
+                second_user_play = PlaysHistory.new.made_by(second_user).of_table(table).last
+
+                expect(table).to be_closed
+                expect(first_user_play.points).to eq 1.3
+                expect(second_user_play.points).to eq 2.6
+                expect(first_user.reload.coins).to eq 30
+                expect(second_user.reload.coins).to eq 60
+
+                expect(table.winners).to have(2).item
+                expect(table.winners.first.user).to eq second_user
                 expect(table.winners.first.position).to eq 1
-              end
-            end
-          end
-
-          context 'when there are no stats for that player' do
-            it 'raises an error and does not assign points' do
-              expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
-              play = PlaysHistory.new.made_by(user).of_table(table).last
-
-              expect(play.points).to be_nil
-            end
-
-            it 'raises an error and does not give coins to the user' do
-              expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
-
-              expect(user.reload.coins).to eq 0
-              expect(UserPrize.count).to eq 0
-            end
-
-            context 'when the user has no current ranking' do
-              it 'does not create a ranking on the tournament' do
-                expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
-
-                expect(user.ranking_on_tournament(tournament)).to be_nil
-              end
-            end
-
-            context 'when the user has a ranking' do
-              let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
-
-              it 'does not update the current ranking' do
-                expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
-
-                expect(ranking.reload.points).to eq 100
+                expect(table.winners.second.user).to eq first_user
+                expect(table.winners.second.position).to eq 2
               end
             end
           end
@@ -286,54 +350,235 @@ describe Croupier do
       end
     end
 
-    context 'when there are two users playing' do
-      let(:first_user) { FactoryGirl.create(:user) }
-      let(:second_user) { FactoryGirl.create(:user) }
+    describe 'for private tables' do
+      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, group: group, entry_coins_cost: 99) }
+      let(:group) { FactoryGirl.create(:group) }
 
-      context 'when the first user plays for a player that scores 3 goals and 2 passes' do
-        let(:player_of_the_first_user) { table.matches.last.local_team.players.last }
-        let(:first_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_first_user, scored_goals: 3, right_passes: 2) }
+      context 'when there is just one user playing' do
+        let(:user) { FactoryGirl.create(:user, :with_coins, coins: 99) }
 
-        before (:each) { croupier.play(user: first_user, players: [player_of_the_first_user]) }
+        before { group.update_attributes!(users: [user]) }
 
-        context 'when the second user plays for a player that scores 1 goals and 5 passes' do
-          let(:player_of_the_second_user) { table.matches.first.visitor_team.players.first }
-          let(:second_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_second_user, scored_goals: 1, right_passes: 5) }
+        context 'when the table pays 2 points for each goal' do
+          let(:points_for_goal) { 2 }
 
-          before (:each) { croupier.play(user: second_user, players: [player_of_the_second_user]) }
+          context 'when the user plays with one player' do
+            let(:player) { table.matches.last.local_team.players.last }
+            let(:player_stats) { FactoryGirl.create(:player_stats, player: player, scored_goals: player_goals) }
 
-          context 'when the table pays 1 point for each goal and .5 for each pass' do
-            let(:points_for_goal) { 1 }
-            let(:points_for_passes) { 0.5 }
+            before { croupier.play(user: user, players: [player]) }
 
-            it 'updates the total points for each user' do
-              croupier.assign_scores(players_stats: [first_player_stats, second_player_stats])
+            context 'when the user plays for a player that does not score any goal' do
+              let(:player_goals) { 0 }
 
-              first_user_play = PlaysHistory.new.made_by(first_user).of_table(table).last
-              second_user_play = PlaysHistory.new.made_by(second_user).of_table(table).last
+              it 'closes the table, assigns 0 points to that play and places the user in the first position' do
+                croupier.assign_scores(players_stats: [player_stats])
+                play = PlaysHistory.new.made_by(user).of_table(table).last
 
-              expect(first_user_play.points).to eq 4
-              expect(second_user_play.points).to eq 3.5
-              expect(first_user.reload.coins).to eq 60
-              expect(second_user.reload.coins).to eq 30
+                expect(table).to be_closed
+                expect(play.points).to eq 0
+                expect(table.winners).to have(1).item
+                expect(table.winners.first.user).to eq user
+                expect(table.winners.first.position).to eq 1
+              end
+
+              it 'gives 99 coins to the user' do
+                croupier.assign_scores(players_stats: [player_stats])
+                prize = UserPrize.last
+
+                expect(user.reload.coins).to eq 99
+                expect(UserPrize.count).to eq 1
+                expect(prize.coins).to eq 99
+                expect(prize.user).to eq user
+                expect(prize.table).to eq table
+              end
+
+              context 'when the user has no current ranking' do
+                it 'does not create a tournament ranking for the user' do
+                  croupier.assign_scores(players_stats: [player_stats])
+
+                  expect(user.ranking_on_tournament(tournament)).to be_nil
+                end
+              end
+
+              context 'when the user has a ranking' do
+                let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
+
+                it 'does not update the current ranking' do
+                  croupier.assign_scores(players_stats: [player_stats])
+
+                  expect(ranking.reload.points).to eq 100
+                end
+              end
+            end
+
+            context 'when the user plays for a player that scores 3 goals' do
+              let(:player_goals) { 3 }
+
+              it 'closes the table, assigns 6 points to that play and places the user in the first position' do
+                croupier.assign_scores(players_stats: [player_stats])
+                play = PlaysHistory.new.made_by(user).of_table(table).last
+
+                expect(table).to be_closed
+                expect(play.points).to eq 6
+                expect(table.winners).to have(1).item
+                expect(table.winners.first.user).to eq user
+                expect(table.winners.first.position).to eq 1
+              end
+
+              it 'gives 99 coins to the user' do
+                croupier.assign_scores(players_stats: [player_stats])
+                prize = UserPrize.last
+
+                expect(user.reload.coins).to eq 99
+                expect(UserPrize.count).to eq 1
+                expect(prize.coins).to eq 99
+                expect(prize.user).to eq user
+                expect(prize.table).to eq table
+              end
+
+              context 'when the user has no current ranking' do
+                it 'does not create a tournament ranking for the user' do
+                  croupier.assign_scores(players_stats: [player_stats])
+
+                  expect(user.ranking_on_tournament(tournament)).to be_nil
+                end
+              end
+
+              context 'when the user has a ranking' do
+                let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
+
+                it 'does not update the current ranking' do
+                  croupier.assign_scores(players_stats: [player_stats])
+
+                  expect(ranking.reload.points).to eq 100
+                end
+              end
+            end
+
+            context 'when there are no stats for that player' do
+              it 'raises an error and does not assign points' do
+                expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+                play = PlaysHistory.new.made_by(user).of_table(table).last
+
+                expect(play.points).to be_nil
+              end
+
+              it 'raises an error and does not give coins to the user' do
+                expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+
+                expect(user.reload.coins).to eq 0
+                expect(UserPrize.count).to eq 0
+              end
+
+              context 'when the user has no current ranking' do
+                it 'does not create a ranking on the tournament' do
+                  expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+
+                  expect(user.ranking_on_tournament(tournament)).to be_nil
+                end
+              end
+
+              context 'when the user has a ranking' do
+                let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
+
+                it 'does not update the current ranking' do
+                  expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+
+                  expect(ranking.reload.points).to eq 100
+                end
+              end
             end
           end
+        end
+      end
 
-          context 'when the table pays 0.1 point for each goal and .5 for each pass' do
-            let(:points_for_goal) { 0.1 }
-            let(:points_for_passes) { 0.5 }
+      context 'when there are two users playing' do
+        let(:first_user) { FactoryGirl.create(:user, :with_coins, coins: 99) }
+        let(:second_user) { FactoryGirl.create(:user, :with_coins, coins: 99) }
 
-            it 'updates the total points for each user' do
-              croupier.assign_scores(players_stats: [first_player_stats, second_player_stats])
+        context 'when those users belong to the group' do
+          before { group.update_attributes!(users: [first_user, second_user]) }
 
-              first_user_play = PlaysHistory.new.made_by(first_user).of_table(table).last
-              second_user_play = PlaysHistory.new.made_by(second_user).of_table(table).last
+          context 'when the first user plays for a player that scores 3 goals and 2 passes' do
+            let(:player_of_the_first_user) { table.matches.last.local_team.players.last }
+            let(:first_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_first_user, scored_goals: 3, right_passes: 2) }
 
-              expect(first_user_play.points).to eq 1.3
-              expect(second_user_play.points).to eq 2.6
-              expect(first_user.reload.coins).to eq 30
-              expect(second_user.reload.coins).to eq 60
+            before { croupier.play(user: first_user, players: [player_of_the_first_user]) }
+
+            context 'when the second user plays for a player that scores 1 goals and 5 passes' do
+              let(:player_of_the_second_user) { table.matches.first.visitor_team.players.first }
+              let(:second_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_second_user, scored_goals: 1, right_passes: 5) }
+
+              before { croupier.play(user: second_user, players: [player_of_the_second_user]) }
+
+              context 'when the table pays 1 point for each goal and .5 for each pass' do
+                let(:points_for_goal) { 1 }
+                let(:points_for_passes) { 0.5 }
+
+                it 'closes the table, gives the pot to the first user and updates the points of each play' do
+                  croupier.assign_scores(players_stats: [first_player_stats, second_player_stats])
+
+                  first_user_play = PlaysHistory.new.made_by(first_user).of_table(table).last
+                  second_user_play = PlaysHistory.new.made_by(second_user).of_table(table).last
+
+                  expect(table).to be_closed
+                  expect(first_user_play.points).to eq 4
+                  expect(second_user_play.points).to eq 3.5
+                  expect(first_user.reload.coins).to eq(99 * 2)
+                  expect(second_user.reload.coins).to eq 0
+
+                  expect(table.winners).to have(2).item
+                  expect(table.winners.first.user).to eq first_user
+                  expect(table.winners.first.position).to eq 1
+                  expect(table.winners.second.user).to eq second_user
+                  expect(table.winners.second.position).to eq 2
+                end
+              end
+
+              context 'when the table pays 0.1 point for each goal and .5 for each pass' do
+                let(:points_for_goal) { 0.1 }
+                let(:points_for_passes) { 0.5 }
+
+                it 'closes the table, gives the pot to the second user and updates the points of each play' do
+                  croupier.assign_scores(players_stats: [first_player_stats, second_player_stats])
+
+                  first_user_play = PlaysHistory.new.made_by(first_user).of_table(table).last
+                  second_user_play = PlaysHistory.new.made_by(second_user).of_table(table).last
+
+                  expect(table).to be_closed
+                  expect(first_user_play.points).to eq 1.3
+                  expect(second_user_play.points).to eq 2.6
+                  expect(second_user.reload.coins).to eq (99 * 2)
+                  expect(first_user.reload.coins).to eq 0
+
+                  expect(table.winners).to have(2).item
+                  expect(table.winners.first.user).to eq second_user
+                  expect(table.winners.first.position).to eq 1
+                  expect(table.winners.second.user).to eq first_user
+                  expect(table.winners.second.position).to eq 2
+                end
+              end
             end
+          end
+        end
+
+        context 'when those users do not belong to the group' do
+          let(:points_for_goal) { 100 }
+          let(:player) { table.matches.last.local_team.players.last }
+          let(:player_stats) { FactoryGirl.create(:player_stats, player: player, scored_goals: 10) }
+
+          it 'closes the table and does not give coins to any user' do
+            first_user_old_amount_of_coins = first_user.coins
+            second_user_old_amount_of_coins = second_user.coins
+
+            croupier.assign_scores(players_stats: [player_stats])
+
+            expect(table).to be_closed
+            expect(table.winners).to be_empty
+            expect(first_user.reload.coins).to eq first_user_old_amount_of_coins
+            expect(second_user.reload.coins).to eq second_user_old_amount_of_coins
+            expect(table.winners).to be_empty
           end
         end
       end

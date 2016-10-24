@@ -1,0 +1,3 @@
+class PublicTableCoinsDispenser < CoinsDispenser
+
+end

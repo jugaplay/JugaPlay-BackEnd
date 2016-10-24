@@ -55,7 +55,7 @@ describe Api::V1::GroupsController do
         post :create, group_params
 
         expect(response.status).to eq 401
-        expect(response_body[:error]).to eq 'You need to sign in or sign up before continuing.'
+        expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
       end
     end
   end
@@ -84,7 +84,7 @@ describe Api::V1::GroupsController do
         it 'responds an error json' do
           get :show, id: FactoryGirl.create(:group).id
 
-          expect(response.status).to eq 200
+          expect(response.status).to eq 400
           expect(response_body[:errors]).to include Api::V1::GroupsController::USER_DOES_NOT_BELONG_TO_GIVEN_GROUP
         end
       end
@@ -104,7 +104,7 @@ describe Api::V1::GroupsController do
         get :show, id: group.id
 
         expect(response.status).to eq 401
-        expect(response_body[:error]).to eq 'You need to sign in or sign up before continuing.'
+        expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
       end
     end
   end
@@ -147,7 +147,7 @@ describe Api::V1::GroupsController do
 
           patch :update, params
 
-          expect(response.status).to eq 200
+          expect(response.status).to eq 400
           expect(response_body[:errors]).to include Api::V1::GroupsController::USER_DOES_NOT_BELONG_TO_GIVEN_GROUP
         end
       end
@@ -170,7 +170,7 @@ describe Api::V1::GroupsController do
         patch :update, group_params
 
         expect(response.status).to eq 401
-        expect(response_body[:error]).to eq 'You need to sign in or sign up before continuing.'
+        expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
       end
     end
   end

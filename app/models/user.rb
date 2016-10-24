@@ -75,7 +75,7 @@ class User < ActiveRecord::Base
   end
 
   # TODO: Move all this shit outta here
-  def self.from_omniauth(auth,params)
+  def self.from_omniauth(auth, params)
     user_by_email = find_by(email: auth.info.email)
 
     if user_by_email.blank?

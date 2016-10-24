@@ -79,7 +79,7 @@ class Admin::TablesController < Admin::BaseController
   end
 
   def croupier
-    Croupier.new(@table)
+    Croupier.for(@table)
   end
 
   def add_table_rules

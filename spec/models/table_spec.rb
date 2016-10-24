@@ -70,7 +70,7 @@ describe Table do
     context 'when a user has played in that table' do
       it 'returns false' do
         players = Player.all.sample(table.number_of_players)
-        Croupier.new(table).play(players: players, user: user)
+        Croupier.for(table).play(players: players, user: user)
 
         expect(table.can_play_user? user).to eq false
       end

@@ -5,6 +5,10 @@ class Group < ActiveRecord::Base
   validates :users, length: { minimum: 1 }
   validate :unique_users
 
+  def size
+    users.size
+  end
+
   def add user
     users << user unless has_user? user
   end

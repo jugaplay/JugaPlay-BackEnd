@@ -1,16 +1,20 @@
 class Api::V1::CroupierController < Api::BaseController
+  TABLE_NOT_FOUND = 'No se encontró la mesa indicada'
+
   def play
     play = croupier.play(user: current_user, players: players, bet: bet?)
     render partial: 'api/v1/plays/play', locals: { play: play }
-  rescue ActiveRecord::RecordNotFound, PlayWithDuplicatedPlayer, PlayerDoesNotBelongToTable,
-         UserDoesNotHaveEnoughCoins, UserHasAlreadyPlayedInThisTable, CanNotPlayWithNumberOfPlayers => error
+  rescue ActiveRecord::RecordNotFound
+    render_not_found_error TABLE_NOT_FOUND
+  rescue PlayWithDuplicatedPlayer, PlayerDoesNotBelongToTable, UserDoesNotHaveEnoughCoins,
+      UserHasAlreadyPlayedInThisTable, CanNotPlayWithNumberOfPlayers => error
     render_json_errors error.message
   end
 
   private
 
   def croupier
-    Croupier.new(table)
+    Croupier.for(table)
   end
 
   def table
