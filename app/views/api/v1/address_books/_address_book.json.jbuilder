@@ -1,10 +1,9 @@
 json.id address_book.id
 
-json.contacts(address_book.contacts) do |user|
-  json.user_id user.id
-  json.first_name user.first_name
-  json.last_name user.last_name
-  json.nickname user.nickname
-  json.email user.email
-  json.member_since user.created_at.strftime('%d/%m/%Y')
+json.contacts(address_book.address_book_contacts) do |contact|
+  json.user_id contact.user.id
+  json.name contact.user.name
+  json.nickname contact.nickname
+  json.synched_by_email contact.synched_by_email
+  json.synched_by_facebook contact.synched_by_facebook
 end
