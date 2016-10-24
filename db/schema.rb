@@ -11,10 +11,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161018210243) do
+ActiveRecord::Schema.define(version: 20161022152756) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "address_book_contacts", force: :cascade do |t|
+    t.integer  "address_book_id",                     null: false
+    t.integer  "user_id",                             null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "nickname",                            null: false
+    t.boolean  "synched_by_email",    default: false, null: false
+    t.boolean  "synched_by_facebook", default: false, null: false
+  end
+
+  add_index "address_book_contacts", ["address_book_id", "user_id"], name: "index_address_book_contacts_on_address_book_id_and_user_id", unique: true, using: :btree
 
   create_table "address_books", force: :cascade do |t|
     t.integer  "user_id",    null: false
@@ -23,15 +35,6 @@ ActiveRecord::Schema.define(version: 20161018210243) do
   end
 
   add_index "address_books", ["user_id"], name: "index_address_books_on_user_id", unique: true, using: :btree
-
-  create_table "address_books_users", force: :cascade do |t|
-    t.integer  "address_book_id", null: false
-    t.integer  "user_id",         null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "address_books_users", ["address_book_id", "user_id"], name: "index_address_books_users_on_address_book_id_and_user_id", unique: true, using: :btree
 
   create_table "channels", force: :cascade do |t|
     t.integer  "user_id",                   null: false
@@ -436,6 +439,7 @@ ActiveRecord::Schema.define(version: 20161018210243) do
     t.integer  "invited_by_id"
     t.string   "telephone"
     t.string   "push_token"
+    t.string   "facebook_token"
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree

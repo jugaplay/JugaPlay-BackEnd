@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
   validates :nickname, uniqueness: true, presence: true
   validates :email, uniqueness: true, if: proc { email.present? }
   validates :facebook_id, uniqueness: { scope: :provider }, if: proc { facebook_id.present? && provider.present? }
+  validates :facebook_token, presence: true, uniqueness: true, if: proc { facebook_id.present? }
   validate :validate_not_invited_by_itself, on: :update
 
   scope :ordered, -> { order(created_at: :asc) }
@@ -68,9 +69,13 @@ class User < ActiveRecord::Base
     plays.detect(return_block) { |play| play.table.eql? table }.bet_coins
   end
 
+  # TODO: Move all this shit outta here
+  def has_facebook_login?
+    facebook_token.present?
+  end
+
+  # TODO: Move all this shit outta here
   def self.from_omniauth(auth,params)
-    # TODO: rename `uid` to `facebook_id`
-    # TODO: Move all this shit outta here
     user_by_email = find_by(email: auth.info.email)
 
     if user_by_email.blank?
@@ -80,22 +85,27 @@ class User < ActiveRecord::Base
       end
     end
 
-    return user_by_email if user_by_email.present?
-    where(provider: auth.provider, facebook_id: auth.uid).first_or_create do |user|
-      user.first_name = auth.info.first_name
-      user.last_name = auth.info.last_name
-      user.email = auth.info.email
-      if auth.info.email.present?
-        user.nickname = auth.info.email.split("@").first + Random.rand(999).to_s
-      else
-        user.nickname = auth.uid
-      end
-      user.password = Devise.friendly_token[0,20]
-      user.image = auth.info.image
-      user.wallet = Wallet.new
-      user.address_book = AddressBook.new
-      if params['invited_by'].present?
-        user.invited_by_id = @host_user.id
+    if user_by_email.present?
+      user_by_email.update_attributes(facebook_id: auth.uid, facebook_token: auth.credentials.token)
+      return user_by_email
+    else
+      where(provider: auth.provider, facebook_id: auth.uid).first_or_create do |user|
+        user.facebook_token = auth.credentials.token
+        user.first_name = auth.info.first_name
+        user.last_name = auth.info.last_name
+        user.email = auth.info.email
+        if auth.info.email.present?
+          user.nickname = auth.info.email.split('@').first + Random.rand(999).to_s
+        else
+          user.nickname = auth.uid
+        end
+        user.password = Devise.friendly_token[0,20]
+        user.image = auth.info.image
+        user.wallet = Wallet.new
+        user.address_book = AddressBook.new
+        if params['invited_by'].present?
+          user.invited_by_id = @host_user.id
+        end
       end
     end
   end

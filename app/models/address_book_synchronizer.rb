@@ -1,26 +1,27 @@
 class AddressBookSynchronizer
-  def initialize user
-    @address_book = user.address_book
+  def initialize address_book
+    @address_book = address_book
   end
 
   def call_with_facebook_ids(facebook_ids)
     return if facebook_ids.empty?
-    contacts = find_users_with_facebook_ids(facebook_ids)
-    add_contacts_to_address_book(contacts)
+    users = find_users_with_facebook_ids(facebook_ids)
+    add_contacts_to_address_book(users).each(&:synched_by_facebook!)
   end
 
   def call_with_emails(emails)
     return if emails.empty?
-    contacts = find_users_with_emails(emails)
-    add_contacts_to_address_book(contacts)
+    users = find_users_with_emails(emails)
+    add_contacts_to_address_book(users).each(&:synched_by_email!)
   end
 
   private
   attr_reader :address_book
 
-  def add_contacts_to_address_book(contacts)
-    address_book.contacts += contacts
-    address_book.save!
+  def add_contacts_to_address_book(users)
+    users.map do |user|
+      AddressBookContact.create!(user: user, address_book: address_book, nickname: user.name)
+    end
   end
 
   def find_users_with_facebook_ids(facebook_ids)

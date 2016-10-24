@@ -16,6 +16,11 @@ FactoryGirl.define do
       end
     end
 
+    trait :with_facebook_login do
+      facebook_id { 'facebook_id' }
+      facebook_token { 'facebook_token' }
+    end
+
     trait :admin do
       first_name { 'Admin' }
       last_name { 'Admin' }
@@ -24,8 +29,7 @@ FactoryGirl.define do
 
     trait :with_an_address_book_with_two_contacts do
       after :create do |user|
-        contacts = [FactoryGirl.create(:user), FactoryGirl.create(:user)]
-        AddressBook.create!(contacts: contacts, user: user)
+        FactoryGirl.create(:address_book, :with_two_contacts, user: user)
       end
     end
   end

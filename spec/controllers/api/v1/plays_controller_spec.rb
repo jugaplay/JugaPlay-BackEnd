@@ -55,7 +55,7 @@ describe Api::V1::PlaysController do
         get :index
 
         expect(response.status).to eq 401
-        expect(response_body[:error]).to eq 'You need to sign in or sign up before continuing.'
+        expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
       end
     end
   end

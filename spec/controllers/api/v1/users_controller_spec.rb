@@ -248,7 +248,7 @@ describe Api::V1::UsersController do
         get :show, id: user.id
 
         expect(response.status).to eq 401
-        expect(response_body[:error]).to eq 'You need to sign in or sign up before continuing.'
+        expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
       end
     end
   end
@@ -357,7 +357,7 @@ describe Api::V1::UsersController do
         patch :update, user_params
 
         expect(response.status).to eq 401
-        expect(response_body[:error]).to eq 'You need to sign in or sign up before continuing.'
+        expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
       end
     end
   end
