@@ -16,11 +16,6 @@ FactoryGirl.define do
       end
     end
 
-    trait :with_facebook_login do
-      facebook_id { 'facebook_id' }
-      facebook_token { 'facebook_token' }
-    end
-
     trait :admin do
       first_name { 'Admin' }
       last_name { 'Admin' }

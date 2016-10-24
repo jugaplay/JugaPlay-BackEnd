@@ -1,4 +1,4 @@
-class FacebookTokenManager
+class FacebookTokenRefresher
   def initialize user
     @user = user
     @fb_graph = FbGraph2::Auth.new(ENV['FB_APP_ID'], ENV['FB_APP_SECRET'])
