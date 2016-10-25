@@ -24,6 +24,6 @@ class PrivateTableCroupier < Croupier
   end
 
   def validate_user_belongs_to_group(user)
-    fail UserDoesNotBelongToTableGroup unless table.group.has_user? user
+    fail UserDoesNotBelongToTableGroup unless table.can_play?(user)
   end
 end

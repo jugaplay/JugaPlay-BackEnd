@@ -28,9 +28,7 @@
       	resources :notifications, only: [:index, :update]
       end
 
-      resources :groups, only: [:show, :create, :update] do
-
-      end
+      resources :groups, only: [:show, :create, :update]
 
 	    resources :explanations, only: [:index, :show, :create]
       resources :invitations, only: [:create]
@@ -43,7 +41,7 @@
         resources :rankings, only: [:index]
       end
 
-      resources :tables, only: [:index, :show] do
+      resources :tables, only: [:index, :show, :create] do
         resources :matches, only: [:index]
       end
 

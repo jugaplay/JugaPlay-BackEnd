@@ -75,6 +75,17 @@ describe Api::V1::AddressBooksController do
 
         expect(response_body[:id]).to eq user.address_book.id
         expect(response_body[:contacts]).to have(2).items
+
+        first_contact = user.address_book.address_book_contacts.first
+        expect(response_body[:contacts].first[:nickname]).to eq first_contact.nickname
+        expect(response_body[:contacts].first[:synched_by_email]).to eq first_contact.synched_by_email
+        expect(response_body[:contacts].first[:synched_by_facebook]).to eq first_contact.synched_by_facebook
+        expect(response_body[:contacts].first[:user][:id]).to eq first_contact.user.id
+        expect(response_body[:contacts].first[:user][:nickname]).to eq first_contact.user.nickname
+        expect(response_body[:contacts].first[:user][:first_name]).to eq first_contact.user.first_name
+        expect(response_body[:contacts].first[:user][:last_name]).to eq first_contact.user.last_name
+        expect(response_body[:contacts].first[:user][:email]).to eq first_contact.user.email
+        expect(response_body[:contacts].first[:user][:member_since]).to eq first_contact.user.created_at.strftime('%d/%m/%Y')
       end
     end
 

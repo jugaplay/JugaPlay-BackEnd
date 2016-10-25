@@ -62,7 +62,7 @@ class Croupier
   end
 
   def validate_user_did_not_play_yet(user)
-    fail UserHasAlreadyPlayedInThisTable unless table.can_play_user?(user)
+    fail UserHasAlreadyPlayedInThisTable unless table.did_not_play?(user)
   end
 
   def validate_bet_coins(user, bet_coins)

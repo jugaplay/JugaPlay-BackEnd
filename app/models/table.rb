@@ -11,21 +11,21 @@ class Table < ActiveRecord::Base
   serialize :points_for_winners, Array
 
   validates :title, presence: true
+  validates :description, presence: true
   validates :start_time, presence: true
   validates :end_time, presence: true, date: { after: :start_time }
   validates :number_of_players, presence: true, numericality: { greater_than: 0, only_integer: true }
-  validates :points_for_winners, presence: true
   validates :entry_coins_cost, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true, allow_nil: false }
   validates_each_in_array(:coins_for_winners) { validates_numericality_of :value, greater_than: 0, only_integer: true, allow_nil: false }
   validates_each_in_array(:points_for_winners) { validates_numericality_of :value, greater_than: 0, only_integer: true, allow_nil: false }
   validate :validate_all_matches_belong_to_tournament
+  validate :validate_points_for_winners_if_public
 
   scope :closed, -> { where(opened: false) }
+  scope :opened, -> { where(opened: true) }
+  scope :publics, -> { where(group_id: nil) }
+  scope :privates_for, -> user { joins(group: :groups_users).where(groups_users: { user_id: user.id }).uniq }
   scope :recent_first, -> { order(start_time: :desc) }
-
-  def can_play_user?(user)
-    plays.where(user: user).empty?
-  end
 
   def expending_coins
     coins_for_winners.sum
@@ -41,6 +41,18 @@ class Table < ActiveRecord::Base
 
   def private?
     group.present?
+  end
+
+  def public?
+    group.nil?
+  end
+
+  def can_play?(user)
+    private? && group.has_user?(user)
+  end
+
+  def did_not_play?(user)
+    plays.where(user: user).empty?
   end
 
   def coins_with_positions
@@ -79,5 +91,9 @@ class Table < ActiveRecord::Base
 
   def validate_all_matches_belong_to_tournament
     errors.add(:matches, 'do not belong to given tournament') unless matches.all? { |match| tournament == match.tournament }
+  end
+
+  def validate_points_for_winners_if_public
+    errors.add(:points_for_winners, "can't be blank") if public? && points_for_winners.empty?
   end
 end

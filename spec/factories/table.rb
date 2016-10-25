@@ -6,6 +6,7 @@ FactoryGirl.define do
     description { Faker::Lorem.sentence }
     points_for_winners { [Faker::Number.number(5), Faker::Number.number(3), Faker::Number.number(2)] }
     entry_coins_cost { 0 }
+    coins_for_winners { [] }
 
     after(:build) do |table|
       table.matches = Faker::Number.between(1, 5).times.collect { FactoryGirl.create(:match, tournament: table.tournament) } if table.matches.empty?
