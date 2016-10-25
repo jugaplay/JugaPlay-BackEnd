@@ -47,7 +47,7 @@ class Admin::TablesController < Admin::BaseController
   end
 
   def to_be_closed
-    @tables_to_be_closed = Table.where(opened: true).where('end_time < ?', Time.now)
+    @tables_to_be_closed = Table.opened.where('end_time < ?', Time.now)
   end
 
   def close
@@ -68,6 +68,7 @@ class Admin::TablesController < Admin::BaseController
   def table_params
     permitted_params = params.require(:table).permit(:title, :entry_coins_cost, :number_of_players, :description, :tournament_id, match_ids: [])
     permitted_params[:matches] = Match.where(id: permitted_params.delete(:match_ids))
+    permitted_params[:coins_for_winners] = []
     permitted_params[:points_for_winners] = PointsForWinners.default
     permitted_params[:start_time] = permitted_params[:matches].map(&:datetime).min
     permitted_params[:end_time] =  permitted_params[:matches].map(&:datetime).min + 2.hours
@@ -79,7 +80,7 @@ class Admin::TablesController < Admin::BaseController
   end
 
   def croupier
-    Croupier.new(@table)
+    Croupier.for(@table)
   end
 
   def add_table_rules

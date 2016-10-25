@@ -16,6 +16,14 @@ FactoryGirl.define do
       end
     end
 
+    trait :with_coins do
+      ignore { coins 0 }
+
+      after :create do |user, evaluator|
+        user.wallet.update_attributes!(coins: evaluator.coins)
+      end
+    end
+
     trait :admin do
       first_name { 'Admin' }
       last_name { 'Admin' }

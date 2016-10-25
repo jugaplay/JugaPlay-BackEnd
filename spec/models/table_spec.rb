@@ -8,6 +8,12 @@ describe Table do
       expect { FactoryGirl.create(:table, title: nil) }.to raise_error ActiveRecord::RecordInvalid, /Title can't be blank/
     end
 
+    it 'must have a description' do
+      expect { FactoryGirl.create(:table, description: 'una descripción') }.not_to raise_error
+
+      expect { FactoryGirl.create(:table, description: nil) }.to raise_error ActiveRecord::RecordInvalid, /Description can't be blank/
+    end
+
     it 'must have an integer number of players greater than 0' do
       expect { FactoryGirl.create(:table, number_of_players: 5) }.not_to raise_error
 
@@ -38,12 +44,28 @@ describe Table do
       expect { Table.last.update_attributes!(start_time: DateTime.now, end_time: DateTime.now) }.to raise_error ActiveRecord::RecordInvalid, /End time must be after/
     end
 
-    it 'must have points for winners greater than 0' do
+    it 'must have points for winners greater than 0 if the table is public' do
       expect { FactoryGirl.create(:table, points_for_winners: [100, 50, 20]) }.not_to raise_error
 
       expect { FactoryGirl.create(:table, points_for_winners: []) }.to raise_error ActiveRecord::RecordInvalid, /Points for winners can't be blank/
       expect { FactoryGirl.create(:table, points_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
       expect { FactoryGirl.create(:table, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
+    end
+
+    it 'can have no points for winners if the table is private' do
+      group = FactoryGirl.create(:group)
+
+      expect { FactoryGirl.create(:table, group: group, points_for_winners: []) }.not_to raise_error
+      expect { FactoryGirl.create(:table, group: group, points_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
+      expect { FactoryGirl.create(:table, group: group, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
+    end
+
+    it 'can have no coins for winners or have coins for winners greater than 0' do
+      expect { FactoryGirl.create(:table, coins_for_winners: []) }.not_to raise_error
+      expect { FactoryGirl.create(:table, coins_for_winners: [100, 50, 20]) }.not_to raise_error
+
+      expect { FactoryGirl.create(:table, coins_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
+      expect { FactoryGirl.create(:table, coins_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
     end
 
     it 'can have a set of matches belonging to the same tournament' do
@@ -57,22 +79,22 @@ describe Table do
     end
   end
   
-  describe '#can_play_user?' do
+  describe '#did_not_play?' do
     let!(:table) { FactoryGirl.create(:table) }
     let!(:user) { FactoryGirl.create(:user) }
     
     context 'when a user has not played in that table' do
       it 'returns true' do
-        expect(table.can_play_user? user).to eq true
+        expect(table.did_not_play? user).to eq true
       end
     end
     
     context 'when a user has played in that table' do
       it 'returns false' do
         players = Player.all.sample(table.number_of_players)
-        Croupier.new(table).play(players: players, user: user)
+        Croupier.for(table).play(players: players, user: user)
 
-        expect(table.can_play_user? user).to eq false
+        expect(table.did_not_play? user).to eq false
       end
     end
   end
@@ -172,6 +194,29 @@ describe Table do
 
         expect(table.payed_points(unknown_user) { 'unknown' }).to eq 'unknown'
       end
+    end
+  end
+
+  describe '.privates_for' do
+    let(:user) { FactoryGirl.create(:user) }
+    let(:another_user) { FactoryGirl.create(:user) }
+    let!(:public_table) { FactoryGirl.create(:table) }
+    let!(:private_table_for_user) { FactoryGirl.create(:table, group: FactoryGirl.create(:group, users: [user])) }
+    let!(:private_table_for_another_user) { FactoryGirl.create(:table, group: FactoryGirl.create(:group, users: [another_user])) }
+
+    it 'only gives the private table including the giving user' do
+      tables_for_user = Table.privates_for user
+      tables_for_another_user = Table.privates_for another_user
+
+      expect(tables_for_user).to have(1).item
+      expect(tables_for_user).to include private_table_for_user
+      expect(tables_for_user).not_to include private_table_for_another_user
+      expect(tables_for_user).not_to include public_table
+
+      expect(tables_for_another_user).to have(1).item
+      expect(tables_for_another_user).to include private_table_for_another_user
+      expect(tables_for_another_user).not_to include private_table_for_user
+      expect(tables_for_another_user).not_to include public_table
     end
   end
 end
