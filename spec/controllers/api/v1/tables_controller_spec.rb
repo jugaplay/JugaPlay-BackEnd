@@ -47,7 +47,7 @@ describe Api::V1::TablesController do
   end
 
   describe 'GET #show' do
-    let!(:public_table) { FactoryGirl.create(:table) }
+    let!(:public_table) { FactoryGirl.create(:table, table_rules: TableRules.new) }
     let!(:private_table_for_user) { FactoryGirl.create(:table, group: FactoryGirl.create(:group, users: [user]), table_rules: TableRules.new) }
     let!(:private_table_excluding_user) { FactoryGirl.create(:table, group: FactoryGirl.create(:group)) }
 
@@ -55,24 +55,48 @@ describe Api::V1::TablesController do
       before(:each) { sign_in user }
 
       context 'when the user can play in the requested table' do
-        it 'returns json of the table' do
-          get :show, id: private_table_for_user.id
+        context 'when the user requests a private table that is allowed to play' do
+          it 'returns json of the table' do
+            get :show, id: private_table_for_user.id
 
-          expect(response.status).to eq 200
-          expect(response_body[:id]).to eq private_table_for_user.id
-          expect(response_body[:title]).to eq private_table_for_user.title
-          expect(response_body[:has_password]).to be_falsey
-          expect(response_body[:number_of_players]).to eq private_table_for_user.number_of_players
-          expect(response_body[:entry_coins_cost]).to eq private_table_for_user.entry_coins_cost
-          expect(response_body[:tournament_id]).to eq private_table_for_user.tournament_id
-          expect(response_body[:start_time]).to eq private_table_for_user.start_time.strftime('%d/%m/%Y - %H:%M')
-          expect(response_body[:end_time]).to eq private_table_for_user.end_time.strftime('%d/%m/%Y - %H:%M')
-          expect(response_body[:description]).to eq private_table_for_user.description
-          expect(response_body[:private]).to eq private_table_for_user.private?
-          expect(response_body[:coins_for_winners]).to have(private_table_for_user.coins_for_winners.size).items
-          expect(response_body[:winners]).to be_empty
-          expect(response_body[:matches]).to have(private_table_for_user.matches.size).items
-          expect(response_body[:table_rules]).not_to be_nil
+            expect(response.status).to eq 200
+            expect(response_body[:id]).to eq private_table_for_user.id
+            expect(response_body[:title]).to eq private_table_for_user.title
+            expect(response_body[:has_password]).to be_falsey
+            expect(response_body[:number_of_players]).to eq private_table_for_user.number_of_players
+            expect(response_body[:entry_coins_cost]).to eq private_table_for_user.entry_coins_cost
+            expect(response_body[:tournament_id]).to eq private_table_for_user.tournament_id
+            expect(response_body[:start_time]).to eq private_table_for_user.start_time.strftime('%d/%m/%Y - %H:%M')
+            expect(response_body[:end_time]).to eq private_table_for_user.end_time.strftime('%d/%m/%Y - %H:%M')
+            expect(response_body[:description]).to eq private_table_for_user.description
+            expect(response_body[:private]).to eq private_table_for_user.private?
+            expect(response_body[:coins_for_winners]).to have(private_table_for_user.coins_for_winners.size).items
+            expect(response_body[:winners]).to be_empty
+            expect(response_body[:matches]).to have(private_table_for_user.matches.size).items
+            expect(response_body[:table_rules]).not_to be_nil
+          end
+        end
+
+        context 'when the user requests a public table' do
+          it 'returns json of the table' do
+            get :show, id: public_table.id
+
+            expect(response.status).to eq 200
+            expect(response_body[:id]).to eq public_table.id
+            expect(response_body[:title]).to eq public_table.title
+            expect(response_body[:has_password]).to be_falsey
+            expect(response_body[:number_of_players]).to eq public_table.number_of_players
+            expect(response_body[:entry_coins_cost]).to eq public_table.entry_coins_cost
+            expect(response_body[:tournament_id]).to eq public_table.tournament_id
+            expect(response_body[:start_time]).to eq public_table.start_time.strftime('%d/%m/%Y - %H:%M')
+            expect(response_body[:end_time]).to eq public_table.end_time.strftime('%d/%m/%Y - %H:%M')
+            expect(response_body[:description]).to eq public_table.description
+            expect(response_body[:private]).to eq public_table.private?
+            expect(response_body[:coins_for_winners]).to have(public_table.coins_for_winners.size).items
+            expect(response_body[:winners]).to be_empty
+            expect(response_body[:matches]).to have(public_table.matches.size).items
+            expect(response_body[:table_rules]).not_to be_nil
+          end
         end
       end
 

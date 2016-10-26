@@ -48,7 +48,7 @@ class Table < ActiveRecord::Base
   end
 
   def can_play?(user)
-    private? && group.has_user?(user)
+    public? || (private? && group.has_user?(user))
   end
 
   def did_not_play?(user)
