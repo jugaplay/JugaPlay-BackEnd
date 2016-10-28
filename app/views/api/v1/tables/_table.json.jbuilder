@@ -8,6 +8,7 @@ json.start_time table.start_time.strftime('%d/%m/%Y - %H:%M')
 json.end_time table.end_time.strftime('%d/%m/%Y - %H:%M')
 json.description table.description
 json.private table.private?
+json.amount_of_users_playing table.amount_of_users_playing
 
 json.coins_for_winners(table.coins_with_positions) do |coins_with_position|
   json.position coins_with_position.first

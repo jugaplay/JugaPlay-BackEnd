@@ -11,4 +11,5 @@ json.array! @tables do |table|
   json.has_been_played_by_user !table.did_not_play?(current_user)
   json.tournament_id  table.tournament_id
   json.private table.private?
+  json.amount_of_users_playing table.amount_of_users_playing
 end

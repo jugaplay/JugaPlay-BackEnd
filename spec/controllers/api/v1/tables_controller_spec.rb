@@ -29,7 +29,8 @@ describe Api::V1::TablesController do
             description: table.description,
             has_been_played_by_user: !table.did_not_play?(user),
             tournament_id: table.tournament_id,
-            private: table.private?
+            private: table.private?,
+            amount_of_users_playing: table.amount_of_users_playing,
           }
           expect(response_body).to include table_data
         end
@@ -70,6 +71,7 @@ describe Api::V1::TablesController do
             expect(response_body[:end_time]).to eq private_table_for_user.end_time.strftime('%d/%m/%Y - %H:%M')
             expect(response_body[:description]).to eq private_table_for_user.description
             expect(response_body[:private]).to eq private_table_for_user.private?
+            expect(response_body[:amount_of_users_playing]).to eq private_table_for_user.amount_of_users_playing
             expect(response_body[:coins_for_winners]).to have(private_table_for_user.coins_for_winners.size).items
             expect(response_body[:winners]).to be_empty
             expect(response_body[:matches]).to have(private_table_for_user.matches.size).items
@@ -92,6 +94,7 @@ describe Api::V1::TablesController do
             expect(response_body[:end_time]).to eq public_table.end_time.strftime('%d/%m/%Y - %H:%M')
             expect(response_body[:description]).to eq public_table.description
             expect(response_body[:private]).to eq public_table.private?
+            expect(response_body[:amount_of_users_playing]).to eq public_table.amount_of_users_playing
             expect(response_body[:coins_for_winners]).to have(public_table.coins_for_winners.size).items
             expect(response_body[:winners]).to be_empty
             expect(response_body[:matches]).to have(public_table.matches.size).items
@@ -112,7 +115,7 @@ describe Api::V1::TablesController do
 
     context 'when the user is not logged in' do
       it 'responds an error json' do
-        get :index
+        get :show, id: public_table.id
 
         expect(response.status).to eq 401
         expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
