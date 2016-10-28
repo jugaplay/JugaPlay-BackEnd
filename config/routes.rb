@@ -28,7 +28,12 @@
       	resources :notifications, only: [:index, :update]
       end
 
-      resources :groups, only: [:show, :create, :update]
+      resources :groups, only: [:show, :create, :update] do
+        member do
+          put 'add_member/:user_id' => 'groups#add_member'
+          post 'exit' => 'groups#exit'
+        end
+      end
 
 	    resources :explanations, only: [:index, :show, :create]
       resources :invitations, only: [:create]
