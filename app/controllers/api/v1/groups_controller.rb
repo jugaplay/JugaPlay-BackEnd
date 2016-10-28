@@ -2,6 +2,10 @@ class Api::V1::GroupsController < Api::BaseController
   GROUP_NOT_FOUND = 'Given group was not found'
   USER_DOES_NOT_BELONG_TO_GIVEN_GROUP = 'You can not access to that group information'
 
+  def index
+    @groups = current_user.groups
+  end
+
   def show
     return render_user_does_not_belong_to_group unless group.has_user? current_user
   rescue ActiveRecord::RecordNotFound

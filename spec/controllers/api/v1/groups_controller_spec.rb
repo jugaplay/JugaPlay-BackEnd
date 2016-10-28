@@ -52,6 +52,45 @@ describe Api::V1::GroupsController do
     end
   end
 
+  describe 'GET #index' do
+    context 'when the user is logged in' do
+      before(:each) { sign_in user }
+
+      context 'when the user belongs to some groups' do
+        let!(:group) { FactoryGirl.create(:group, users: [user]) }
+        let!(:another_group) { FactoryGirl.create(:group, users: [user]) }
+        let!(:foreign_group) { FactoryGirl.create(:group) }
+
+        it 'responds a json with the information of the groups of the user' do
+          get :index
+
+          expect(response_body[:groups]).to have(2).items
+          expect(response.status).to eq 200
+          expect(response).to render_template :index
+        end
+      end
+
+      context 'when the user does not belong to any group' do
+        it 'responds a json with the information of the groups of the user' do
+          get :index
+
+          expect(response_body[:groups]).to be_empty
+          expect(response.status).to eq 200
+          expect(response).to render_template :index
+        end
+      end
+    end
+
+    context 'when the user is not logged in' do
+      it 'responds an error json' do
+        get :index
+
+        expect(response.status).to eq 401
+        expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
+      end
+    end
+  end
+
   describe 'POST #create' do
     let(:group_params) { { group: { name: 'Carlos' } } }
 

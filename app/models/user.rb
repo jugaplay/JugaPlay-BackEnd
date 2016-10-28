@@ -13,6 +13,7 @@ class User < ActiveRecord::Base
   has_many :user_prizes
   has_many :requests
   has_many :notifications
+  has_and_belongs_to_many :groups, -> { uniq }
   has_and_belongs_to_many :explanations, before_add: :validates_explanation_already_exist
 
   belongs_to :invited_by, class_name: self.to_s, foreign_key: :invited_by_id
