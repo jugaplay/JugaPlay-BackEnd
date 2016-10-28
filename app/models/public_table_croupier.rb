@@ -5,9 +5,8 @@ class PublicTableCroupier < Croupier
     bet ? table.entry_coins_cost : 0
   end
 
-  def dispense_coins
+  def update_ranking
     ranking_points_updater.call
-    coins_dispenser.call
   end
 
   def create_play(players, user, bet_coins)
@@ -19,10 +18,6 @@ class PublicTableCroupier < Croupier
 
   def validate_user_can_play(user)
     validate_user_did_not_play_yet user
-  end
-
-  def coins_dispenser
-    @coins_dispenser ||= CoinsDispenser.new(table: table, users: winner_users)
   end
 
   def ranking_points_updater

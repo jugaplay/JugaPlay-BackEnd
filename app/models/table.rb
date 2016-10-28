@@ -47,6 +47,10 @@ class Table < ActiveRecord::Base
     group.nil?
   end
 
+  def amount_of_users_playing
+    plays.count
+  end
+
   def can_play?(user)
     public? || (private? && group.has_user?(user))
   end

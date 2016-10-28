@@ -197,6 +197,17 @@ describe Table do
     end
   end
 
+  describe '#amount_of_users_playing' do
+    let!(:table) { FactoryGirl.create(:table) }
+
+    it 'returns the amount of plays that are taking place in that table' do
+      FactoryGirl.create(:play, table: table)
+      FactoryGirl.create(:play, table: FactoryGirl.create(:table))
+
+      expect(table.amount_of_users_playing).to eq 1
+    end
+  end
+
   describe '.privates_for' do
     let(:user) { FactoryGirl.create(:user) }
     let(:another_user) { FactoryGirl.create(:user) }

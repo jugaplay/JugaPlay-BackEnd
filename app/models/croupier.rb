@@ -21,7 +21,10 @@ class Croupier
   def assign_scores(players_stats:)
     validate_players_stats(players_stats)
     calculate_play_points(players_stats)
-    dispense_coins unless winner_users.empty?
+    unless winner_users.empty?
+      coins_dispenser.call
+      update_ranking
+    end
     table.close!
   end
 
@@ -32,7 +35,7 @@ class Croupier
     fail 'subclass responsibility'
   end
 
-  def dispense_coins
+  def update_ranking
     fail 'subclass responsibility'
   end
 
@@ -59,6 +62,10 @@ class Croupier
 
   def winner_users
     @winner_users ||= winners_calculator.call
+  end
+
+  def coins_dispenser
+    @coins_dispenser ||= CoinsDispenser.for(table: table, users: winner_users)
   end
 
   def validate_user_did_not_play_yet(user)

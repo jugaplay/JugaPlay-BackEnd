@@ -5,12 +5,8 @@ class PrivateTableCroupier < Croupier
     table.entry_coins_cost
   end
 
-  def dispense_coins
-    #TODO: move this to coins dispenser
-    winner = winner_users.first
-    coins = table.entry_coins_cost * table.group.size
-    winner.win_coins! coins
-    UserPrize.create!(coins: coins, user: winner, table: table)
+  def update_ranking
+    # private tables do not add points for the tournament ranking
   end
 
   def create_play(players, user, bet_coins)
