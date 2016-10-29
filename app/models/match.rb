@@ -23,6 +23,10 @@ class Match < ActiveRecord::Base
     "#{title} #{datetime.strftime('%d/%m/%Y - %H:%M')}"
   end
 
+  def players
+    local_team.players + visitor_team.players
+  end
+
   private
 
   def teams_are_different

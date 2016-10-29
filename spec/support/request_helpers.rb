@@ -1,11 +1,11 @@
-module Request
-  module JsonHelpers
+module RequestHelpers
+  module Json
     def response_body
       JSON.parse(response.body, symbolize_names: true)
     end
   end
 
-  module FacebookHelpers
+  module Facebook
     FacebookUser = Struct.new(:id)
 
     def mock_facebook_token_refresh

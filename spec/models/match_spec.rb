@@ -41,6 +41,20 @@ describe Match do
     end
   end
 
+  describe '#players' do
+    let(:match) { FactoryGirl.create(:match) }
+
+    it 'returns a list including both team players' do
+      local_team_players = match.local_team.players
+      visitor_team_players = match.visitor_team.players
+
+      players = match.players
+
+      expect(players).to have(local_team_players.size + visitor_team_players.size).items
+      (local_team_players + visitor_team_players).each { |player| expect(players).to include player }
+    end
+  end
+
   describe '#is_played_by?' do
     let(:match) { FactoryGirl.create(:match) }
 

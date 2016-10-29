@@ -208,6 +208,46 @@ describe Table do
     end
   end
 
+  describe '#players' do
+    let(:tournament) { FactoryGirl.create(:tournament) }
+    let(:table) { FactoryGirl.create(:table, matches: matches, tournament: tournament) }
+
+    context 'when the table has no matches' do
+      let(:matches) { [] }
+      before { table.update_attributes!(matches: matches) }
+
+      it 'returns an empty list' do
+        expect(table.reload.players).to be_empty
+      end
+    end
+
+    context 'when the table one match' do
+      let(:match) { FactoryGirl.create(:match, tournament: tournament) }
+      let(:matches) { [match] }
+
+      it 'returns the players of the match' do
+        expect(table.players).to match_array match.players
+      end
+    end
+
+    context 'when the table two matches with the same team' do
+      let(:match) { FactoryGirl.create(:match, tournament: tournament) }
+      let(:another_match) { FactoryGirl.create(:match, tournament: tournament, local_team: match.local_team) }
+      let(:matches) { [match, another_match] }
+
+      it 'returns the players of the match without duplications' do
+        local_team_players = match.local_team.players
+        visitor_team_players = match.visitor_team.players
+        another_visitor_team_players = another_match.visitor_team.players
+
+        players = table.players
+
+        expect(players).to have(local_team_players.size + visitor_team_players.size + another_visitor_team_players.size).items
+        expect(players).to match_array (local_team_players + visitor_team_players + another_visitor_team_players)
+      end
+    end
+  end
+
   describe '.privates_for' do
     let(:user) { FactoryGirl.create(:user) }
     let(:another_user) { FactoryGirl.create(:user) }

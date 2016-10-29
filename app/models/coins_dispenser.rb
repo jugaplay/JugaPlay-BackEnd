@@ -13,7 +13,7 @@ class CoinsDispenser
     fail 'subclass responsibility'
   end
 
-  private
+  protected
   attr_reader :users, :table
 
   def self.validate_arguments(table, users)

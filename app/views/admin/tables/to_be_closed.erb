@@ -1,25 +1,5 @@
 <h4 class="page-title">Cerrar Mesas</h4>
 
-<h5>Estadísticas de jugador</h5>
-<%= form_for :player_stats, html: { id: 'close-table-form' } do |f| %>
-  <div class="file-field input-field">
-    <div class="btn">
-      <span>File (csv)</span>
-      <%= f.file_field :file, required: true %>
-    </div>
-    <div class="file-path-wrapper">
-      <input class="file-path validate" type="text">
-    </div>
-  </div>
-<% end %>
-
-<br>
-<i><h6>Ejemplo:</h6></i>
-<i>player_id,match_id,assists,defender_scored_goals,faults</i><br>
-<i>1,1,1,2,3</i><br>
-<i>2,1,0,0,2</i><br>
-<br>
-
 <div class="table-container">
   <table class="stripped tb900">
     <thead>

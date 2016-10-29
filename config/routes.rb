@@ -1,6 +1,4 @@
  Rails.application.routes.draw do
- 
-
   devise_for :users,
              path: 'api/v1/users',
              controllers: {
@@ -103,6 +101,13 @@
     resources :teams, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
       member do
         post 'import_players' => 'teams#import_players', as: :import_players
+      end
+    end
+
+    resources :player_stats, only: [] do
+      collection do
+        post 'import' => 'player_stats#import', as: :import
+        get 'import_form' => 'player_stats#import_form', as: :import_form
       end
     end
 

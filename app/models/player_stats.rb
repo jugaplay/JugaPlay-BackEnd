@@ -15,6 +15,10 @@ class PlayerStats < ActiveRecord::Base
   validates_presence_of FEATURES
   validates_numericality_of FEATURES, greater_than_or_equal_to: 0
 
+  def self.for_table(table)
+    where(match: table.matches).uniq
+  end
+
   def self.for_player_in_match(player, match)
     find_by(player_id: player.id, match_id: match.id)
   end

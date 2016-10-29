@@ -31,6 +31,10 @@ class Croupier
   protected
   attr_reader :table, :points_calculator, :winners_calculator, :play_ids_to_update, :play_data_to_update
 
+  def bet_coins(bet)
+    fail 'subclass responsibility'
+  end
+
   def create_play(players, user, bet_coins)
     fail 'subclass responsibility'
   end
@@ -53,7 +57,7 @@ class Croupier
     applicable_stats = players_stats.select { |player_stats| play.involves_player? (player_stats.player) }
     fail MissingPlayerStats if applicable_stats.empty?
     play_ids_to_update << play.id
-    play_data_to_update << { points: points_calculator.call(table.table_rules, applicable_stats)}
+    play_data_to_update << { points: points_calculator.call(table.table_rules, applicable_stats) }
   end
 
   def plays
@@ -89,7 +93,7 @@ class Croupier
   end
 
   def validate_players_stats(players_stats)
-    fail MissingPlayerStats if players_stats.nil? || players_stats.empty?
+    fail MissingPlayerStats unless table.can_be_closed_with_stats?(players_stats)
     fail PlayerDoesNotBelongToTable unless table.include_all_players?(players_stats.map(&:player))
   end
 end
