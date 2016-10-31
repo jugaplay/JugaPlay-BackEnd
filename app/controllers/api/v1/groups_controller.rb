@@ -13,13 +13,13 @@ class Api::V1::GroupsController < Api::BaseController
   end
 
   def create
-    @group = Group.new(group_params.merge(users: [current_user]))
+    @group = Group.new create_group_params
     return render :show if group.save
     render_json_errors group.errors
   end
 
   def update
-    update_handling_errors { group.update group_params }
+    update_handling_errors { group.update update_group_params }
   end
 
   def exit
@@ -50,8 +50,14 @@ class Api::V1::GroupsController < Api::BaseController
     render_json_error USER_DOES_NOT_BELONG_TO_GIVEN_GROUP
   end
 
-  def group_params
+  def update_group_params
     params.require(:group).permit(:name)
+  end
+
+  def create_group_params
+    group_params = params.require(:group).permit(:name, user_ids: [])
+    group_params[:user_ids] = [current_user.id] + (group_params[:user_ids] || [])
+    group_params
   end
 
   def group

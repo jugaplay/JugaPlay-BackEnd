@@ -98,16 +98,36 @@ describe Api::V1::GroupsController do
       before { sign_in user }
 
       context 'when request succeeds' do
-        it 'creates a new group with the given data and renders a json of it' do
-          expect { post :create, group_params }.to change { Group.count }.by(1)
+        context 'when no user ids are given' do
+          it 'creates a new group including just the logged user and renders a json of it' do
+            expect { post :create, group_params }.to change { Group.count }.by(1)
 
-          new_group = Group.last
-          expect(new_group.name).to eq group_params[:group][:name]
-          expect(new_group.users).to have(1).items
-          expect(new_group.users).to include user
+            new_group = Group.last
+            expect(new_group.name).to eq group_params[:group][:name]
+            expect(new_group.users).to have(1).items
+            expect(new_group.users).to include user
 
-          expect(response.status).to eq 200
-          expect(response).to render_template :show
+            expect(response.status).to eq 200
+            expect(response).to render_template :show
+          end
+        end
+
+        context 'when no user ids are given' do
+          it 'creates a new group including the given users and the logged one, and renders a json of it' do
+            another_user = FactoryGirl.create(:user)
+            params = group_params
+            params[:group][:user_ids] = [another_user.id]
+
+            expect { post :create, params }.to change { Group.count }.by(1)
+
+            new_group = Group.last
+            expect(new_group.name).to eq group_params[:group][:name]
+            expect(new_group.users).to have(2).items
+            expect(new_group.users).to match_array [user, another_user]
+
+            expect(response.status).to eq 200
+            expect(response).to render_template :show
+          end
         end
       end
 
