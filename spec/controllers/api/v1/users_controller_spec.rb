@@ -64,6 +64,7 @@ describe Api::V1::UsersController do
                 email: 'carlos_perez@jugaplay.com',
                 password: 12345678,
                 uid: '2478723649',
+                facebook_token: '2asdf4asdf7a8sdf72asadf36asdf4d9',
                 image: 'url'
               }
             }
@@ -164,6 +165,8 @@ describe Api::V1::UsersController do
       end
 
       context 'when request succeeds' do
+        before { NotificationType.create!(name: 'friend-invitation') }
+
         it 'creates a user, add some coins to the user that has invited him, and renders a json of it' do
           existing_user_initial_coins = existing_user.coins
 

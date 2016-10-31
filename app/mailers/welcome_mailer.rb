@@ -9,7 +9,7 @@ class WelcomeMailer < ActionMailer::Base
     end
 
     if user.invited_by.present?
-      @notification_type = NotificationType.where(name: 'friend-invitation').first()
+      @notification_type = NotificationType.where(name: 'friend-invitation').first
 
       @title ='<b>'+ user.nickname + '</b> aceptó tu invitación'
       @text =  Wallet::COINS_PER_INVITATION.to_s
