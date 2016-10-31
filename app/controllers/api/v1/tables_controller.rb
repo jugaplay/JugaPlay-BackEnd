@@ -43,8 +43,8 @@ class Api::V1::TablesController < Api::BaseController
     private_table_params[:table_rules] = TableRules.new
     private_table_params[:coins_for_winners] = []
     private_table_params[:points_for_winners] = []
-    private_table_params[:start_time] = Time.now
-    private_table_params[:end_time] = match.datetime
+    private_table_params[:start_time] = match.datetime
+    private_table_params[:end_time] = match.datetime + 2.hours
     private_table_params
   end
 

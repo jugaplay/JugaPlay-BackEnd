@@ -159,8 +159,8 @@ describe Api::V1::TablesController do
           expect(table.points_for_winners).to be_empty
           expect(table.coins_for_winners).to be_empty
           expect(table.matches).to match_array [match]
-          expect(table.start_time).not_to be_nil
-          expect(table.end_time).not_to be_nil
+          expect(table.start_time).to eq match.datetime
+          expect(table.end_time).to eq (match.datetime + 2.hours)
         end
       end
 
