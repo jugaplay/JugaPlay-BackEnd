@@ -49,7 +49,7 @@ class Admin::TablesController < Admin::BaseController
     RankingSorter.new(table.tournament).call
     ResultsMailer.for_table(table)
     redirect_with_success_message to_be_closed_admin_tables_path, CLOSE_SUCCESS_MESSAGE
-  rescue ArgumentError, ActiveRecord::RecordInvalid => error
+  rescue MissingPlayerStats, ArgumentError, ActiveRecord::RecordInvalid => error
     redirect_with_error_message to_be_closed_admin_tables_path, error
   end
 
