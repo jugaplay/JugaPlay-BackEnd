@@ -17,6 +17,10 @@ class Admin::BaseController < ApplicationController
     redirect_to path, flash: { error: "#{error.message}\n#{message}" }
   end
 
+  def redirect_with_error_messages path, error_messages
+    redirect_to path, flash: { error: error_messages.join("\n") }
+  end
+
   def render_with_error_message template, error
     flash.now[:error] = error.message
     render template

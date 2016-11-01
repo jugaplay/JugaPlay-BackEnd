@@ -8,6 +8,8 @@ json.array! @tables do |table|
   json.start_time table.start_time.strftime('%d/%m/%Y - %H:%M')
   json.end_time table.end_time.strftime('%d/%m/%Y - %H:%M')
   json.description table.description
-  json.has_been_played_by_user !table.can_play_user?(current_user)
+  json.has_been_played_by_user !table.did_not_play?(current_user)
   json.tournament_id  table.tournament_id
+  json.private table.private?
+  json.amount_of_users_playing table.amount_of_users_playing
 end

@@ -72,8 +72,8 @@ describe Api::V1::CroupierController do
           it 'does not create a play and renders an error' do
             expect { post :play, table_id: table.id + 5, player_ids: players.map(&:id) }.not_to change { Play.count }
 
-            expect(response.status).to eq 200
-            expect(response_body[:errors]).to eq "Couldn't find Table with 'id'=#{table.id + 5}"
+            expect(response.status).to eq 422
+            expect(response_body[:errors]).to include Api::V1::CroupierController::TABLE_NOT_FOUND
           end
         end
 
@@ -116,7 +116,7 @@ describe Api::V1::CroupierController do
         expect { post :play, table_id: table.id, player_ids: players.map(&:id) }.not_to change { Play.count }
 
         expect(response.status).to eq 401
-        expect(response_body[:error]).to eq 'You need to sign in or sign up before continuing.'
+        expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
       end
     end
   end

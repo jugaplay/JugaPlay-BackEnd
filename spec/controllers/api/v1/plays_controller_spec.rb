@@ -17,34 +17,56 @@ describe Api::V1::PlaysController do
       end
       
       context 'when the user has made some plays' do
-        let!(:play) { FactoryGirl.create(:play, user: user) }
-        let!(:another_play) { FactoryGirl.create(:play, user: user) }
-        
-        it 'returns json of them' do
-          get :index
-    
-          expect(response.status).to eq 200
-          expect(response_body).to have(2).items
+        let(:table) { FactoryGirl.create(:table, :with_table_rules) }
+        let!(:play) { FactoryGirl.create(:play, user: user, table: table) }
+        let(:another_table) { FactoryGirl.create(:table, :with_table_rules) }
+        let!(:another_play) { FactoryGirl.create(:play, user: user, table: another_table) }
 
-          user.plays.each do |play|
-            play_data = {
-              id: play.id,
-              bet_coins: 0,
-              points: 'N/A',
-              players: play.players.map { |player| {
-                id: player.id,
-                first_name: player.first_name,
-                last_name: player.last_name,
-                team: player.team.name,
-              }},
-              table: {
-                id: play.table.id,
-                title: play.table.title,
-                position: 'N/A',
-                payed_points: 'N/A'
+        context 'when the table is still open' do
+          it 'returns json of an empty list' do
+            get :index
+
+            expect(response.status).to eq 200
+            expect(response_body).to be_empty
+          end
+        end
+
+        context 'when the table is still open' do
+          before do
+            table.close!
+            another_table.close!
+          end
+
+          it 'returns json of them' do
+            get :index
+
+            expect(response.status).to eq 200
+            expect(response_body).to have(2).items
+
+            user.plays.each do |play|
+              play_data = {
+                id: play.id,
+                start_time: play.table.start_time,
+                points: 'N/A',
+                bet_coins: 0,
+                earn_coins: 0,
+                players: play.players.map { |player| {
+                  id: player.id,
+                  first_name: player.first_name,
+                  last_name: player.last_name,
+                  team: player.team.name,
+                  team_id: player.team.id,
+                  points: PlayPointsCalculator.new.call_for_player(play, player)
+                }},
+                table: {
+                  id: play.table.id,
+                  title: play.table.title,
+                  position: 'N/A',
+                  payed_points: 'N/A'
+                }
               }
-            }
-            expect(response_body).to include play_data
+              expect(response_body).to include play_data
+            end
           end
         end
       end
@@ -55,7 +77,7 @@ describe Api::V1::PlaysController do
         get :index
 
         expect(response.status).to eq 401
-        expect(response_body[:error]).to eq 'You need to sign in or sign up before continuing.'
+        expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
       end
     end
   end

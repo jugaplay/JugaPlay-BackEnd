@@ -1,26 +1,22 @@
 class CoinsDispenser
-  def initialize(table:, users:)
+  def self.for(table:, users:)
     validate_arguments(table, users)
+    return PrivateTableCoinsDispenser.new(table, users) if table.private?
+    PublicTableCoinsDispenser.new(table, users)
+  end
+
+  def initialize(table, users)
     @users, @table = users, table
   end
     
   def call
-    coins_for_winners = table.coins_for_winners
-    User.transaction do
- 	    users.each_with_index.each do |user, i|
-        coins = coins_for_winners[i]
-        if coins
-          user.win_coins! coins
-          UserPrize.create!(coins: coins, user: user, table: table)
-        end
-      end
-    end
+    fail 'subclass responsibility'
   end
 
-  private
+  protected
   attr_reader :users, :table
 
-  def validate_arguments(table, users)
+  def self.validate_arguments(table, users)
     fail ArgumentError, 'Missing table' unless table.present?
     fail ArgumentError, 'Missing users' unless users.present?
   end

@@ -1,0 +1,26 @@
+<h4 class="page-title">Estadísticas de Jugadores</h4>
+
+<h5>Estadísticas de jugador</h5>
+<%= form_for :player_stats, url: import_admin_player_stats_path, html: { id: 'player-stats-import-form' } do |f| %>
+  <div class="row">
+    <div class="file-field input-field col s10">
+      <div class="btn">
+        <span>File (csv)</span>
+        <%= f.file_field :file, required: true %>
+      </div>
+      <div class="file-path-wrapper">
+        <input class="file-path validate" type="text">
+      </div>
+    </div>
+    <div class="input-field col s2">
+      <%= submit_button_for 'Guardar' %>
+    </div>
+  </div>
+<% end %>
+
+<br>
+<i><h6>Ejemplo:</h6></i>
+<i>player_id,match_id,assists,defender_scored_goals,faults</i><br>
+<i>1,1,1,2,3</i><br>
+<i>2,1,0,0,2</i><br>
+<br>

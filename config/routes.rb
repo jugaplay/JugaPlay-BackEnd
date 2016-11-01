@@ -1,6 +1,4 @@
  Rails.application.routes.draw do
- 
-
   devise_for :users,
              path: 'api/v1/users',
              controllers: {
@@ -26,7 +24,14 @@
       	resources :requests, only: [:index, :create]
       	resources :channels, only: [:index, :update]
       	resources :notifications, only: [:index, :update]
-      end      
+      end
+
+      resources :groups, only: [:index, :show, :create, :update] do
+        member do
+          put 'add_member/:user_id' => 'groups#add_member'
+          post 'exit' => 'groups#exit'
+        end
+      end
 
 	    resources :explanations, only: [:index, :show, :create]
       resources :invitations, only: [:create]
@@ -39,7 +44,7 @@
         resources :rankings, only: [:index]
       end
 
-      resources :tables, only: [:index, :show] do
+      resources :tables, only: [:index, :show, :create] do
         resources :matches, only: [:index]
       end
 
@@ -56,6 +61,13 @@
       resources :comments, only: [:create]
 
       resources :user_prizes, only: [:index, :create]
+
+      resources :address_books, only: [] do
+        collection do
+          post 'synch' => 'address_books#synch', as: :synch
+          get '/' => 'address_books#show', as: :show
+        end
+      end
 
       resources :guests, only: [:index, :show]
       resources :transactions, only: [:index, :show, :create]
@@ -89,6 +101,13 @@
     resources :teams, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
       member do
         post 'import_players' => 'teams#import_players', as: :import_players
+      end
+    end
+
+    resources :player_stats, only: [] do
+      collection do
+        post 'import' => 'player_stats#import', as: :import
+        get 'import_form' => 'player_stats#import_form', as: :import_form
       end
     end
 

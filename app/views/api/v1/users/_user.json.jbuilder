@@ -8,3 +8,4 @@ json.image user.image
 json.coins user.coins
 json.telephone user.telephone
 json.push_token user.push_token
+json.has_facebook_login user.has_facebook_token?

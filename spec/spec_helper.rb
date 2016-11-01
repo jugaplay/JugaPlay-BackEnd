@@ -31,7 +31,9 @@ end
 RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
   config.include Devise::TestHelpers, type: :controller
-  config.include Request::JsonHelpers, type: :controller
+  config.include RequestHelpers::Json, type: :controller
+  config.include RequestHelpers::Facebook, type: :controller
+  config.include PlayerStatsHelpers
 
   # render json views
   config.render_views

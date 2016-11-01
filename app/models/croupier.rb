@@ -1,35 +1,50 @@
 class Croupier
+  def self.for(table)
+    return PrivateTableCroupier.new(table) if table.private?
+    PublicTableCroupier.new(table)
+  end
+
   def initialize(table)
     @table = table
     @points_calculator = PlayPointsCalculator.new
-    @winners_calculator = TableWinnersCalculator.new(table)
+    @winners_calculator = TableWinnersCalculator.for(table)
   end
 
   def play(user:, players:, bet: false)
-    bet_coins = bet ? table.entry_coins_cost : 0
-    validate_user(user)
-    validate_is_opened
+    validate_table_is_opened
+    validate_bet_coins(user, bet_coins(bet))
+    validate_user_can_play(user)
     validate_all_players(players)
-    validate_bet_coins(user, bet_coins)
-    create_play(players, user, bet_coins)
+    create_play(players, user, bet_coins(bet))
   end
 
   def assign_scores(players_stats:)
     validate_players_stats(players_stats)
     calculate_play_points(players_stats)
-    ranking_points_updater.call
-    coins_dispenser.call
+    unless winner_users.empty?
+      coins_dispenser.call
+      update_ranking
+    end
     table.close!
   end
 
-  private
+  protected
   attr_reader :table, :points_calculator, :winners_calculator, :play_ids_to_update, :play_data_to_update
 
+  def bet_coins(bet)
+    fail 'subclass responsibility'
+  end
+
   def create_play(players, user, bet_coins)
-    user.pay_coins!(bet_coins)
-    @detail = 'Entrada a : ' + table.title
-    TEntryFee.create!(user: user, coins: bet_coins, detail: @detail, table: table ) if bet_coins > 0
-    Play.create!(user: user, table: table, players: players, bet_coins: bet_coins)
+    fail 'subclass responsibility'
+  end
+
+  def update_ranking
+    fail 'subclass responsibility'
+  end
+
+  def validate_user_can_play(user)
+    fail 'subclass responsibility'
   end
 
   def calculate_play_points(players_stats)
@@ -42,47 +57,43 @@ class Croupier
     applicable_stats = players_stats.select { |player_stats| play.involves_player? (player_stats.player) }
     fail MissingPlayerStats if applicable_stats.empty?
     play_ids_to_update << play.id
-    play_data_to_update << { points: points_calculator.call(table.table_rules, applicable_stats)}
-  end
-
-  def coins_dispenser
-    @coins_dispenser ||= CoinsDispenser.new(table: table, users: winner_users)
-  end
-
-  def ranking_points_updater
-    @ranking_points_updater ||= RankingPointsUpdater.new(tournament: table.tournament, points_for_winners: table.points_for_winners, users: winner_users)
-  end
-
-  def winner_users
-    @winner_users ||= winners_calculator.call
+    play_data_to_update << { points: points_calculator.call(table.table_rules, applicable_stats) }
   end
 
   def plays
     Play.where(table: table)
   end
 
-  def validate_user(user)
-    fail UserHasAlreadyPlayedInThisTable unless table.can_play_user?(user)
+  def winner_users
+    @winner_users ||= winners_calculator.call
   end
 
-  def validate_is_opened
-    # TODO: Manejar time zones acá, esto no escala - El servidor esta atrasado 3 horas desde argentina
-    # TODO falta agregar condicion de si ya finalizo el partido
-    fail TableIsClosed unless (table.opened && (table.start_time > (Time.now - 182.minutes)))
+  def coins_dispenser
+    @coins_dispenser ||= CoinsDispenser.for(table: table, users: winner_users)
   end
-  
-  def validate_all_players(players)
-    fail CanNotPlayWithNumberOfPlayers unless table.can_play_with_amount_of_players?(players)
-    fail PlayWithDuplicatedPlayer unless players.map(&:id).count == players.map(&:id).uniq.count
-    fail PlayerDoesNotBelongToTable unless table.include_all_players?(players)
+
+  def validate_user_did_not_play_yet(user)
+    fail UserHasAlreadyPlayedInThisTable unless table.did_not_play?(user)
   end
 
   def validate_bet_coins(user, bet_coins)
     fail UserDoesNotHaveEnoughCoins unless user.has_coins?(bet_coins)
   end
 
+  def validate_table_is_opened
+    # TODO: Manejar time zones acá, esto no escala - El servidor esta atrasado 3 horas desde argentina
+    # TODO falta agregar condicion de si ya finalizo el partido
+    fail TableIsClosed unless (table.opened && (table.start_time > (Time.now - 182.minutes)))
+  end
+
+  def validate_all_players(players)
+    fail CanNotPlayWithNumberOfPlayers unless table.can_play_with_amount_of_players?(players)
+    fail PlayWithDuplicatedPlayer unless players.map(&:id).count == players.map(&:id).uniq.count
+    fail PlayerDoesNotBelongToTable unless table.include_all_players?(players)
+  end
+
   def validate_players_stats(players_stats)
-    fail MissingPlayerStats if players_stats.nil? || players_stats.empty?
+    fail MissingPlayerStats unless table.can_be_closed_with_stats?(players_stats)
     fail PlayerDoesNotBelongToTable unless table.include_all_players?(players_stats.map(&:player))
   end
 end
