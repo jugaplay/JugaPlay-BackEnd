@@ -17,7 +17,7 @@ describe PlaysHistory do
       let(:table) { nil }
 
       it 'returns all the plays' do
-        plays = plays_history.of_table(table).all
+        plays = plays_history.in_table(table).all
 
         expect(plays).to have(4).items
         expect(plays).to include play_by_user_1_in_table_A
@@ -31,7 +31,7 @@ describe PlaysHistory do
       let(:table) { table_A }
 
       it 'returns all the plays that belongs to that table' do
-        plays = plays_history.of_table(table).all
+        plays = plays_history.in_table(table).all
 
         expect(plays).to have(2).items
         expect(plays).to include play_by_user_1_in_table_A
@@ -70,7 +70,7 @@ describe PlaysHistory do
 
       context 'when it is also filtered by table' do
         it 'returns all the plays made by that user in that table' do
-          plays = plays_history.of_table(table_A).made_by(user).all
+          plays = plays_history.in_table(table_A).made_by(user).all
 
           expect(plays).to have(1).items
           expect(plays).to include play_by_user_1_in_table_A
@@ -106,7 +106,7 @@ describe PlaysHistory do
 
       context 'when it is also filtered by table' do
         it 'returns the plays with highers scores of that user in that table' do
-          plays = plays_history.of_table(table_A).made_by(user).highest_scores.all
+          plays = plays_history.in_table(table_A).made_by(user).highest_scores.all
 
           expect(plays).to have(1).items
           expect(plays).to include play_by_user_1_in_table_A
@@ -116,7 +116,7 @@ describe PlaysHistory do
 
     context 'when a table is given' do
       it 'returns all the plays made by that user' do
-        plays = plays_history.of_table(table_A).highest_scores.all
+        plays = plays_history.in_table(table_A).highest_scores.all
 
         expect(plays).to have(2).items
         expect(plays).to include play_by_user_1_in_table_A

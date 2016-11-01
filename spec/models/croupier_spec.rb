@@ -171,7 +171,7 @@ describe Croupier do
 
                 it 'closes the table, assigns 0 points to that play and places the user in the first position' do
                   croupier.assign_scores(players_stats: players_stats)
-                  play = PlaysHistory.new.made_by(user).of_table(table).last
+                  play = PlaysHistory.new.made_by(user).in_table(table).last
 
                   expect(table).to be_closed
                   expect(play.points).to eq 0
@@ -215,7 +215,7 @@ describe Croupier do
 
                 it 'closes the table, assigns 6 points to that play and places the user in the first position' do
                   croupier.assign_scores(players_stats: players_stats)
-                  play = PlaysHistory.new.made_by(user).of_table(table).last
+                  play = PlaysHistory.new.made_by(user).in_table(table).last
 
                   expect(table).to be_closed
                   expect(play.points).to eq 6
@@ -259,7 +259,7 @@ describe Croupier do
 
                 it 'raises an error and does not assign points' do
                   expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
-                  play = PlaysHistory.new.made_by(user).of_table(table).last
+                  play = PlaysHistory.new.made_by(user).in_table(table).last
 
                   expect(play.points).to be_nil
                 end
@@ -321,8 +321,8 @@ describe Croupier do
                 it 'closes the table and updates the total points for each user' do
                   croupier.assign_scores(players_stats: players_stats)
 
-                  first_user_play = PlaysHistory.new.made_by(first_user).of_table(table).last
-                  second_user_play = PlaysHistory.new.made_by(second_user).of_table(table).last
+                  first_user_play = PlaysHistory.new.made_by(first_user).in_table(table).last
+                  second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
 
                   expect(table).to be_closed
                   expect(first_user_play.points).to eq 4
@@ -345,8 +345,8 @@ describe Croupier do
                 it 'closes the table and updates the total points for each user' do
                   croupier.assign_scores(players_stats: players_stats)
 
-                  first_user_play = PlaysHistory.new.made_by(first_user).of_table(table).last
-                  second_user_play = PlaysHistory.new.made_by(second_user).of_table(table).last
+                  first_user_play = PlaysHistory.new.made_by(first_user).in_table(table).last
+                  second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
 
                   expect(table).to be_closed
                   expect(first_user_play.points).to eq 1.3
@@ -395,8 +395,8 @@ describe Croupier do
 
           it 'closes both tables and updates the total points for each user' do
             first_table_croupier.assign_scores(players_stats: PlayerStats.for_table(first_table))
-            first_user_first_table_play = PlaysHistory.new.made_by(first_user).of_table(first_table).last
-            second_user_first_table_play = PlaysHistory.new.made_by(second_user).of_table(first_table).last
+            first_user_first_table_play = PlaysHistory.new.made_by(first_user).in_table(first_table).last
+            second_user_first_table_play = PlaysHistory.new.made_by(second_user).in_table(first_table).last
 
             expect(first_table).to be_closed
             expect(first_user_first_table_play.points).to eq 3
@@ -410,8 +410,8 @@ describe Croupier do
             expect(first_table.winners.second.position).to eq 2
 
             second_table_croupier.assign_scores(players_stats: PlayerStats.for_table(second_table))
-            first_user_second_table_play = PlaysHistory.new.made_by(first_user).of_table(second_table).last
-            second_user_second_table_play = PlaysHistory.new.made_by(second_user).of_table(second_table).last
+            first_user_second_table_play = PlaysHistory.new.made_by(first_user).in_table(second_table).last
+            second_user_second_table_play = PlaysHistory.new.made_by(second_user).in_table(second_table).last
 
             expect(second_table).to be_closed
             expect(first_user_second_table_play).to be_nil
@@ -429,7 +429,7 @@ describe Croupier do
     describe 'for private tables' do
       context 'when only one table is being calculated' do
         let(:tournament) { table.tournament }
-        let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, group: group, entry_coins_cost: 99) }
+        let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, group: group, entry_coins_cost: 99, points_for_winners: []) }
         let(:table_rules) { FactoryGirl.create(:table_rules, scored_goals: points_for_goal, right_passes: points_for_passes) }
         let(:group) { FactoryGirl.create(:group) }
 
@@ -457,7 +457,7 @@ describe Croupier do
 
                 it 'closes the table, assigns 0 points to that play and places the user in the first position' do
                   croupier.assign_scores(players_stats: players_stats)
-                  play = PlaysHistory.new.made_by(user).of_table(table).last
+                  play = PlaysHistory.new.made_by(user).in_table(table).last
 
                   expect(table).to be_closed
                   expect(play.points).to eq 0
@@ -501,7 +501,7 @@ describe Croupier do
 
                 it 'closes the table, assigns 6 points to that play and places the user in the first position' do
                   croupier.assign_scores(players_stats: players_stats)
-                  play = PlaysHistory.new.made_by(user).of_table(table).last
+                  play = PlaysHistory.new.made_by(user).in_table(table).last
 
                   expect(table).to be_closed
                   expect(play.points).to eq 6
@@ -545,7 +545,7 @@ describe Croupier do
 
                 it 'raises an error and does not assign points' do
                   expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
-                  play = PlaysHistory.new.made_by(user).of_table(table).last
+                  play = PlaysHistory.new.made_by(user).in_table(table).last
 
                   expect(play.points).to be_nil
                 end
@@ -610,8 +610,8 @@ describe Croupier do
                   it 'closes the table, gives the pot to the first user and updates the points of each play' do
                     croupier.assign_scores(players_stats: players_stats)
 
-                    first_user_play = PlaysHistory.new.made_by(first_user).of_table(table).last
-                    second_user_play = PlaysHistory.new.made_by(second_user).of_table(table).last
+                    first_user_play = PlaysHistory.new.made_by(first_user).in_table(table).last
+                    second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
 
                     expect(table).to be_closed
                     expect(first_user_play.points).to eq 4
@@ -634,8 +634,8 @@ describe Croupier do
                   it 'closes the table, gives the pot to the second user and updates the points of each play' do
                     croupier.assign_scores(players_stats: players_stats)
 
-                    first_user_play = PlaysHistory.new.made_by(first_user).of_table(table).last
-                    second_user_play = PlaysHistory.new.made_by(second_user).of_table(table).last
+                    first_user_play = PlaysHistory.new.made_by(first_user).in_table(table).last
+                    second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
 
                     expect(table).to be_closed
                     expect(first_user_play.points).to eq 1.3
@@ -686,8 +686,8 @@ describe Croupier do
         let(:shared_match) { FactoryGirl.create(:match, tournament: tournament) }
         let(:first_table_match) { FactoryGirl.create(:match, tournament: tournament) }
         let(:second_table_match) { FactoryGirl.create(:match, tournament: tournament) }
-        let(:first_table) { FactoryGirl.create(:table, group: group, matches: [first_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), entry_coins_cost: 10, tournament: tournament) }
-        let(:second_table) { FactoryGirl.create(:table, group: group, matches: [second_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), entry_coins_cost: 10, tournament: tournament) }
+        let(:first_table) { FactoryGirl.create(:table, group: group, matches: [first_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), entry_coins_cost: 10, points_for_winners: [], tournament: tournament) }
+        let(:second_table) { FactoryGirl.create(:table, group: group, matches: [second_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), entry_coins_cost: 10, points_for_winners: [], tournament: tournament) }
 
         context 'when one user bets for a player of the first table match, and other user bets for a player of the shared match in both tables' do
           let(:group) { FactoryGirl.create(:group, users: [first_user, second_user]) }
@@ -708,8 +708,8 @@ describe Croupier do
 
           it 'closes both tables and updates the total points for each user' do
             first_table_croupier.assign_scores(players_stats: PlayerStats.for_table(first_table))
-            first_user_first_table_play = PlaysHistory.new.made_by(first_user).of_table(first_table).last
-            second_user_first_table_play = PlaysHistory.new.made_by(second_user).of_table(first_table).last
+            first_user_first_table_play = PlaysHistory.new.made_by(first_user).in_table(first_table).last
+            second_user_first_table_play = PlaysHistory.new.made_by(second_user).in_table(first_table).last
 
             expect(first_table).to be_closed
             expect(first_user_first_table_play.points).to eq 3
@@ -723,8 +723,8 @@ describe Croupier do
             expect(first_table.winners.second.position).to eq 2
 
             second_table_croupier.assign_scores(players_stats: PlayerStats.for_table(second_table))
-            first_user_second_table_play = PlaysHistory.new.made_by(first_user).of_table(second_table).last
-            second_user_second_table_play = PlaysHistory.new.made_by(second_user).of_table(second_table).last
+            first_user_second_table_play = PlaysHistory.new.made_by(first_user).in_table(second_table).last
+            second_user_second_table_play = PlaysHistory.new.made_by(second_user).in_table(second_table).last
 
             expect(second_table).to be_closed
             expect(first_user_second_table_play).to be_nil

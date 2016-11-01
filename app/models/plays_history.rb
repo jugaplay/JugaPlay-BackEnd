@@ -3,7 +3,7 @@ class PlaysHistory
     @scope = scope
   end
 
-  def of_table(table)
+  def in_table(table)
     @scope = scope.where(table: table) if table.present?
     self
   end

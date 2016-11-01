@@ -5,7 +5,7 @@ class ResultsMailer < ActionMailer::Base
 
   def self.for_table(table)
     table.plays.each do |play|
-      send_results_message(table, play).deliver
+      send_results_message(table, play).deliver_now
     end
   end
 

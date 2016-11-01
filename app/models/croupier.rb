@@ -7,7 +7,7 @@ class Croupier
   def initialize(table)
     @table = table
     @points_calculator = PlayPointsCalculator.new
-    @winners_calculator = TableWinnersCalculator.new(table)
+    @winners_calculator = TableWinnersCalculator.for(table)
   end
 
   def play(user:, players:, bet: false)
