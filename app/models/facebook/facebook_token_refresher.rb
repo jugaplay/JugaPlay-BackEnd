@@ -5,7 +5,7 @@ class FacebookTokenRefresher
   end
 
   def call(&on_fail_block)
-    return unless user.has_facebook_login?
+    return unless user.has_facebook_token?
     fb_graph.fb_exchange_token = user.facebook_token
     token = fb_graph.access_token!(scope: 'email,user_friends', info_fields: 'email,first_name,last_name')
     user.update_attributes(facebook_token: token)

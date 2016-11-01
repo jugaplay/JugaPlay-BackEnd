@@ -14,6 +14,7 @@ class Api::BaseController < ApplicationController
 
   def authenticate_user!
     return render_unauthorized_user unless user_signed_in?
+    return render_unauthorized_user if current_user.needs_to_login_with_facebook?
     facebook_token_refresher.call do |user|
       sign_out user
       return redirect_to_home_page
@@ -64,7 +65,7 @@ class Api::BaseController < ApplicationController
   end
 
   def facebook_requester
-    FacebookRequester.new current_user
+    FacebookRequester.for current_user
   end
 
   def facebook_token_refresher

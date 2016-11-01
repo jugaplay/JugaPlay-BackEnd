@@ -14,7 +14,7 @@ module RequestHelpers
 
     def mock_facebook_friend_list_with(users)
       facebook_users = users.map { |user| FacebookUser.new(user.facebook_id) }
-      allow_any_instance_of(FacebookRequester).to receive(:friends_list).and_return(facebook_users)
+      allow_any_instance_of(RealFacebookRequester).to receive(:friends_list).and_return(facebook_users)
     end
   end
 end

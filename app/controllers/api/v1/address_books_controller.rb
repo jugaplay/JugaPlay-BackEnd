@@ -7,7 +7,7 @@ class Api::V1::AddressBooksController < Api::BaseController
 
   def synch
     synchronizer.call_with_emails emails
-    synchronizer.call_with_facebook_ids(facebook_ids) if current_user.has_facebook_login?
+    synchronizer.call_with_facebook_ids(facebook_ids)
     render :show
   rescue ActiveRecord::RecordNotFound => error
     render_json_error error.message

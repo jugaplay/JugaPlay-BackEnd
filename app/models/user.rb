@@ -23,7 +23,6 @@ class User < ActiveRecord::Base
   validates :nickname, uniqueness: true, presence: true
   validates :email, uniqueness: true, if: proc { email.present? }
   validates :facebook_id, uniqueness: { scope: :provider }, if: proc { facebook_id.present? && provider.present? }
-  validates :facebook_token, presence: true, uniqueness: true, if: proc { facebook_id.present? }
   validate :validate_not_invited_by_itself, on: :update
 
   scope :ordered, -> { order(created_at: :asc) }
@@ -71,7 +70,11 @@ class User < ActiveRecord::Base
   end
 
   # TODO: Move all this shit outta here
-  def has_facebook_login?
+  def needs_to_login_with_facebook?
+    facebook_id.present? && !has_facebook_token?
+  end
+
+  def has_facebook_token?
     facebook_token.present?
   end
 

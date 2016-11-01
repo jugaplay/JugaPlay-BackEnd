@@ -1,18 +1,18 @@
 class FacebookRequester
+  def self.for user
+    return RealFacebookRequester.new(user) if user.has_facebook_token?
+    NullFacebookRequester.new(user)
+  end
+
   def initialize user
-    raise_user_without_fb_login_error unless user.has_facebook_login?
     @user = user
     @fb_graph = FbGraph2::User.me(user.facebook_token)
   end
 
   def friends_list
-    fb_graph.friends
+    fail 'subclass responsibility'
   end
 
-  private
+  protected
   attr_reader :fb_graph, :user
-
-  def raise_user_without_fb_login_error
-    fail UserHasNotLoggedInWithFacebook
-  end
 end
