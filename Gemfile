@@ -14,6 +14,7 @@ gem 'date_validator'
 gem 'validates_serialized', '~> 0.0.1'
 gem 'activerecord-import'
 gem 'active_model_serializers'
+gem 'kaminari'
 
 gem 'sass-rails', '~> 5.0'
 gem 'compass-rails', '~> 2.0.4'
