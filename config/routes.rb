@@ -24,6 +24,10 @@
       	resources :requests, only: [:index, :create]
       	resources :channels, only: [:index, :update]
       	resources :notifications, only: [:index, :update]
+
+        collection do
+          post 'search' => 'users#search', as: :search
+        end
       end
 
       resources :groups, only: [:index, :show, :create, :update] do
