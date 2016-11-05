@@ -30,6 +30,12 @@ unless table.closed?
   end
 end
 
+if table.private?
+  json.group do
+    json.partial! partial: 'api/v1/groups/group', locals: { group: table.group }
+  end
+end
+
 json.winners(table.winners) do |winner|
   json.user_id winner.user_id
   json.user_email winner.user.email
