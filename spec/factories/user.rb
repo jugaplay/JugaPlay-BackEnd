@@ -17,7 +17,7 @@ FactoryGirl.define do
     end
 
     trait :with_coins do
-      ignore { coins 0 }
+      transient { coins 0 }
 
       after :create do |user, evaluator|
         user.wallet.update_attributes!(coins: evaluator.coins)

@@ -14,9 +14,7 @@ class Api::V1::UsersController < Api::BaseController
       @invitation.update(won_coins: Wallet::COINS_PER_INVITATION, guest_user_id: user.id, guest_ip: request.remote_ip, invitation_status: InvitationStatus.find_by_name('Registered')) if @invitation.present?
       TPromotion.create!(coins: Wallet::COINS_PER_INVITATION, user: user.invited_by, detail: 'Invitación a ' + user.nickname, promotion_type: 'friend-invitation')
     end
-
     TPromotion.create!(coins: Wallet::COINS_PER_REGISTRATION, user: @user, detail: 'Bienvenida a JugaPlay', promotion_type: 'registration')
-
     WelcomeMailer.send_welcome_message(@user).deliver_now
     render :show
   end
@@ -24,6 +22,17 @@ class Api::V1::UsersController < Api::BaseController
   def update
     return render :show if user.update(update_user_params)
     render_json_errors user.errors
+  end
+
+  def search
+    users = UsersSearchEngine.new
+    users.with_name_nickname_or_email_including(search_params[:q]) if search_params[:q].present?
+    users.playing_tournament(search_params[:playing_tournament]) if search_params[:playing_tournament].present?
+    users.sorted_by_ranking if search_params[:order_by_ranking].present?
+    users.sorted_by_name if search_params[:order_by_name].present?
+    @total_items = users.count
+    @users = users.page(params[:page])
+    render :index
   end
 
   private
@@ -48,6 +57,10 @@ class Api::V1::UsersController < Api::BaseController
     count = User.where("email LIKE '#{nickname}@%'").count
     nickname = "#{nickname}_#{count}" if count > 0
     params[:user][:nickname] = nickname
+  end
+
+  def search_params
+    params.require(:search).permit(:q, :playing_tournament, :order_by_ranking, :order_by_name)
   end
 
   def update_user_params

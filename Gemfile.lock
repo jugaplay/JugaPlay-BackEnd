@@ -133,6 +133,9 @@ GEM
       railties (>= 3.2.16)
     json (1.8.3)
     jwt (1.5.2)
+    kaminari (0.17.0)
+      actionpack (>= 3.0.0)
+      activesupport (>= 3.0.0)
     launchy (2.4.3)
       addressable (~> 2.3)
     letter_opener (1.4.1)
@@ -296,6 +299,7 @@ DEPENDENCIES
   jbuilder
   jquery-rails (~> 2.3.0)
   jquery-ui-rails
+  kaminari
   letter_opener
   materialize-sass
   omniauth-facebook

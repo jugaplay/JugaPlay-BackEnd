@@ -364,4 +364,135 @@ describe Api::V1::UsersController do
       end
     end
   end
+
+  describe 'POST #search' do
+    let!(:harvey_specter) { FactoryGirl.create(:user, first_name: 'Harvey', last_name: 'Specter', email: 'harvey_specter@gmail.com', nickname: 'harvey_specter') }
+    let!(:mike_ross) { FactoryGirl.create(:user, first_name: 'Mike', last_name: 'Ross', email: 'mike_ross@gmail.com', nickname: 'mike_ross') }
+    let!(:louis_litt) { FactoryGirl.create(:user, first_name: 'Louis', last_name: 'Litt', email: 'louis_litt@gmail.com', nickname: 'louis_litt') }
+    let!(:rachel_zane) { FactoryGirl.create(:user, first_name: 'Rachel', last_name: 'Zane', email: 'rachel_zane@gmail.com', nickname: 'rachel_zane') }
+
+    context 'when a user is logged in' do
+      before(:each) { sign_in harvey_specter }
+
+      context 'when no search params are given' do
+        let(:search_params) do
+          {
+            search: {
+              q: nil,
+              playing_tournament: nil,
+              order_by_ranking: nil,
+              order_by_name: nil
+            }
+          }
+        end
+
+        it 'returns all the users' do
+          post :search, search_params
+
+          expect(response.status).to eq 200
+          expect(response).to render_template :index
+          expect(response_body[:users]).to have(4).items
+
+          expect(response_body[:pagination][:items_per_page]).to eq 25
+          expect(response_body[:pagination][:total_items]).to eq 4
+          expect(response_body[:pagination][:current_page]).to eq 1
+          expect(response_body[:pagination][:total_pages]).to eq 1
+        end
+      end
+
+      context 'when a tournament is specified' do
+        let(:tournament) { FactoryGirl.create(:tournament) }
+        let(:another_tournament) { FactoryGirl.create(:tournament) }
+        let(:search_params) do
+          {
+            search: { playing_tournament: tournament, order_by_ranking: true }
+          }
+        end
+
+        context 'when no user is playing the given tournament' do
+          it 'returns an empty list' do
+            post :search, search_params
+
+            expect(response.status).to eq 200
+            expect(response).to render_template :index
+            expect(response_body[:users]).to be_empty
+          end
+        end
+
+        context 'when two user is playing the given tournament' do
+          before do
+            FactoryGirl.create(:ranking, tournament: tournament, user: mike_ross, position: 2, points: 5)
+            FactoryGirl.create(:ranking, tournament: tournament, user: harvey_specter, position: 1, points: 10)
+            FactoryGirl.create(:ranking, tournament: another_tournament, user: rachel_zane, position: 1, points: 10)
+          end
+
+          it 'returns both users' do
+            post :search, search_params
+
+            expect(response.status).to eq 200
+            expect(response).to render_template :index
+            expect(response_body[:users]).to have(2).item
+            expect(response_body[:users].first[:first_name]).to eq harvey_specter.first_name
+            expect(response_body[:users].second[:first_name]).to eq mike_ross.first_name
+
+            expect(response_body[:pagination][:items_per_page]).to eq 25
+            expect(response_body[:pagination][:total_items]).to eq 2
+            expect(response_body[:pagination][:current_page]).to eq 1
+            expect(response_body[:pagination][:total_pages]).to eq 1
+          end
+        end
+      end
+
+      context 'when some query is specified' do
+        let(:search_params) do
+          {
+            search: { q: 'itt' }
+          }
+        end
+
+        it 'returns the users that match that query by first name, last name, nickname or email' do
+          post :search, search_params
+
+          expect(response.status).to eq 200
+          expect(response).to render_template :index
+          expect(response_body[:users]).to have(1).item
+          expect(response_body[:users].first[:first_name]).to eq louis_litt.first_name
+        end
+      end
+
+      context 'when order by name is requested' do
+        let(:search_params) do
+          {
+            search: { order_by_name: true }
+          }
+        end
+
+        it 'returns the users sorted by first name and last name' do
+          post :search, search_params
+
+          expect(response.status).to eq 200
+          expect(response).to render_template :index
+          expect(response_body[:users]).to have(4).item
+          expect(response_body[:users].first[:first_name]).to eq harvey_specter.first_name
+          expect(response_body[:users].second[:first_name]).to eq louis_litt.first_name
+          expect(response_body[:users].third[:first_name]).to eq mike_ross.first_name
+          expect(response_body[:users].fourth[:first_name]).to eq rachel_zane.first_name
+
+          expect(response_body[:pagination][:items_per_page]).to eq 25
+          expect(response_body[:pagination][:total_items]).to eq 4
+          expect(response_body[:pagination][:current_page]).to eq 1
+          expect(response_body[:pagination][:total_pages]).to eq 1
+        end
+      end
+    end
+
+    context 'when the user is not logged in' do
+      it 'responds an error json' do
+        post :search, {}
+
+        expect(response.status).to eq 401
+        expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
+      end
+    end
+  end
 end
