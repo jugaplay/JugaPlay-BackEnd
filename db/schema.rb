@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161113210957) do
+ActiveRecord::Schema.define(version: 20161113220535) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,6 +98,18 @@ ActiveRecord::Schema.define(version: 20161113210957) do
 
   add_index "explanations_users", ["user_id", "explanation_id"], name: "index_explanations_users_on_user_id_and_explanation_id", unique: true, using: :btree
 
+  create_table "external_address_book_contacts", force: :cascade do |t|
+    t.integer  "user_id",    null: false
+    t.string   "email"
+    t.string   "phone"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "external_address_book_contacts", ["user_id", "email"], name: "index_external_address_book_contacts_on_user_id_and_email", unique: true, using: :btree
+  add_index "external_address_book_contacts", ["user_id", "phone"], name: "index_external_address_book_contacts_on_user_id_and_phone", unique: true, using: :btree
+  add_index "external_address_book_contacts", ["user_id"], name: "index_external_address_book_contacts_on_user_id", using: :btree
+
   create_table "group_invitation_tokens", force: :cascade do |t|
     t.integer  "group_id",   null: false
     t.string   "token",      null: false
@@ -106,8 +118,8 @@ ActiveRecord::Schema.define(version: 20161113210957) do
     t.datetime "updated_at"
   end
 
-  add_index "group_invitation_tokens", ["group_id"], name: "index_group_invitation_tokens_on_group_id", using: :btree
-  add_index "group_invitation_tokens", ["token"], name: "index_group_invitation_tokens_on_token", using: :btree
+  add_index "group_invitation_tokens", ["group_id"], name: "index_group_invitation_tokens_on_group_id", unique: true, using: :btree
+  add_index "group_invitation_tokens", ["token"], name: "index_group_invitation_tokens_on_token", unique: true, using: :btree
 
   create_table "groups", force: :cascade do |t|
     t.string   "name",       null: false
