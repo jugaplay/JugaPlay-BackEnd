@@ -53,52 +53,10 @@ describe Api::V1::UsersController do
           expect(welcome_mails.last.from).to include WelcomeMailer::INFO_MAIL
           expect(welcome_mails.last.subject).to eq 'Bienvenido!'
         end
-
-        context 'when facebook information is present' do
-          let(:user_params) do
-            {
-              user: {
-                first_name: 'Carlos',
-                last_name: 'Perez',
-                nickname: 'carlos_perez',
-                email: 'carlos_perez@jugaplay.com',
-                password: 12345678,
-                uid: '2478723649',
-                facebook_token: '2asdf4asdf7a8sdf72asadf36asdf4d9',
-                image: 'url'
-              }
-            }
-          end
-
-          it 'creates a user and renders a json of it' do
-            expect { post :create, user_params }.to change { User.count }.by(1)
-
-            new_user = User.last
-            expect(new_user.first_name).to eq user_params[:user][:first_name]
-            expect(new_user.last_name).to eq user_params[:user][:last_name]
-            expect(new_user.nickname).to eq user_params[:user][:nickname]
-            expect(new_user.email).to eq user_params[:user][:email]
-            expect(new_user.facebook_id).to eq user_params[:user][:uid]
-            expect(new_user.image).to eq user_params[:user][:image]
-            expect(new_user.provider).to eq 'facebook'
-            expect(new_user.encrypted_password).to be_present
-
-            expect(response).to render_template :show
-            expect(response.status).to eq 200
-            expect(response_body[:id]).to eq new_user.id
-            expect(response_body[:nickname]).to eq new_user.nickname
-            expect(response_body[:email]).to eq new_user.email
-            expect(response_body[:first_name]).to eq new_user.first_name
-            expect(response_body[:last_name]).to eq new_user.last_name
-            expect(response_body[:member_since]).to eq new_user.created_at.strftime('%d/%m/%Y')
-            expect(response_body[:image]).to eq new_user.image
-          end
-        end
       end
 
       context 'when the request fails' do
         context 'when a required parameter is missing' do
-          # TODO: Fix this when front-end implements new form
           let(:mandatory_fields) { user_params[:user].except(:nickname).keys }
 
           it 'does not create a user and renders a json with error messages' do

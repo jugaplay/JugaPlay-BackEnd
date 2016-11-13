@@ -1,4 +1,5 @@
 class Group < ActiveRecord::Base
+  has_one :group_invitation_token
   has_and_belongs_to_many :users, -> { uniq }
 
   validates :name, presence: true
@@ -19,6 +20,10 @@ class Group < ActiveRecord::Base
 
   def has_user? user
     users.include? user
+  end
+
+  def invitation_token
+    group_invitation_token.token
   end
 
   private
