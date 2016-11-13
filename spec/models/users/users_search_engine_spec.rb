@@ -22,17 +22,17 @@ describe UsersSearchEngine do
 
     expect(found_users).not_to include user_without_a
     expect(found_users).to include user_with_first_name_starting_with_a, 
-                                         user_with_first_name_including_with_a, 
-                                         user_with_first_name_ending_with_a,
-                                         user_with_last_name_starting_with_a,
-                                         user_with_last_name_including_with_a,
-                                         user_with_last_name_ending_with_a,
-                                         user_with_email_starting_with_a,
-                                         user_with_email_including_with_a,
-                                         user_with_email_ending_with_a,
-                                         user_with_nickname_starting_with_a,
-                                         user_with_nickname_including_with_a,
-                                         user_with_nickname_ending_with_a
+                                   user_with_first_name_including_with_a,
+                                   user_with_first_name_ending_with_a,
+                                   user_with_last_name_starting_with_a,
+                                   user_with_last_name_including_with_a,
+                                   user_with_last_name_ending_with_a,
+                                   user_with_email_starting_with_a,
+                                   user_with_email_including_with_a,
+                                   user_with_email_ending_with_a,
+                                   user_with_nickname_starting_with_a,
+                                   user_with_nickname_including_with_a,
+                                   user_with_nickname_ending_with_a
   end
 
   it 'can search users playing in a specific tournament' do
@@ -55,6 +55,7 @@ describe UsersSearchEngine do
 
     found_users = search_engine.sorted_by_name.all
 
+    expect(found_users).to have(3).items
     expect(found_users.first).to eq expected_first_user
     expect(found_users.second).to eq expected_second_user
     expect(found_users.third).to eq expected_third_user
@@ -62,12 +63,21 @@ describe UsersSearchEngine do
   
   it 'can order by ranking points' do
     tournament = FactoryGirl.create(:tournament)
-    expected_second_user = FactoryGirl.create(:user, rankings: [FactoryGirl.create(:ranking, tournament: tournament, points: 100, position: 1)])
-    expected_first_user = FactoryGirl.create(:user, rankings: [FactoryGirl.create(:ranking, tournament: tournament, points: 1000, position: 2)])
+    another_tournament = FactoryGirl.create(:tournament)
+
+    first_user = FactoryGirl.create(:user, rankings: [
+      FactoryGirl.create(:ranking, tournament: tournament, points: 1000, position: 1),
+      FactoryGirl.create(:ranking, tournament: another_tournament, points: 100, position: 2)]
+    )
+    second_user = FactoryGirl.create(:user, rankings: [
+      FactoryGirl.create(:ranking, tournament: tournament, points: 5, position: 2),
+      FactoryGirl.create(:ranking, tournament: another_tournament, points: 1001, position: 1)]
+    )
 
     found_users = search_engine.sorted_by_ranking.all
 
-    expect(found_users.first).to eq expected_first_user
-    expect(found_users.second).to eq expected_second_user
+    expect(found_users).to have(2).items
+    expect(found_users.first).to eq second_user
+    expect(found_users.second).to eq first_user
   end
 end
