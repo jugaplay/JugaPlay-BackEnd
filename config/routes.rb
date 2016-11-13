@@ -35,6 +35,10 @@
           put 'add_member/:user_id' => 'groups#add_member'
           post 'exit' => 'groups#exit'
         end
+
+        collection do
+          post 'join' => 'groups#join'
+        end
       end
 
 	    resources :explanations, only: [:index, :show, :create]

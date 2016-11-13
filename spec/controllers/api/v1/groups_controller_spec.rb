@@ -12,9 +12,11 @@ describe Api::V1::GroupsController do
       context 'when the logged in user belongs to the requested group' do
         it 'responds a json with the information of the logged in user' do
           get :show, id: group.id
+          group.reload
 
           expect(response_body[:id]).to eq group.id
           expect(response_body[:name]).to eq group.name
+          expect(response_body[:invitation_token]).to eq group.invitation_token
           expect(response_body[:users]).to have(group.users.count).items
           expect(response_body[:users].map { |u| u[:id] }).to match_array group.users.map(&:id)
 
@@ -330,6 +332,69 @@ describe Api::V1::GroupsController do
     context 'when the user is not logged in' do
       it 'responds an error json' do
         post :exit, id: group.id
+
+        expect(response.status).to eq 401
+        expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
+      end
+    end
+  end
+
+  describe 'POST #join' do
+    let(:another_user) { FactoryGirl.create(:user) }
+    let(:group) { FactoryGirl.create(:group, users: [another_user]) }
+
+    context 'when the user is logged in' do
+      before(:each) { sign_in user }
+
+      context 'when request succeeds' do
+        it 'joins the user to the group and renders a json of it' do
+          post :join, token: group.invitation_token
+
+          updated_group = group.reload
+          expect(updated_group.users).to have(2).item
+          expect(updated_group.users).to include user
+          expect(updated_group.users).to include another_user
+
+          expect(response.status).to eq 200
+          expect(response).to render_template :show
+        end
+      end
+
+      context 'when request fails' do
+        context 'when the token does not match the group token' do
+          it 'responds an error json' do
+            post :join, token: Devise.friendly_token(32)
+
+            expect(response.status).to eq 400
+            expect(response_body[:errors]).to include Api::V1::GroupsController::INVALID_INVITATION_TOKEN
+          end
+        end
+
+        context 'when the token is expired' do
+          it 'responds an error json' do
+            group.group_invitation_token.update_attributes!(expires_at: DateTime.yesterday)
+
+            post :join, token: group.invitation_token
+
+            expect(response.status).to eq 400
+            expect(response_body[:errors]).to include Api::V1::GroupsController::INVALID_INVITATION_TOKEN
+          end
+        end
+
+        context 'when no token is given' do
+          it 'responds an error json' do
+            post :join
+
+            expect(response.status).to eq 400
+            expect(response_body[:errors]).to include Api::V1::GroupsController::INVALID_INVITATION_TOKEN
+          end
+        end
+      end
+    end
+
+    context 'when the user is not logged in' do
+      it 'responds an error json' do
+        post :join, token: group.invitation_token
 
         expect(response.status).to eq 401
         expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'

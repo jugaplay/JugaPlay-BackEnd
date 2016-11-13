@@ -1,5 +1,6 @@
 class Api::V1::GroupsController < Api::BaseController
   GROUP_NOT_FOUND = 'Given group was not found'
+  INVALID_INVITATION_TOKEN = 'Invalid invitation token'
   USER_DOES_NOT_BELONG_TO_GIVEN_GROUP = 'You can not access to that group information'
 
   def index
@@ -14,8 +15,9 @@ class Api::V1::GroupsController < Api::BaseController
 
   def create
     @group = Group.new create_group_params
-    return render :show if group.save
-    render_json_errors group.errors
+    return render_json_errors group.errors unless group.save
+    GroupInvitationToken.create_for_group! group
+    render :show
   end
 
   def update
@@ -28,12 +30,21 @@ class Api::V1::GroupsController < Api::BaseController
 
   def add_member
     new_member = User.find(params[:user_id])
-    update_handling_errors {
+    update_handling_errors do
       group.add new_member
       group.save
-    }
+    end
   rescue ActiveRecord::RecordNotFound
     render_not_found_error GROUP_NOT_FOUND
+  end
+
+  def join
+    group_invitation_token = GroupInvitationToken.find_by_token(params[:token])
+    return render_json_error INVALID_INVITATION_TOKEN if group_invitation_token.nil? || group_invitation_token.expired?
+    @group = group_invitation_token.group
+    group.add current_user
+    group.save
+    render :show
   end
 
   private
