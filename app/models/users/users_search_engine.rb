@@ -1,5 +1,5 @@
 class UsersSearchEngine
-  def initialize(scope = User.all)
+  def initialize(scope = User)
     @scope = scope
   end
 
@@ -18,7 +18,7 @@ class UsersSearchEngine
   end
 
   def sorted_by_ranking
-    @scope = scope.joins(:rankings).order('rankings.points DESC')
+    @scope = scope.select('users.*, rankings.points').joins(:rankings).order('rankings.points DESC').distinct
     self
   end
 
