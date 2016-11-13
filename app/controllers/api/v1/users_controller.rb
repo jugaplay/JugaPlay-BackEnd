@@ -30,7 +30,7 @@ class Api::V1::UsersController < Api::BaseController
     users.playing_tournament(search_params[:playing_tournament]) if search_params[:playing_tournament].present?
     users.sorted_by_ranking if search_params[:order_by_ranking].present?
     users.sorted_by_name if search_params[:order_by_name].present?
-    @total_items = users.count
+    @total_items = users.count(:id)
     @users = users.page(params[:page])
     render :index
   end
@@ -38,16 +38,11 @@ class Api::V1::UsersController < Api::BaseController
   private
 
   def create_user_params
-    # TODO: No deberíamos permitir crear usuarios con datos de FB acá
-    if params[:user].present?
-      build_base_nickname if params[:user][:email].present? && params[:user][:nickname].nil?
-      params[:user][:provider] = 'facebook' if params[:user][:uid].present?
-    end
-    user_params = params.require(:user).permit(:first_name, :last_name, :email, :nickname, :password, :password_confirmation, :invited_by_id, :uid, :image, :provider, :facebook_token)
+    user_params = params.require(:user).permit(:first_name, :last_name, :email, :nickname, :password, :password_confirmation, :invited_by_id)
     user_params[:wallet] = Wallet.new
     user_params[:channel] = Channel.new
     user_params[:address_book] = AddressBook.new
-    user_params[:facebook_id] = user_params.delete(:uid)
+    user_params[:nickname] = build_base_nickname if params[:user][:nickname].nil?
     user_params
   end
 
@@ -55,8 +50,8 @@ class Api::V1::UsersController < Api::BaseController
     # TODO: Remove this when front-end implements new form
     nickname = params[:user][:email].partition('@').first
     count = User.where("email LIKE '#{nickname}@%'").count
-    nickname = "#{nickname}_#{count}" if count > 0
-    params[:user][:nickname] = nickname
+    nickname = "#{nickname}#{count}" if count > 0
+    nickname
   end
 
   def search_params
