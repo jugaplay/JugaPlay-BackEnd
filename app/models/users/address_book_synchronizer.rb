@@ -15,6 +15,12 @@ class AddressBookSynchronizer
     add_contacts_to_address_book(users).each(&:synched_by_email!)
   end
 
+  def call_with_phones(phones)
+    return if phones.empty?
+    users = find_users_with_phones(phones)
+    add_contacts_to_address_book(users).each(&:synched_by_phone!)
+  end
+
   private
   attr_reader :address_book
 
@@ -30,6 +36,10 @@ class AddressBookSynchronizer
 
   def find_users_with_emails(emails)
     excluding_existing_contacts User.where(email: emails)
+  end
+
+  def find_users_with_phones(phones)
+    excluding_existing_contacts User.where(telephone: phones)
   end
 
   def excluding_existing_contacts(scope)

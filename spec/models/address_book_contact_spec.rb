@@ -20,11 +20,13 @@ describe AddressBook do
       expect { FactoryGirl.create(:address_book_contact, address_book: address_book, user: user) }.to raise_error ActiveRecord::RecordInvalid, /Address book has already been taken/
     end
 
-    it 'must know if it was synched by facebook or email' do
+    it 'must know if it was synched by facebook, phone or email' do
       expect { FactoryGirl.create(:address_book_contact, synched_by_email: true) }.not_to raise_error
+      expect { FactoryGirl.create(:address_book_contact, synched_by_phone: false) }.not_to raise_error
       expect { FactoryGirl.create(:address_book_contact, synched_by_facebook: false) }.not_to raise_error
 
       expect { FactoryGirl.create(:address_book_contact, synched_by_email: nil) }.to raise_error ActiveRecord::RecordInvalid, /Synched by email is not included in the list/
+      expect { FactoryGirl.create(:address_book_contact, synched_by_phone: nil) }.to raise_error ActiveRecord::RecordInvalid, /Synched by phone is not included in the list/
       expect { FactoryGirl.create(:address_book_contact, synched_by_facebook: nil) }.to raise_error ActiveRecord::RecordInvalid, /Synched by facebook is not included in the list/
     end
   end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161113193318) do
+ActiveRecord::Schema.define(version: 20161113210957) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 20161113193318) do
     t.string   "nickname",                            null: false
     t.boolean  "synched_by_email",    default: false, null: false
     t.boolean  "synched_by_facebook", default: false, null: false
+    t.boolean  "synched_by_phone",    default: false
   end
 
   add_index "address_book_contacts", ["address_book_id", "user_id"], name: "index_address_book_contacts_on_address_book_id_and_user_id", unique: true, using: :btree

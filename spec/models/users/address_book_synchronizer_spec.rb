@@ -29,18 +29,21 @@ describe AddressBookSynchronizer do
           third_contact = user.address_book.address_book_contacts.third
           expect(third_contact.user).to eq unsynched_users.first
           expect(third_contact).to be_synched_by_facebook
+          expect(third_contact).not_to be_synched_by_phone
           expect(third_contact).not_to be_synched_by_email
           expect(third_contact.nickname).to eq unsynched_users.first.name
 
           fourth_contact = user.address_book.address_book_contacts.fourth
           expect(fourth_contact.user).to eq unsynched_users.second
           expect(fourth_contact).to be_synched_by_facebook
+          expect(third_contact).not_to be_synched_by_phone
           expect(fourth_contact).not_to be_synched_by_email
           expect(fourth_contact.nickname).to eq unsynched_users.second.name
 
           fifth_contact = user.address_book.address_book_contacts.fifth
           expect(fifth_contact.user).to eq unsynched_users.third
           expect(fifth_contact).to be_synched_by_facebook
+          expect(third_contact).not_to be_synched_by_phone
           expect(fifth_contact).not_to be_synched_by_email
           expect(fifth_contact.nickname).to eq unsynched_users.third.name
         end
@@ -98,18 +101,21 @@ describe AddressBookSynchronizer do
           third_contact = user.address_book.address_book_contacts.third
           expect(third_contact.user).to eq unsynched_users.first
           expect(third_contact).not_to be_synched_by_facebook
+          expect(third_contact).not_to be_synched_by_phone
           expect(third_contact).to be_synched_by_email
           expect(third_contact.nickname).to eq unsynched_users.first.name
 
           fourth_contact = user.address_book.address_book_contacts.fourth
           expect(fourth_contact.user).to eq unsynched_users.second
           expect(fourth_contact).not_to be_synched_by_facebook
+          expect(third_contact).not_to be_synched_by_phone
           expect(fourth_contact).to be_synched_by_email
           expect(fourth_contact.nickname).to eq unsynched_users.second.name
 
           fifth_contact = user.address_book.address_book_contacts.fifth
           expect(fifth_contact.user).to eq unsynched_users.third
           expect(fifth_contact).not_to be_synched_by_facebook
+          expect(third_contact).not_to be_synched_by_phone
           expect(fifth_contact).to be_synched_by_email
           expect(fifth_contact.nickname).to eq unsynched_users.third.name
         end
@@ -136,6 +142,78 @@ describe AddressBookSynchronizer do
 
       it 'updates the address book of the given user with those users' do
         synchronizer.call_with_emails(emails)
+        user.address_book.reload
+
+        expect(unsynched_users - user.address_book.contacts).to be_empty
+      end
+    end
+  end
+
+  describe '#call_with_phones' do
+    describe 'when no phones are given' do
+      let(:phones) { [] }
+
+      it 'does not update the address book of the given user' do
+        synchronizer.call_with_phones(phones)
+
+        expect(user.address_book.contacts).to have(2).items
+      end
+    end
+
+    describe 'when 3 of 10 phones are given' do
+      let(:phones) { unsynched_users.first(3).map(&:telephone) }
+
+      context 'when non of the 3 users are in the address book' do
+        it 'updates the address book of the given user with those users' do
+          synchronizer.call_with_phones(phones)
+          user.address_book.reload
+
+          expect(user.address_book.contacts).to have(5).items
+
+          third_contact = user.address_book.address_book_contacts.third
+          expect(third_contact.user).to eq unsynched_users.first
+          expect(third_contact).not_to be_synched_by_facebook
+          expect(third_contact).not_to be_synched_by_email
+          expect(third_contact).to be_synched_by_phone
+          expect(third_contact.nickname).to eq unsynched_users.first.name
+
+          fourth_contact = user.address_book.address_book_contacts.fourth
+          expect(fourth_contact.user).to eq unsynched_users.second
+          expect(third_contact).not_to be_synched_by_facebook
+          expect(third_contact).not_to be_synched_by_email
+          expect(third_contact).to be_synched_by_phone
+          expect(fourth_contact.nickname).to eq unsynched_users.second.name
+
+          fifth_contact = user.address_book.address_book_contacts.fifth
+          expect(fifth_contact.user).to eq unsynched_users.third
+          expect(third_contact).not_to be_synched_by_facebook
+          expect(third_contact).not_to be_synched_by_email
+          expect(third_contact).to be_synched_by_phone
+          expect(fifth_contact.nickname).to eq unsynched_users.third.name
+        end
+      end
+
+      context 'when two of the 3 users are in the address book' do
+        it 'updates the address book adding just the non-included user' do
+          AddressBookContact.create!(address_book: user.address_book, user: unsynched_users.first, nickname: unsynched_users.first.name, synched_by_email: true)
+          AddressBookContact.create!(address_book: user.address_book, user: unsynched_users.second, nickname: unsynched_users.second.name, synched_by_facebook: true)
+
+          synchronizer.call_with_phones(phones)
+          user.address_book.reload
+
+          expect(user.address_book.contacts).to have(5).items
+          expect(user.address_book.contacts).to include unsynched_users.first
+          expect(user.address_book.contacts).to include unsynched_users.second
+          expect(user.address_book.contacts).to include unsynched_users.third
+        end
+      end
+    end
+
+    describe 'when all the phones are given' do
+      let(:phones) { unsynched_users.map(&:telephone) }
+
+      it 'updates the address book of the given user with those users' do
+        synchronizer.call_with_phones(phones)
         user.address_book.reload
 
         expect(unsynched_users - user.address_book.contacts).to be_empty
