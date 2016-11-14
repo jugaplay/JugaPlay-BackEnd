@@ -30,7 +30,7 @@ class Api::V1::UsersController < Api::BaseController
     users.playing_tournament(search_params[:playing_tournament]) if search_params[:playing_tournament].present?
     users.sorted_by_ranking if search_params[:order_by_ranking].present?
     users.sorted_by_name if search_params[:order_by_name].present?
-    @total_items = users.count(:id)
+    @total_items = users.map(&:id).size
     @users = users.page(params[:page])
     render :index
   end

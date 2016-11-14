@@ -76,7 +76,7 @@ describe UsersSearchEngine do
 
     found_users = search_engine.sorted_by_ranking.all
 
-    expect(found_users).to have(2).items
+    expect(found_users.to_a).to have(2).items
     expect(found_users.first).to eq second_user
     expect(found_users.second).to eq first_user
   end
