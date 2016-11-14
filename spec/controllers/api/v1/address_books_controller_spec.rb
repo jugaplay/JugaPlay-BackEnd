@@ -8,8 +8,10 @@ describe Api::V1::AddressBooksController do
     let(:users_by_email) { unsynched_users.first(2) }
     let(:users_by_phone) { [unsynched_users.fourth, unsynched_users.fifth] }
     let(:users_by_facebook) { unsynched_users.last(2) }
-    let(:emails) { users_by_email.map(&:email) }
-    let(:phones) { users_by_phone.map(&:telephone) }
+    let(:contacts) do
+      users_by_email.map { |user| { name: user.name, email: user.email } } +
+      users_by_phone.map { |user| { name: user.name, phone: user.telephone} }
+    end
 
     context 'when the user is logged in' do
       before(:each) { sign_in user }
@@ -22,7 +24,7 @@ describe Api::V1::AddressBooksController do
         end
 
         it 'updates the user address book' do
-          post :synch, emails: emails, phones: phones
+          post :synch, contacts: contacts
           user.address_book.reload
 
           expect(user.address_book.contacts).to include users_by_email.first
@@ -39,7 +41,7 @@ describe Api::V1::AddressBooksController do
 
       context 'when the user has not logged in with facebook' do
         it 'updates the user address book' do
-          post :synch, emails: emails, phones: phones
+          post :synch, contacts: contacts
           user.address_book.reload
 
           expect(user.address_book.contacts).to include users_by_email.first
@@ -57,7 +59,7 @@ describe Api::V1::AddressBooksController do
 
     context 'when the user is not logged in' do
       it 'responds an error json' do
-        post :synch, emails: emails
+        post :synch, contacts: contacts
 
         expect(response.status).to eq 401
         expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
