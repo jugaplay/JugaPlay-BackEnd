@@ -5,6 +5,7 @@ FactoryGirl.define do
     email { Faker::Internet.email }
     nickname { Faker::Internet.user_name }
     password { Faker::Internet.password(8) }
+    telephone { Faker::PhoneNumber.cell_phone.gsub(/[^0-9]/, '') }
 
     after :create do |user|
       Wallet.create! user: user
@@ -17,7 +18,7 @@ FactoryGirl.define do
     end
 
     trait :with_coins do
-      ignore { coins 0 }
+      transient { coins 0 }
 
       after :create do |user, evaluator|
         user.wallet.update_attributes!(coins: evaluator.coins)

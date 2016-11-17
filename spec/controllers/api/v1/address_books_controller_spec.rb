@@ -4,8 +4,12 @@ describe Api::V1::AddressBooksController do
   let(:user) { FactoryGirl.create(:user, :with_an_address_book_with_two_contacts) }
 
   describe 'POST #synch' do
-    let(:emails) { unsynched_users.first(2).map(&:email) }
     let!(:unsynched_users) { 10.times.map { |i| FactoryGirl.create(:user, facebook_id: "FB_#{i}", facebook_token: "FB_#{i}", email: "user_#{i}@jugaplay.com") }}
+    let(:users_by_email) { unsynched_users.first(2) }
+    let(:users_by_phone) { [unsynched_users.fourth, unsynched_users.fifth] }
+    let(:users_by_facebook) { unsynched_users.last(2) }
+    let(:emails) { users_by_email.map(&:email) }
+    let(:phones) { users_by_phone.map(&:telephone) }
 
     context 'when the user is logged in' do
       before(:each) { sign_in user }
@@ -14,18 +18,17 @@ describe Api::V1::AddressBooksController do
         before do
           user.update_attributes!(facebook_id: 'facebook_id', facebook_token: 'facebook_token')
           mock_facebook_token_refresh
-          mock_facebook_friend_list_with unsynched_users.last(2)
+          mock_facebook_friend_list_with users_by_facebook
         end
 
         it 'updates the user address book' do
-          users_by_email = unsynched_users.first(2)
-          users_by_facebook = unsynched_users.last(2)
-
-          post :synch, emails: emails
+          post :synch, emails: emails, phones: phones
           user.address_book.reload
 
           expect(user.address_book.contacts).to include users_by_email.first
           expect(user.address_book.contacts).to include users_by_email.second
+          expect(user.address_book.contacts).to include users_by_phone.first
+          expect(user.address_book.contacts).to include users_by_phone.second
           expect(user.address_book.contacts).to include users_by_facebook.first
           expect(user.address_book.contacts).to include users_by_facebook.second
 
@@ -36,14 +39,13 @@ describe Api::V1::AddressBooksController do
 
       context 'when the user has not logged in with facebook' do
         it 'updates the user address book' do
-          users_by_email = unsynched_users.first(2)
-          users_by_facebook = unsynched_users.last(2)
-
-          post :synch, emails: emails
+          post :synch, emails: emails, phones: phones
           user.address_book.reload
 
           expect(user.address_book.contacts).to include users_by_email.first
           expect(user.address_book.contacts).to include users_by_email.second
+          expect(user.address_book.contacts).to include users_by_phone.first
+          expect(user.address_book.contacts).to include users_by_phone.second
           expect(user.address_book.contacts).not_to include users_by_facebook.first
           expect(user.address_book.contacts).not_to include users_by_facebook.second
 

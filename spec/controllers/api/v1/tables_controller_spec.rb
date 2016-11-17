@@ -16,8 +16,8 @@ describe Api::V1::TablesController do
 
         expect(response.status).to eq 200
         expect(response_body).to have(2).items
-        [public_table, private_table_for_user].each do |table|
-          table_data = {
+        expected_data = [public_table, private_table_for_user].map do |table|
+          {
             id: table.id,
             title: table.title,
             has_password: false,
@@ -30,10 +30,13 @@ describe Api::V1::TablesController do
             has_been_played_by_user: !table.did_not_play?(user),
             tournament_id: table.tournament_id,
             private: table.private?,
-            amount_of_users_playing: table.amount_of_users_playing,
+            amount_of_users_playing: table.amount_of_users_playing
           }
-          expect(response_body).to include table_data
         end
+
+        expected_data.second[:group] = { name: private_table_for_user.group.name, size: private_table_for_user.group.size }
+        expect(response_body).to include expected_data.first
+        expect(response_body).to include expected_data.second
       end
     end
 
@@ -75,6 +78,7 @@ describe Api::V1::TablesController do
             expect(response_body[:coins_for_winners]).to have(private_table_for_user.coins_for_winners.size).items
             expect(response_body[:winners]).to be_empty
             expect(response_body[:matches]).to have(private_table_for_user.matches.size).items
+            expect(response_body[:group]).not_to be_nil
             expect(response_body[:table_rules]).not_to be_nil
           end
         end
@@ -98,6 +102,7 @@ describe Api::V1::TablesController do
             expect(response_body[:coins_for_winners]).to have(public_table.coins_for_winners.size).items
             expect(response_body[:winners]).to be_empty
             expect(response_body[:matches]).to have(public_table.matches.size).items
+            expect(response_body[:group]).to be_nil
             expect(response_body[:table_rules]).not_to be_nil
           end
         end

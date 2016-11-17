@@ -12,4 +12,11 @@ json.array! @tables do |table|
   json.tournament_id  table.tournament_id
   json.private table.private?
   json.amount_of_users_playing table.amount_of_users_playing
+
+  if table.private?
+    json.group do
+      json.name table.group.name
+      json.size table.group.size
+    end
+  end
 end
