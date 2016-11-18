@@ -6,11 +6,9 @@ class Api::V1::AddressBooksController < Api::BaseController
   end
 
   def synch
-    synchronizer.call_with_emails emails
-    synchronizer.call_with_phones phones
-    synchronizer.call_with_facebook_ids(facebook_ids.compact)
-    external_synchronizer.call_with_emails emails
-    external_synchronizer.call_with_phones phones
+    synchronizer.call_with_facebook_ids facebook_ids
+    non_added_contacts = synchronizer.call_with_emails_and_phones contacts
+    external_synchronizer.call_with_emails_and_phones non_added_contacts
     render :show
   rescue ActiveRecord::RecordNotFound => error
     render_json_error error.message
@@ -18,16 +16,12 @@ class Api::V1::AddressBooksController < Api::BaseController
 
   private
 
-  def emails
-    (params[:emails] || []).compact
-  end
-
-  def phones
-    (params[:phones] || []).compact
-  end
-
   def facebook_ids
     facebook_requester.friends_list.map(&:id)
+  end
+
+  def contacts
+    (params[:contacts] || []).compact
   end
 
   def address_book

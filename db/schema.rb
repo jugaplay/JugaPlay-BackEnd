@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161113220535) do
+ActiveRecord::Schema.define(version: 20161114134405) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -99,11 +99,12 @@ ActiveRecord::Schema.define(version: 20161113220535) do
   add_index "explanations_users", ["user_id", "explanation_id"], name: "index_explanations_users_on_user_id_and_explanation_id", unique: true, using: :btree
 
   create_table "external_address_book_contacts", force: :cascade do |t|
-    t.integer  "user_id",    null: false
+    t.integer  "user_id",                 null: false
     t.string   "email"
     t.string   "phone"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "name",       default: ""
   end
 
   add_index "external_address_book_contacts", ["user_id", "email"], name: "index_external_address_book_contacts_on_user_id_and_email", unique: true, using: :btree

@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
   validates :nickname, uniqueness: true, presence: true
   validates :email, uniqueness: true, if: proc { email.present? }
   validates :facebook_id, uniqueness: { scope: :provider }, if: proc { facebook_id.present? && provider.present? }
-  validates :telephone, format: /\A\d+\Z/, if: proc { telephone.present? }
+  validates :telephone, format: /\A\d+\Z/, uniqueness: true, if: proc { telephone.present? }
   validate :validate_not_invited_by_itself, on: :update
 
   scope :ordered, -> { order(created_at: :asc) }

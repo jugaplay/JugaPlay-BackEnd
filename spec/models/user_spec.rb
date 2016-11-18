@@ -35,9 +35,11 @@ describe User do
       expect { FactoryGirl.create(:user, nickname: 'nickname') }.to raise_error ActiveRecord::RecordInvalid, /Nickname has already been taken/
     end
 
-    it 'can have a telephone as a string with only numbers' do
+    it 'can have a unique telephone as a string with only numbers' do
+      expect { FactoryGirl.create(:user, telephone: nil) }.not_to raise_error
       expect { FactoryGirl.create(:user, telephone: '541197997394') }.not_to raise_error
 
+      expect { FactoryGirl.create(:user, telephone: '541197997394') }.to raise_error ActiveRecord::RecordInvalid, /Telephone has already been taken/
       expect { FactoryGirl.create(:user, telephone: '+5491182388348') }.to raise_error ActiveRecord::RecordInvalid, /Telephone is invalid/
       expect { FactoryGirl.create(:user, telephone: '54-911-82388348') }.to raise_error ActiveRecord::RecordInvalid, /Telephone is invalid/
       expect { FactoryGirl.create(:user, telephone: '54 911 82388348') }.to raise_error ActiveRecord::RecordInvalid, /Telephone is invalid/
