@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161114134405) do
+ActiveRecord::Schema.define(version: 20161122144109) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -426,6 +426,17 @@ ActiveRecord::Schema.define(version: 20161114134405) do
 
   add_index "teams", ["director_id"], name: "index_teams_on_director_id", unique: true, using: :btree
   add_index "teams", ["name"], name: "index_teams_on_name", unique: true, using: :btree
+
+  create_table "telephone_update_requests", force: :cascade do |t|
+    t.integer "user_id",                         null: false
+    t.string  "telephone",                       null: false
+    t.string  "validation_code",                 null: false
+    t.boolean "applied",         default: false, null: false
+  end
+
+  add_index "telephone_update_requests", ["user_id", "validation_code"], name: "index_telephone_update_requests_on_user_id_and_validation_code", unique: true, using: :btree
+  add_index "telephone_update_requests", ["user_id"], name: "index_telephone_update_requests_on_user_id", using: :btree
+  add_index "telephone_update_requests", ["validation_code"], name: "index_telephone_update_requests_on_validation_code", using: :btree
 
   create_table "tournaments", force: :cascade do |t|
     t.string   "name",       null: false

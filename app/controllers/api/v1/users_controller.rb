@@ -20,8 +20,9 @@ class Api::V1::UsersController < Api::BaseController
   end
 
   def update
-    return render :show if user.update(update_user_params)
-    render_json_errors user.errors
+    return render_json_errors user.errors unless user.update(update_user_params)
+    send_telephone_update_request_if_necessary
+    render :show
   end
 
   def search
@@ -36,6 +37,12 @@ class Api::V1::UsersController < Api::BaseController
   end
 
   private
+
+  def send_telephone_update_request_if_necessary
+    phone = params[:user][:telephone]
+    return if phone.nil?
+    TelephoneUpdateRequester.new(user, phone).call
+  end
 
   def create_user_params
     user_params = params.require(:user).permit(:first_name, :last_name, :email, :nickname, :password, :password_confirmation, :invited_by_id)
@@ -59,7 +66,7 @@ class Api::V1::UsersController < Api::BaseController
   end
 
   def update_user_params
-    params.require(:user).permit(:first_name, :last_name, :email, :nickname, :password, :telephone, :push_token)
+    params.require(:user).permit(:first_name, :last_name, :email, :nickname, :password, :push_token)
   end
 
   def user

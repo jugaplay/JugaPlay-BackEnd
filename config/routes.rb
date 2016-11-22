@@ -77,6 +77,12 @@
         end
       end
 
+      resources :telephone_update_requests, only: [] do
+        collection do
+          post 'validate' => 'telephone_update_requests#validate', as: :validate
+        end
+      end
+
       resources :guests, only: [:index, :show]
       resources :transactions, only: [:index, :show, :create]
       resources :t_entry_fees, only: [:index, :create]

@@ -40,6 +40,7 @@ describe Api::V1::UsersController do
           expect(response_body[:email]).to eq new_user.email
           expect(response_body[:first_name]).to eq new_user.first_name
           expect(response_body[:last_name]).to eq new_user.last_name
+          expect(response_body[:telephone]).to eq new_user.telephone
           expect(response_body[:member_since]).to eq new_user.created_at.strftime('%d/%m/%Y')
           expect(response_body[:image]).to eq nil
         end
@@ -184,6 +185,7 @@ describe Api::V1::UsersController do
           expect(response_body[:nickname]).to eq user.nickname
           expect(response_body[:first_name]).to eq user.first_name
           expect(response_body[:last_name]).to eq user.last_name
+          expect(response_body[:telephone]).to eq user.telephone
           expect(response_body[:member_since]).to eq user.created_at.strftime('%d/%m/%Y')
         end
       end
@@ -224,18 +226,22 @@ describe Api::V1::UsersController do
           last_name: 'Perez',
           nickname: 'carlos_perez',
           email: 'carlos_perez@jugaplay.com',
-          password: 12345678
+          password: 12345678,
+          telephone: '1112341234'
         }
       }
     end
 
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before do
+        sign_in user
+        allow_any_instance_of(TelephoneUpdateRequester).to receive(:send_validation_code)
+      end
 
       context 'when request succeeds' do
         context 'when the given user id corresponds to the logged user' do
           it 'updates the logged user and renders a json of it' do
-            patch :update, user_params
+            expect { patch :update, user_params }.to change { TelephoneUpdateRequest.count }.by 1
 
             updated_user = user.reload
             expect(updated_user.first_name).to eq user_params[:user][:first_name]
@@ -251,6 +257,7 @@ describe Api::V1::UsersController do
             expect(response_body[:email]).to eq updated_user.email
             expect(response_body[:first_name]).to eq updated_user.first_name
             expect(response_body[:last_name]).to eq updated_user.last_name
+            expect(response_body[:telephone]).to eq updated_user.telephone
             expect(response_body[:member_since]).to eq updated_user.created_at.strftime('%d/%m/%Y')
           end
         end
@@ -275,6 +282,7 @@ describe Api::V1::UsersController do
             expect(response_body[:nickname]).to eq updated_user.nickname
             expect(response_body[:first_name]).to eq updated_user.first_name
             expect(response_body[:last_name]).to eq updated_user.last_name
+            expect(response_body[:telephone]).to eq updated_user.telephone
             expect(response_body[:member_since]).to eq updated_user.created_at.strftime('%d/%m/%Y')
           end
         end
@@ -296,12 +304,12 @@ describe Api::V1::UsersController do
           end
         end
 
-        context 'when a nickname is already taken' do
+        context 'when the nickname is already taken' do
           let(:another_user) { FactoryGirl.create(:user) }
 
           before(:each) { user_params[:user][:nickname] = another_user.nickname }
 
-          it 'does not update the email of the user and renders a json with error message' do
+          it 'does not update the nickname of the user and renders a json with error message' do
             patch :update, user_params
 
             expect(user.nickname).not_to eq user_params[:user][:nickname]
