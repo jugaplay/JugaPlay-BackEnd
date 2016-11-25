@@ -124,8 +124,6 @@ describe Api::V1::UsersController do
       end
 
       context 'when request succeeds' do
-        before { NotificationType.create!(name: 'friend-invitation') }
-
         it 'creates a user, add some coins to the user that has invited him, and renders a json of it' do
           existing_user_initial_coins = existing_user.coins
 

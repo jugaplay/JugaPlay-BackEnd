@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161122144109) do
+ActiveRecord::Schema.define(version: 20161125221758) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -180,27 +180,18 @@ ActiveRecord::Schema.define(version: 20161122144109) do
   add_index "matches_tables", ["match_id"], name: "index_matches_tables_on_match_id", using: :btree
   add_index "matches_tables", ["table_id"], name: "index_matches_tables_on_table_id", using: :btree
 
-  create_table "notification_types", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "notification_types", ["name"], name: "index_notification_types_on_name", unique: true, using: :btree
-
   create_table "notifications", force: :cascade do |t|
     t.integer  "user_id"
-    t.integer  "notification_type_id"
-    t.string   "title",                                null: false
+    t.string   "title",                      null: false
     t.string   "image"
     t.text     "text"
     t.text     "action"
-    t.boolean  "read",                 default: false, null: false
-    t.datetime "created_at",                           null: false
-    t.datetime "updated_at",                           null: false
+    t.boolean  "read",       default: false, null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.string   "type",                       null: false
   end
 
-  add_index "notifications", ["notification_type_id"], name: "index_notifications_on_notification_type_id", using: :btree
   add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree
 
   create_table "player_stats", force: :cascade do |t|
@@ -512,7 +503,6 @@ ActiveRecord::Schema.define(version: 20161122144109) do
 
   add_index "wallets", ["user_id"], name: "index_wallets_on_user_id", unique: true, using: :btree
 
-  add_foreign_key "notifications", "notification_types"
   add_foreign_key "notifications", "users"
   add_foreign_key "t_deposits", "users"
   add_foreign_key "t_entry_fees", "tables"

@@ -251,8 +251,6 @@ describe Admin::TablesController do
         end
 
         it 'sends one email to each user with the results of their plays' do
-          NotificationType.create!(name: 'result')
-
           post :close, id: table.id
 
           results_emails = ResultsMailer.deliveries
@@ -326,8 +324,6 @@ describe Admin::TablesController do
         end
 
         it 'sends one email to each user with the results of their plays' do
-          NotificationType.create!(name: 'result')
-
           post :close, id: table.id
 
           results_emails = ResultsMailer.deliveries

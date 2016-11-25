@@ -20,11 +20,8 @@ class ResultsMailer < ActionMailer::Base
       format.html { render 'mailer/results_mailer/send_results_message' }
     end
     
-    @notification_type = NotificationType.where(name: 'result').first
-    
-    @title = "Saliste #{@table.position(@user)}° en #{@table.title }. Ganaste #{@coins} monedas."
-    @title += 'Suerte para la próxima!' if @coins.eql? 0
-
-   	Notification.create!(notification_type: @notification_type, user: @user, title: @table.title, text: @title , action: %q[window.location='history.html';])
+    text = "Saliste #{@table.position(@user)}° en #{@table.title }. Ganaste #{@coins} monedas."
+    text += 'Suerte para la próxima!' if @coins.eql? 0
+   	Notification.result!(user: @user, title: table.title, text: text , action: %q[window.location='history.html';])
   end
 end
