@@ -5,4 +5,12 @@ class TPromotion < ActiveRecord::Base
   validates :user, presence: true
   validates :detail, presence: true, length: { maximum: 500 }, allow_blank: false
   validates :promotion_type, presence: true, allow_blank: false
+
+  def self.friend_invitation!(attributes)
+    create!(attributes.merge(promotion_type: 'friend-invitation', coins: Wallet::COINS_PER_INVITATION))
+  end
+
+  def self.registration!(user)
+    create!(user: user, promotion_type: 'registration', coins: Wallet::COINS_PER_REGISTRATION, detail: 'Bienvenida a JugaPlay')
+  end
 end

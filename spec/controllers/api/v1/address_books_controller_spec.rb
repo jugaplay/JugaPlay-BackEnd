@@ -14,7 +14,7 @@ describe Api::V1::AddressBooksController do
     end
 
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       context 'when the user has logged in with facebook' do
         before do
@@ -69,7 +69,7 @@ describe Api::V1::AddressBooksController do
 
   describe 'GET #show' do
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       it 'responds a json with the information of the address book of the logged in user' do
         get :show

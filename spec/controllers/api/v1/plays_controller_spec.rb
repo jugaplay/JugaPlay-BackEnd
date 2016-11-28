@@ -5,7 +5,7 @@ describe Api::V1::PlaysController do
   
   describe 'GET #index' do
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       context 'when the user has not made any plays' do
         it 'returns an empty json' do

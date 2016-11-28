@@ -7,7 +7,6 @@ class FacebookUserLogin
   def call
     return update_existing_user if user_email_already_exists?
     create_new_user
-    dispense_coins if new_user_was_invited?
     new_user
   end
 
@@ -38,25 +37,12 @@ class FacebookUserLogin
     end
   end
 
-  def dispense_coins
-    new_user.update_attributes(invited_by: inviting_user)
-    inviting_user.win_coins!(10)
-  end
-
-  def new_user_was_invited?
-    inviting_user.present?
-  end
-
   def user_email_already_exists?
     existing_user.present?
   end
 
   def existing_user
     @existing_user ||= User.find_by(email: omniauth_params.info.email)
-  end
-
-  def inviting_user
-    @inviting_user ||= User.find_by_id(query_params['invited_by'])
   end
 
   def build_nickname

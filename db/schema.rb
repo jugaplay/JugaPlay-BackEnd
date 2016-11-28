@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161126005926) do
+ActiveRecord::Schema.define(version: 20161126023900) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -138,23 +138,34 @@ ActiveRecord::Schema.define(version: 20161126005926) do
   add_index "groups_users", ["group_id"], name: "index_groups_users_on_group_id", using: :btree
   add_index "groups_users", ["user_id"], name: "index_groups_users_on_user_id", using: :btree
 
-  create_table "invitation_statuses", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "invitation_acceptances", force: :cascade do |t|
+    t.integer  "invitation_request_id", null: false
+    t.integer  "user_id",               null: false
+    t.inet     "ip",                    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  add_index "invitation_statuses", ["name"], name: "index_invitation_statuses_on_name", unique: true, using: :btree
+  add_index "invitation_acceptances", ["invitation_request_id"], name: "index_invitation_acceptances_on_invitation_request_id", using: :btree
+  add_index "invitation_acceptances", ["user_id", "invitation_request_id"], name: "unique_user_per_invitation_request", unique: true, using: :btree
+  add_index "invitation_acceptances", ["user_id"], name: "index_invitation_acceptances_on_user_id", using: :btree
 
-  create_table "invitations", force: :cascade do |t|
-    t.integer  "won_coins"
-    t.inet     "guest_ip"
-    t.string   "detail"
-    t.integer  "invitation_status_id", null: false
-    t.integer  "request_id",           null: false
-    t.integer  "guest_user_id"
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+  create_table "invitation_requests", force: :cascade do |t|
+    t.integer  "user_id",    null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string   "token",      null: false
+    t.string   "type",       null: false
+  end
+
+  add_index "invitation_requests", ["token"], name: "index_invitation_requests_on_token", unique: true, using: :btree
+  add_index "invitation_requests", ["user_id"], name: "index_invitation_requests_on_user_id", using: :btree
+
+  create_table "invitation_visits", force: :cascade do |t|
+    t.integer  "invitation_request_id", null: false
+    t.inet     "ip",                    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "matches", force: :cascade do |t|
@@ -279,24 +290,6 @@ ActiveRecord::Schema.define(version: 20161126005926) do
   add_index "rankings", ["tournament_id", "user_id"], name: "index_rankings_on_tournament_id_and_user_id", unique: true, using: :btree
   add_index "rankings", ["tournament_id"], name: "index_rankings_on_tournament_id", using: :btree
   add_index "rankings", ["user_id"], name: "index_rankings_on_user_id", using: :btree
-
-  create_table "request_types", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "request_types", ["name"], name: "index_request_types_on_name", unique: true, using: :btree
-
-  create_table "requests", force: :cascade do |t|
-    t.integer  "request_type_id", null: false
-    t.integer  "host_user_id",    null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-  end
-
-  add_index "requests", ["host_user_id"], name: "index_requests_on_host_user_id", using: :btree
-  add_index "requests", ["request_type_id"], name: "index_requests_on_request_type_id", using: :btree
 
   create_table "sent_mails", force: :cascade do |t|
     t.string   "from"
@@ -480,7 +473,6 @@ ActiveRecord::Schema.define(version: 20161126005926) do
     t.string   "facebook_id"
     t.text     "image"
     t.string   "nickname",                            null: false
-    t.integer  "invited_by_id"
     t.string   "telephone"
     t.string   "push_token"
     t.string   "facebook_token"

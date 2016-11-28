@@ -15,7 +15,7 @@ describe Admin::PlayersController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should render index view page' do
         get :index
@@ -35,7 +35,7 @@ describe Admin::PlayersController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should render new view page' do
         get :new
@@ -55,7 +55,7 @@ describe Admin::PlayersController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
       let(:player_params) do
         {
           player: { 
@@ -104,7 +104,7 @@ describe Admin::PlayersController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should render show view page' do
         get :show, id: player.id
@@ -126,7 +126,7 @@ describe Admin::PlayersController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should update old player with given params and redirect to show view page' do
         player_params = {
@@ -173,7 +173,7 @@ describe Admin::PlayersController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should render edit view page' do
         get :edit, id: player.id
@@ -195,7 +195,7 @@ describe Admin::PlayersController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should delete given course content and redirect to index path' do
         delete :destroy, id: player.id
