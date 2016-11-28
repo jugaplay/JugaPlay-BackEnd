@@ -95,7 +95,6 @@
 
       resources :teams, only: [:show]
       resources :plays, only: [:index]
-      resources :user_prizes, only: [:index, :create]
       post '/play' => 'croupier#play'
 
 
@@ -108,9 +107,9 @@
       ###########################################
 
       resources :comments, only: [:create]
-      resources :guests, only: [:index, :show]
+      resources :prizes, only: [:index]
+      resources :t_entry_fees, only: [:index]
       resources :transactions, only: [:index, :show, :create]
-      resources :t_entry_fees, only: [:index, :create]
       resources :t_deposits, only: [:index, :create]
       resources :t_withdraws, only: [:index, :create]
       resources :t_promotions, only: [:index, :create]

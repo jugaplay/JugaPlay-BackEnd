@@ -4,15 +4,15 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :recoverable, :trackable, :validatable #, :lockable #, :confirmable
   devise :omniauthable, omniauth_providers: [:facebook]
 
-  has_one :wallet, dependent: :destroy
-  has_one :address_book, dependent: :destroy
-  has_one :channel, dependent: :destroy
-
-  has_many :plays, dependent: :destroy
-  has_many :rankings, dependent: :destroy
-  has_many :user_prizes
+  has_many :prizes
   has_many :notifications
   has_many :invitation_requests
+  has_one :channel, dependent: :destroy
+  has_one :wallet, dependent: :destroy
+  has_one :address_book, dependent: :destroy
+  has_many :plays, dependent: :destroy
+  has_many :t_entry_fees, dependent: :destroy
+  has_many :rankings, dependent: :destroy
   has_and_belongs_to_many :groups, -> { uniq }
   has_and_belongs_to_many :explanations, before_add: :validates_explanation_already_exist
 
@@ -55,7 +55,7 @@ class User < ActiveRecord::Base
   end
 
   def prize_of_table(table, &if_none_block)
-    user_prizes.detect(if_none_block) { |prize| prize.comes_from_table?(table) }
+    prizes.detect(if_none_block) { |prize| prize.comes_from_table?(table) }
   end
 
   def bet_coins_in_table(table, &if_none_block)

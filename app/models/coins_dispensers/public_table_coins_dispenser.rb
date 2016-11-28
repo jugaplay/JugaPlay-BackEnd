@@ -6,7 +6,7 @@ class PublicTableCoinsDispenser < CoinsDispenser
         coins = coins_for_winners[i]
         if coins
           user.win_coins! coins
-          UserPrize.create!(coins: coins, user: user, table: table)
+          Prize.create!(coins: coins, user: user, table: table)
         end
       end
     end
