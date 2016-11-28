@@ -19,7 +19,7 @@ describe Admin::TablesController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should render index view page' do
         get :index
@@ -39,7 +39,7 @@ describe Admin::TablesController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should render new view page' do
         get :new
@@ -59,7 +59,7 @@ describe Admin::TablesController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
       let(:table_params) do
         {
           table: {
@@ -105,7 +105,7 @@ describe Admin::TablesController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should render show view page' do
         get :show, id: table.id
@@ -127,7 +127,7 @@ describe Admin::TablesController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should update old table with given params and redirect to show view page' do
         table_params = {
@@ -167,7 +167,7 @@ describe Admin::TablesController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should render edit view page' do
         get :edit, id: table.id
@@ -189,7 +189,7 @@ describe Admin::TablesController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should delete given course content and redirect to index path' do
         delete :destroy, id: table.id

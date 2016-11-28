@@ -266,27 +266,9 @@ ActiveRecord::Base.transaction do
   )
  
 
-  ## REQUEST TYPES
-  ## Request_Type: Facebook - Whatsapp - SMS - Mail
-  facebook = RequestType.create!(name:'Facebook')
-  RequestType.create!(name:'Whatsapp')
-  RequestType.create!(name:'SMS')
-  RequestType.create!(name:'Mail')
-
-
-  ## REQUEST STATUS
-  ## Request_Status: Unused - Entered- Registered
-  entered = InvitationStatus.create!(name:'Entered')
-  InvitationStatus.create!(name:'Unused')
-  InvitationStatus.create!(name:'Registered')
-
-
-  ## REQUESTS
-  request1 = Request.create!(request_type: facebook, host_user: user1)
-
-
   ## INVITATIONS
-  Invitation.create!(invitation_status: entered, guest_user: user2, request: request1 )
+  invitation_request = InvitationRequest.create!(type: InvitationRequestType::FACEBOOK, user: user1)
+  InvitationAcceptance.create!(invitation_request: invitation_request, user: user2, ip: '0.0.0.0')
 
 
   ## EXPLANATIONS
@@ -297,13 +279,6 @@ ActiveRecord::Base.transaction do
   ## USER EXPLANATION
   user1.update!(explanations: [explanation1, explanation2])
   user2.update!(explanations: [explanation2])
-
-
-  ## NOTIFICATION TYPES
-  NotificationType.create!(name: 'result')
-  NotificationType.create!(name: 'challenge')
-  NotificationType.create!(name: 'news')
-  NotificationType.create!(name: 'personal')
 
 
   ## TRANSACTIONS

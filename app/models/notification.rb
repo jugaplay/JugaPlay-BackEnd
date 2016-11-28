@@ -14,7 +14,7 @@ class Notification < ActiveRecord::Base
     create!(attributes.merge(type: NotificationType::CHALLENGE))
   end
 
-  def friend_invitation!(attributes)
+  def self.friend_invitation!(attributes)
     create!(attributes.merge(type: NotificationType::FRIEND_INVITATION))
   end
 end

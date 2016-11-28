@@ -44,16 +44,6 @@ describe User do
       expect { FactoryGirl.create(:user, telephone: '54-911-82388348') }.to raise_error ActiveRecord::RecordInvalid, /Telephone is invalid/
       expect { FactoryGirl.create(:user, telephone: '54 911 82388348') }.to raise_error ActiveRecord::RecordInvalid, /Telephone is invalid/
     end
-
-    it 'could have been invited by another user' do
-      existing_user = FactoryGirl.create(:user)
-
-      invited_user = FactoryGirl.create(:user, invited_by: existing_user)
-
-      expect(invited_user).to be_valid
-      expect(invited_user.invited_by).to eq existing_user
-      expect { existing_user.update_attributes!(invited_by: existing_user) }.to raise_error ActiveRecord::RecordInvalid, /Can not invite itself/
-    end
   end
 
   describe '#ranking_on_tournament' do

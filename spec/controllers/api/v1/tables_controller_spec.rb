@@ -9,7 +9,7 @@ describe Api::V1::TablesController do
     let!(:private_table_excluding_user) { FactoryGirl.create(:table, group: FactoryGirl.create(:group)) }
 
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       it 'returns json of the public tables and the private tables that the user can play' do
         get :index
@@ -56,7 +56,7 @@ describe Api::V1::TablesController do
     let!(:private_table_excluding_user) { FactoryGirl.create(:table, group: FactoryGirl.create(:group)) }
 
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       context 'when the user can play in the requested table' do
         context 'when the user requests a private table that is allowed to play' do

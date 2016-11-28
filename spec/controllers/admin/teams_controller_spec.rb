@@ -13,7 +13,7 @@ describe Admin::TeamsController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should render index view page' do
         get :index
@@ -33,7 +33,7 @@ describe Admin::TeamsController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should render new view page' do
         get :new
@@ -53,7 +53,7 @@ describe Admin::TeamsController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
       let(:team_params) do
         {
           team: {
@@ -97,7 +97,7 @@ describe Admin::TeamsController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should render show view page' do
         get :show, id: team.id
@@ -119,7 +119,7 @@ describe Admin::TeamsController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should update old team with given params and redirect to show view page' do
         team_params = {
@@ -161,7 +161,7 @@ describe Admin::TeamsController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should render edit view page' do
         get :edit, id: team.id
@@ -183,7 +183,7 @@ describe Admin::TeamsController do
     end
 
     context 'when admin_user is logged in' do
-      before(:each) { sign_in admin_user }
+      before { sign_in admin_user }
 
       it 'should delete given course content and redirect to index path' do
         delete :destroy, id: team.id
