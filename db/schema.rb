@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161125221758) do
+ActiveRecord::Schema.define(version: 20161126005926) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,8 +107,7 @@ ActiveRecord::Schema.define(version: 20161125221758) do
     t.string   "name",       default: ""
   end
 
-  add_index "external_address_book_contacts", ["user_id", "email"], name: "index_external_address_book_contacts_on_user_id_and_email", unique: true, using: :btree
-  add_index "external_address_book_contacts", ["user_id", "phone"], name: "index_external_address_book_contacts_on_user_id_and_phone", unique: true, using: :btree
+  add_index "external_address_book_contacts", ["user_id", "email", "phone"], name: "unique_email_and_phone_per_user", unique: true, using: :btree
   add_index "external_address_book_contacts", ["user_id"], name: "index_external_address_book_contacts_on_user_id", using: :btree
 
   create_table "group_invitation_tokens", force: :cascade do |t|
