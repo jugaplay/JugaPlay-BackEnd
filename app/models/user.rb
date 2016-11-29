@@ -7,12 +7,12 @@ class User < ActiveRecord::Base
   has_many :prizes
   has_many :notifications
   has_many :invitation_requests
-  has_one :channel, dependent: :destroy
-  has_one :wallet, dependent: :destroy
-  has_one :address_book, dependent: :destroy
   has_many :plays, dependent: :destroy
   has_many :t_entry_fees, dependent: :destroy
   has_many :rankings, dependent: :destroy
+  has_one :wallet, dependent: :destroy
+  has_one :address_book, dependent: :destroy
+  has_one :notifications_setting, dependent: :destroy
   has_and_belongs_to_many :groups, -> { uniq }
   has_and_belongs_to_many :explanations, before_add: :validates_explanation_already_exist
 

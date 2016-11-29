@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161128161755) do
+ActiveRecord::Schema.define(version: 20161128220541) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,18 +36,6 @@ ActiveRecord::Schema.define(version: 20161128161755) do
   end
 
   add_index "address_books", ["user_id"], name: "index_address_books_on_user_id", unique: true, using: :btree
-
-  create_table "channels", force: :cascade do |t|
-    t.integer  "user_id",                   null: false
-    t.boolean  "mail",       default: true, null: false
-    t.boolean  "sms",        default: true, null: false
-    t.boolean  "whatsapp",   default: true, null: false
-    t.boolean  "push",       default: true, null: false
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
-  end
-
-  add_index "channels", ["user_id"], name: "index_channels_on_user_id", unique: true, using: :btree
 
   create_table "comments", force: :cascade do |t|
     t.string   "sender_name"
@@ -203,6 +191,19 @@ ActiveRecord::Schema.define(version: 20161128161755) do
   end
 
   add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree
+
+  create_table "notifications_settings", force: :cascade do |t|
+    t.integer  "user_id",                    null: false
+    t.boolean  "mail",       default: true,  null: false
+    t.boolean  "sms",        default: false, null: false
+    t.boolean  "whatsapp",   default: false, null: false
+    t.boolean  "push",       default: false, null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.boolean  "facebook",   default: false, null: false
+  end
+
+  add_index "notifications_settings", ["user_id"], name: "index_notifications_settings_on_user_id", unique: true, using: :btree
 
   create_table "player_stats", force: :cascade do |t|
     t.integer  "player_id",                             null: false

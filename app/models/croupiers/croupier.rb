@@ -45,8 +45,8 @@ class Croupier
 
   def create_play(players, user, bet_coins)
     user.pay_coins! bet_coins
-    Play.create!(user: user, table: table, players: players, bet_coins: bet_coins)
     TEntryFee.create!(user: user, coins: bet_coins, table: table, detail: "Entrada a : #{table.title}") if bet_coins > 0
+    Play.create!(user: user, table: table, players: players, bet_coins: bet_coins)
   end
 
   def calculate_play_points(players_stats)
