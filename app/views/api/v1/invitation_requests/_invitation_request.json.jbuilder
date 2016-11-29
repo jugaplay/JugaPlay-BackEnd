@@ -1,5 +1,6 @@
 json.id invitation_request.id
 json.type invitation_request.type
+json.token invitation_request.token
 
 json.accepted(invitation_request.invitation_acceptances) do |invitation_acceptance|
   json.id invitation_acceptance.id

@@ -29,7 +29,6 @@
       resources :users, only: [:show, :create, :update] do
         # TODO: Remove this out of here
       	resources :channels, only: [:index, :update]
-      	resources :notifications, only: [:index, :update]
 
         collection do
           post 'search' => 'users#search', as: :search
@@ -67,6 +66,7 @@
         end
       end
 
+      resources :notifications, only: [:index, :update]
       resources :explanations, only: [:index, :show, :create]
 
 

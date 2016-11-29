@@ -1,8 +1,6 @@
 class Api::V1::NotificationsController < Api::BaseController
-  skip_before_filter :authenticate_user!, only: [:create]
-
   def index
-    @notifications = Notification.where(user_id: params[:user_id]).limit(params[:to]).offset(params[:from]).order('created_at DESC' )
+    @notifications = current_user.notifications.limit(params[:to]).offset(params[:from]).order('created_at DESC')
   end
 
   def update
@@ -10,6 +8,8 @@ class Api::V1::NotificationsController < Api::BaseController
     return render :show if @notification.update(update_notification_params)
     render_json_errors @notification.errors
   end
+
+  private
 
   def update_notification_params
     params.permit(:read)

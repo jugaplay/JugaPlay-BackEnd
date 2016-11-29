@@ -17,6 +17,7 @@ describe Api::V1::InvitationRequestsController do
           expect(response_body[:invitation_requests]).to have(2).items
           expect(response_body[:invitation_requests].first[:id]).to eq invitation_request.id
           expect(response_body[:invitation_requests].first[:type]).to eq invitation_request.type
+          expect(response_body[:invitation_requests].first[:token]).to eq invitation_request.token
           expect(response_body[:invitation_requests].first[:visited]).not_to be_empty
           expect(response_body[:invitation_requests].first[:accepted]).not_to be_empty
           expect(response.status).to eq 200
