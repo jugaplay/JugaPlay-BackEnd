@@ -8,7 +8,7 @@ describe Api::V1::CroupierController do
     let(:players) { Player.all.sample(table.number_of_players) }
 
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       context 'when the request succeeds' do
         context 'when the user does not bet for the table' do

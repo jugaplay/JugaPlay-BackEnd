@@ -1,5 +1,4 @@
 class Api::V1::MailerController < ApplicationController
-
 	def send_request
 		@user = User.find_by_id(params[:from_user_id])
 		if  @user.present?

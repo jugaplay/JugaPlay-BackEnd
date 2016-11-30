@@ -7,7 +7,7 @@ describe Api::V1::GroupsController do
     let(:group) { FactoryGirl.create(:group, users: [user]) }
 
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       context 'when the logged in user belongs to the requested group' do
         it 'responds a json with the information of the logged in user' do
@@ -56,7 +56,7 @@ describe Api::V1::GroupsController do
 
   describe 'GET #index' do
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       context 'when the user belongs to some groups' do
         let!(:group) { FactoryGirl.create(:group, users: [user]) }
@@ -162,7 +162,7 @@ describe Api::V1::GroupsController do
     let(:group_params) { { id: group.id, group: { name: 'Perez' } } }
 
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       context 'when request succeeds' do
         it 'updates the group and renders a json of it' do
@@ -221,7 +221,7 @@ describe Api::V1::GroupsController do
     let(:add_member_params) { { id: group.id, user_id: new_user.id } }
 
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       context 'when request succeeds' do
         context 'when the new user does not belong to the group' do
@@ -294,7 +294,7 @@ describe Api::V1::GroupsController do
     let(:group) { FactoryGirl.create(:group, users: [user]) }
 
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       context 'when request succeeds' do
         it 'updates the given group and renders a json of it' do
@@ -344,7 +344,7 @@ describe Api::V1::GroupsController do
     let(:group) { FactoryGirl.create(:group, users: [another_user]) }
 
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       context 'when request succeeds' do
         it 'joins the user to the group and renders a json of it' do

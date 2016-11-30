@@ -154,7 +154,7 @@ describe TableWinnersCalculator do
           let!(:second_user_first_play) { FactoryGirl.create(:play, user: second_user, table: another_table, points: 10) }
           let!(:third_user_first_play) { FactoryGirl.create(:play, user: third_user, table: another_table, points: 1) }
 
-          before(:each) do
+          before do
             users = [second_user, first_user, third_user]
             RankingPointsUpdater.new(tournament: tournament, users: users, points_for_winners: another_table.points_for_winners).call
             RankingSorter.new(tournament).call
@@ -201,7 +201,7 @@ describe TableWinnersCalculator do
           let!(:first_user_first_play) { FactoryGirl.create(:play, user: first_user, table: another_table, points: 1) }
           let!(:second_user_first_play) { FactoryGirl.create(:play, user: second_user, table: another_table, points: 10) }
 
-          before(:each) do
+          before do
             users = [second_user, first_user]
             RankingPointsUpdater.new(tournament: tournament, users: users, points_for_winners: another_table.points_for_winners).call
             RankingSorter.new(tournament).call

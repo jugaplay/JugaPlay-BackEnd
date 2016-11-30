@@ -2,7 +2,6 @@
   devise_for :users,
              path: 'api/v1/users',
              controllers: {
-               invitations: 'api/v1/users/invitations',
                sessions: 'api/v1/users/sessions',
                confirmations: 'api/v1/users/confirmations',
                passwords: 'api/v1/users/passwords',
@@ -12,18 +11,24 @@
 
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
+
+      get 'mailer/send_request'
+      post 'mailer/send_request'
+
+      ###########################################
+      #                                         #
+      #                 USERS                   #
+      #                                         #
+      ###########################################
+
       devise_scope :user do
         post 'login' => 'users/sessions#create'
         delete 'logout' => 'users/sessions#destroy'
       end
-      
-      get 'mailer/send_request'
-      post 'mailer/send_request'
 
       resources :users, only: [:show, :create, :update] do
-      	resources :requests, only: [:index, :create]
+        # TODO: Remove this out of here
       	resources :channels, only: [:index, :update]
-      	resources :notifications, only: [:index, :update]
 
         collection do
           post 'search' => 'users#search', as: :search
@@ -41,12 +46,36 @@
         end
       end
 
-	    resources :explanations, only: [:index, :show, :create]
-      resources :invitations, only: [:create]
-
-      resources :requests, only: [] do
-        resources :invitations, only: [:create]
+      resources :address_books, only: [] do
+        collection do
+          post 'synch' => 'address_books#synch', as: :synch
+          get '/' => 'address_books#show', as: :show
+        end
       end
+
+      resources :telephone_update_requests, only: [] do
+        collection do
+          post 'validate' => 'telephone_update_requests#validate', as: :validate
+        end
+      end
+
+      resources :invitation_requests, only: [:index, :create] do
+        collection do
+          post 'visit' => 'invitation_requests#visit', as: :visit
+          post 'accept' => 'invitation_requests#accept', as: :accept
+        end
+      end
+
+      resources :notifications, only: [:index, :update]
+      resources :explanations, only: [:index, :show, :create]
+
+
+
+      ###########################################
+      #                                         #
+      #                  GAME                   #
+      #                                         #
+      ###########################################
 
       resources :tournaments, only: [] do
         resources :rankings, only: [:index]
@@ -66,17 +95,19 @@
 
       resources :teams, only: [:show]
       resources :plays, only: [:index]
-      resources :comments, only: [:create]
-
       resources :user_prizes, only: [:index, :create]
+      post '/play' => 'croupier#play'
 
-      resources :address_books, only: [] do
-        collection do
-          post 'synch' => 'address_books#synch', as: :synch
-          get '/' => 'address_books#show', as: :show
-        end
-      end
 
+
+
+      ###########################################
+      #                                         #
+      #                 UNKNOWN                 #
+      #                                         #
+      ###########################################
+
+      resources :comments, only: [:create]
       resources :guests, only: [:index, :show]
       resources :transactions, only: [:index, :show, :create]
       resources :t_entry_fees, only: [:index, :create]
@@ -84,10 +115,6 @@
       resources :t_withdraws, only: [:index, :create]
       resources :t_promotions, only: [:index, :create]
       resources :wallet_history, only: [:index]
-      resources :unused_invitations, only: [:index]
-      resources :registered_invitations, only: [:index]
-
-      post '/play' => 'croupier#play'
     end
   end
 

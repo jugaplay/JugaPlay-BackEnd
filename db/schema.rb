@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161114134405) do
+ActiveRecord::Schema.define(version: 20161126023900) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,8 +107,7 @@ ActiveRecord::Schema.define(version: 20161114134405) do
     t.string   "name",       default: ""
   end
 
-  add_index "external_address_book_contacts", ["user_id", "email"], name: "index_external_address_book_contacts_on_user_id_and_email", unique: true, using: :btree
-  add_index "external_address_book_contacts", ["user_id", "phone"], name: "index_external_address_book_contacts_on_user_id_and_phone", unique: true, using: :btree
+  add_index "external_address_book_contacts", ["user_id", "email", "phone"], name: "unique_email_and_phone_per_user", unique: true, using: :btree
   add_index "external_address_book_contacts", ["user_id"], name: "index_external_address_book_contacts_on_user_id", using: :btree
 
   create_table "group_invitation_tokens", force: :cascade do |t|
@@ -139,23 +138,34 @@ ActiveRecord::Schema.define(version: 20161114134405) do
   add_index "groups_users", ["group_id"], name: "index_groups_users_on_group_id", using: :btree
   add_index "groups_users", ["user_id"], name: "index_groups_users_on_user_id", using: :btree
 
-  create_table "invitation_statuses", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "invitation_acceptances", force: :cascade do |t|
+    t.integer  "invitation_request_id", null: false
+    t.integer  "user_id",               null: false
+    t.inet     "ip",                    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  add_index "invitation_statuses", ["name"], name: "index_invitation_statuses_on_name", unique: true, using: :btree
+  add_index "invitation_acceptances", ["invitation_request_id"], name: "index_invitation_acceptances_on_invitation_request_id", using: :btree
+  add_index "invitation_acceptances", ["user_id", "invitation_request_id"], name: "unique_user_per_invitation_request", unique: true, using: :btree
+  add_index "invitation_acceptances", ["user_id"], name: "index_invitation_acceptances_on_user_id", using: :btree
 
-  create_table "invitations", force: :cascade do |t|
-    t.integer  "won_coins"
-    t.inet     "guest_ip"
-    t.string   "detail"
-    t.integer  "invitation_status_id", null: false
-    t.integer  "request_id",           null: false
-    t.integer  "guest_user_id"
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+  create_table "invitation_requests", force: :cascade do |t|
+    t.integer  "user_id",                     null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.string   "token",                       null: false
+    t.string   "type",       default: "Link", null: false
+  end
+
+  add_index "invitation_requests", ["token"], name: "index_invitation_requests_on_token", unique: true, using: :btree
+  add_index "invitation_requests", ["user_id"], name: "index_invitation_requests_on_user_id", using: :btree
+
+  create_table "invitation_visits", force: :cascade do |t|
+    t.integer  "invitation_request_id", null: false
+    t.inet     "ip",                    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "matches", force: :cascade do |t|
@@ -180,27 +190,18 @@ ActiveRecord::Schema.define(version: 20161114134405) do
   add_index "matches_tables", ["match_id"], name: "index_matches_tables_on_match_id", using: :btree
   add_index "matches_tables", ["table_id"], name: "index_matches_tables_on_table_id", using: :btree
 
-  create_table "notification_types", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "notification_types", ["name"], name: "index_notification_types_on_name", unique: true, using: :btree
-
   create_table "notifications", force: :cascade do |t|
     t.integer  "user_id"
-    t.integer  "notification_type_id"
-    t.string   "title",                                null: false
+    t.string   "title",                      null: false
     t.string   "image"
     t.text     "text"
     t.text     "action"
-    t.boolean  "read",                 default: false, null: false
-    t.datetime "created_at",                           null: false
-    t.datetime "updated_at",                           null: false
+    t.boolean  "read",       default: false, null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.string   "type",                       null: false
   end
 
-  add_index "notifications", ["notification_type_id"], name: "index_notifications_on_notification_type_id", using: :btree
   add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree
 
   create_table "player_stats", force: :cascade do |t|
@@ -289,24 +290,6 @@ ActiveRecord::Schema.define(version: 20161114134405) do
   add_index "rankings", ["tournament_id", "user_id"], name: "index_rankings_on_tournament_id_and_user_id", unique: true, using: :btree
   add_index "rankings", ["tournament_id"], name: "index_rankings_on_tournament_id", using: :btree
   add_index "rankings", ["user_id"], name: "index_rankings_on_user_id", using: :btree
-
-  create_table "request_types", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "request_types", ["name"], name: "index_request_types_on_name", unique: true, using: :btree
-
-  create_table "requests", force: :cascade do |t|
-    t.integer  "request_type_id", null: false
-    t.integer  "host_user_id",    null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-  end
-
-  add_index "requests", ["host_user_id"], name: "index_requests_on_host_user_id", using: :btree
-  add_index "requests", ["request_type_id"], name: "index_requests_on_request_type_id", using: :btree
 
   create_table "sent_mails", force: :cascade do |t|
     t.string   "from"
@@ -427,6 +410,17 @@ ActiveRecord::Schema.define(version: 20161114134405) do
   add_index "teams", ["director_id"], name: "index_teams_on_director_id", unique: true, using: :btree
   add_index "teams", ["name"], name: "index_teams_on_name", unique: true, using: :btree
 
+  create_table "telephone_update_requests", force: :cascade do |t|
+    t.integer "user_id",                         null: false
+    t.string  "telephone",                       null: false
+    t.string  "validation_code",                 null: false
+    t.boolean "applied",         default: false, null: false
+  end
+
+  add_index "telephone_update_requests", ["user_id", "validation_code"], name: "index_telephone_update_requests_on_user_id_and_validation_code", unique: true, using: :btree
+  add_index "telephone_update_requests", ["user_id"], name: "index_telephone_update_requests_on_user_id", using: :btree
+  add_index "telephone_update_requests", ["validation_code"], name: "index_telephone_update_requests_on_validation_code", using: :btree
+
   create_table "tournaments", force: :cascade do |t|
     t.string   "name",       null: false
     t.datetime "created_at"
@@ -479,7 +473,6 @@ ActiveRecord::Schema.define(version: 20161114134405) do
     t.string   "facebook_id"
     t.text     "image"
     t.string   "nickname",                            null: false
-    t.integer  "invited_by_id"
     t.string   "telephone"
     t.string   "push_token"
     t.string   "facebook_token"
@@ -501,7 +494,6 @@ ActiveRecord::Schema.define(version: 20161114134405) do
 
   add_index "wallets", ["user_id"], name: "index_wallets_on_user_id", unique: true, using: :btree
 
-  add_foreign_key "notifications", "notification_types"
   add_foreign_key "notifications", "users"
   add_foreign_key "t_deposits", "users"
   add_foreign_key "t_entry_fees", "tables"

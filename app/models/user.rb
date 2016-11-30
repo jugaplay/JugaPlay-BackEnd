@@ -11,29 +11,22 @@ class User < ActiveRecord::Base
   has_many :plays, dependent: :destroy
   has_many :rankings, dependent: :destroy
   has_many :user_prizes
-  has_many :requests
   has_many :notifications
+  has_many :invitation_requests
   has_and_belongs_to_many :groups, -> { uniq }
   has_and_belongs_to_many :explanations, before_add: :validates_explanation_already_exist
-
-  belongs_to :invited_by, class_name: self.to_s, foreign_key: :invited_by_id
 
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :nickname, uniqueness: true, presence: true
   validates :email, uniqueness: true, if: proc { email.present? }
-  validates :facebook_id, uniqueness: { scope: :provider }, if: proc { facebook_id.present? && provider.present? }
   validates :telephone, format: /\A\d+\Z/, uniqueness: true, if: proc { telephone.present? }
-  validate :validate_not_invited_by_itself, on: :update
+  validates :facebook_id, uniqueness: { scope: :provider }, if: proc { facebook_id.present? && provider.present? }
 
   scope :ordered, -> { order(created_at: :asc) }
 
   def name
     "#{first_name} #{last_name}"
-  end
-
-  def host
-    User.find(self.invited_by_id)
   end
 
   def coins
@@ -83,10 +76,6 @@ class User < ActiveRecord::Base
   end
 
   private
-
-  def validate_not_invited_by_itself
-    errors.add(:invited_by, 'Can not invite itself') if id.eql? invited_by_id
-  end
 
   def validates_explanation_already_exist(explanation)
     raise ActiveRecord::Rollback if self.explanations.include? explanation

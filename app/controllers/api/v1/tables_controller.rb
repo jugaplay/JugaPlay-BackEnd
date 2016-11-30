@@ -23,12 +23,19 @@ class Api::V1::TablesController < Api::BaseController
     return render_json_error ENTRY_COINS_COST_MUST_BE_GIVEN unless table_params[:entry_coins_cost].to_i > 0
     @table = Table.new private_table_params
     return render_json_errors table.errors unless table.save
+    create_notifications_for_table_group
     render :show
   rescue ActiveRecord::RecordNotFound
     render_not_found_error MATCH_NOT_FOUND
   end
 
   private
+
+  def create_notifications_for_table_group
+    table.group.users.each do |user|
+      Notification.challenge!(title: table.group.name, text: table.title, user: user)
+    end
+  end
 
   def table_params
     params.require(:table).permit(:title, :description, :match_id, :group_id, :entry_coins_cost)

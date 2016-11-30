@@ -9,7 +9,7 @@ describe Api::V1::TablesController do
     let!(:private_table_excluding_user) { FactoryGirl.create(:table, group: FactoryGirl.create(:group)) }
 
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       it 'returns json of the public tables and the private tables that the user can play' do
         get :index
@@ -56,7 +56,7 @@ describe Api::V1::TablesController do
     let!(:private_table_excluding_user) { FactoryGirl.create(:table, group: FactoryGirl.create(:group)) }
 
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       context 'when the user can play in the requested table' do
         context 'when the user requests a private table that is allowed to play' do
@@ -144,7 +144,7 @@ describe Api::V1::TablesController do
     end
 
     context 'when the user is logged in' do
-      before(:each) { sign_in user }
+      before { sign_in user }
 
       context 'when request succeeds' do
         it 'creates a new private table for the given group' do
@@ -167,6 +167,17 @@ describe Api::V1::TablesController do
           expect(table.start_time).to eq match.datetime
           expect(table.end_time).to eq (match.datetime + 2.hours)
         end
+
+        it 'creates challenge notifications for all the group members' do
+          expect { post :create, table_params }.to change { Notification.count }.by 2
+
+          table = Table.last
+          Notification.all.each do |notification|
+            expect(notification.title).to eq group.name
+            expect(notification.text).to eq table.title
+            expect(group.users).to include notification.user
+          end
+        end
       end
 
       context 'when request fails' do
@@ -180,6 +191,7 @@ describe Api::V1::TablesController do
 
               expect { post :create, missing_params }.to_not change { Table.count }
 
+              expect(Notification.count).to eq 0
               expect(response.status).to eq 200
               expect(response_body[:errors][param]).to include "can't be blank"
             end
@@ -193,6 +205,7 @@ describe Api::V1::TablesController do
 
             expect { post :create, params }.not_to change { Table.count }
 
+            expect(Notification.count).to eq 0
             expect(response.status).to eq 400
             expect(response_body[:errors]).to include Api::V1::TablesController::GROUP_MUST_BE_GIVEN
           end
@@ -205,6 +218,7 @@ describe Api::V1::TablesController do
 
             expect { post :create, params }.not_to change { Table.count }
 
+            expect(Notification.count).to eq 0
             expect(response.status).to eq 400
             expect(response_body[:errors]).to include Api::V1::TablesController::ENTRY_COINS_COST_MUST_BE_GIVEN
           end
@@ -217,6 +231,7 @@ describe Api::V1::TablesController do
 
             expect { post :create, params }.not_to change { Table.count }
 
+            expect(Notification.count).to eq 0
             expect(response.status).to eq 422
             expect(response_body[:errors]).to include Api::V1::TablesController::MATCH_NOT_FOUND
           end
