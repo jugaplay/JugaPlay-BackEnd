@@ -8,7 +8,7 @@ describe Api::V1::InvitationRequestsController do
       before { sign_in user }
 
       context 'when the user has some invitation requests' do
-        let!(:invitation_request) { FactoryGirl.create(:invitation_request, user: user) }
+        let!(:invitation_request) { FactoryGirl.create(:invitation_request, :with_visits_and_acceptances, user: user) }
         let!(:another_invitation_request) { FactoryGirl.create(:invitation_request, user: user) }
 
         it 'responds a json with the information of the invitation requests of the user' do
@@ -105,8 +105,8 @@ describe Api::V1::InvitationRequestsController do
       it 'does not create a invitation visit and renders a json with error messages' do
         expect { post :visit, token: 'invalid token' }.to_not change { InvitationVisit.count }
 
-        expect(response.status).to eq 200
-        expect(response_body[:errors][:invitation_request]).to include "can't be blank"
+        expect(response.status).to eq 400
+        expect(response_body[:errors]).to include Api::V1::InvitationRequestsController::INVALID_INVITATION_TOKEN
       end
     end
   end
@@ -135,8 +135,8 @@ describe Api::V1::InvitationRequestsController do
         it 'does not create a invitation acceptance and renders a json with error messages' do
           expect { post :accept, token: 'invalid token' }.to_not change { InvitationAcceptance.count }
 
-          expect(response.status).to eq 200
-          expect(response_body[:errors][:invitation_request]).to include "can't be blank"
+          expect(response.status).to eq 400
+          expect(response_body[:errors]).to include Api::V1::InvitationRequestsController::INVALID_INVITATION_TOKEN
         end
       end
     end

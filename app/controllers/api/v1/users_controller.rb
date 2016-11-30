@@ -8,8 +8,9 @@ class Api::V1::UsersController < Api::BaseController
   def create
     @user = User.new(create_user_params)
     return render_json_errors user.errors unless user.save
-    TPromotion.registration!(@user)
-    WelcomeMailer.send_welcome_message(@user).deliver_now
+    invitation_request.accept(user, remote_ip) if invitation_request.present?
+    TPromotion.registration!(user)
+    WelcomeMailer.send_welcome_message(user).deliver_now
     render :show
   end
 
@@ -64,5 +65,13 @@ class Api::V1::UsersController < Api::BaseController
 
   def user
     @user ||= current_user
+  end
+
+  def remote_ip
+    request.remote_ip || '0.0.0.0'
+  end
+
+  def invitation_request
+    @invitation_request ||= InvitationRequest.find_by_token(params[:invitation_token])
   end
 end

@@ -17,6 +17,10 @@ class Api::V1::Users::OmniauthCallbacksController < Devise::OmniauthCallbacksCon
   private
 
   def facebook_user_login
-    FacebookUserLogin.new request.env['omniauth.auth'], request.env['omniauth.params']
+    FacebookUserLogin.new request.env['omniauth.auth'], request.env['omniauth.params'], remote_ip
+  end
+
+  def remote_ip
+    request.remote_ip || '0.0.0.0'
   end
 end

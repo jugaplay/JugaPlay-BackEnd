@@ -1,17 +1,19 @@
 class FacebookUserLogin
-  def initialize(omniauth_params, query_params)
+  def initialize(omniauth_params, query_params, remote_ip)
     @omniauth_params = omniauth_params
     @query_params = query_params
+    @remote_ip = remote_ip
   end
   
   def call
     return update_existing_user if user_email_already_exists?
     create_new_user
+    accept_invitation_if_present
     new_user
   end
 
   private
-  attr_accessor :omniauth_params, :query_params, :new_user
+  attr_accessor :omniauth_params, :query_params, :remote_ip, :new_user
 
   def update_existing_user
     existing_user.update_attributes(
@@ -37,12 +39,20 @@ class FacebookUserLogin
     end
   end
 
+  def accept_invitation_if_present
+    invitation_request.accept(new_user, remote_ip) if invitation_request.present?
+  end
+
   def user_email_already_exists?
     existing_user.present?
   end
 
   def existing_user
     @existing_user ||= User.find_by(email: omniauth_params.info.email)
+  end
+
+  def invitation_request
+    @invitation_request ||= InvitationRequest.find_by_token(query_params['invitation_token'])
   end
 
   def build_nickname

@@ -2,106 +2,167 @@ require 'spec_helper'
 
 describe Api::V1::UsersController do
   describe 'POST #create' do
-    let(:user_params) do
-      {
-        user: {
-          first_name: 'Carlos',
-          last_name: 'Perez',
-          nickname: 'carlos_perez',
-          email: 'carlos_perez@jugaplay.com',
-          password: 12345678
+    context 'when the user has not been invited by another user' do
+      let(:user_params) do
+        {
+          user: {
+            first_name: 'Carlos',
+            last_name: 'Perez',
+            nickname: 'carlos_perez',
+            email: 'carlos_perez@jugaplay.com',
+            password: 12345678
+          }
         }
-      }
-    end
-
-    context 'when request succeeds' do
-      it 'creates a user and renders a json of it' do
-        expect { post :create, user_params }.to change { User.count }.by(1)
-
-        new_user = User.last
-        expect(new_user.first_name).to eq user_params[:user][:first_name]
-        expect(new_user.last_name).to eq user_params[:user][:last_name]
-        expect(new_user.nickname).to eq user_params[:user][:nickname]
-        expect(new_user.email).to eq user_params[:user][:email]
-        expect(new_user.encrypted_password).to be_present
-        expect(new_user.facebook_id).to be_nil
-        expect(new_user.image).to be_nil
-        expect(new_user.provider).to be_nil
-        expect(new_user.wallet).not_to be_nil
-        expect(new_user.coins).to be >= 0
-        expect(new_user.address_book).not_to be_nil
-        expect(new_user.address_book.contacts).to be_empty
-
-        expect(response).to render_template :show
-        expect(response.status).to eq 200
-        expect(response_body[:id]).to eq new_user.id
-        expect(response_body[:nickname]).to eq new_user.nickname
-        expect(response_body[:email]).to eq new_user.email
-        expect(response_body[:first_name]).to eq new_user.first_name
-        expect(response_body[:last_name]).to eq new_user.last_name
-        expect(response_body[:telephone]).to eq new_user.telephone
-        expect(response_body[:member_since]).to eq new_user.created_at.strftime('%d/%m/%Y')
-        expect(response_body[:image]).to eq nil
       end
 
-      it 'sends a welcome email' do
-        post :create, user_params
+      context 'when request succeeds' do
+        it 'creates a user and renders a json of it' do
+          expect { post :create, user_params }.to change { User.count }.by(1)
 
-        welcome_mails = WelcomeMailer.deliveries
-        expect(welcome_mails).to have(1).item
-        expect(welcome_mails.last.to).to include user_params[:user][:email]
-        expect(welcome_mails.last.from).to include WelcomeMailer::INFO_MAIL
-        expect(welcome_mails.last.subject).to eq 'Bienvenido!'
+          new_user = User.last
+          expect(new_user.first_name).to eq user_params[:user][:first_name]
+          expect(new_user.last_name).to eq user_params[:user][:last_name]
+          expect(new_user.nickname).to eq user_params[:user][:nickname]
+          expect(new_user.email).to eq user_params[:user][:email]
+          expect(new_user.encrypted_password).to be_present
+          expect(new_user.facebook_id).to be_nil
+          expect(new_user.image).to be_nil
+          expect(new_user.provider).to be_nil
+          expect(new_user.wallet).not_to be_nil
+          expect(new_user.coins).to be >= 0
+          expect(new_user.address_book).not_to be_nil
+          expect(new_user.address_book.contacts).to be_empty
+
+          expect(response).to render_template :show
+          expect(response.status).to eq 200
+          expect(response_body[:id]).to eq new_user.id
+          expect(response_body[:nickname]).to eq new_user.nickname
+          expect(response_body[:email]).to eq new_user.email
+          expect(response_body[:first_name]).to eq new_user.first_name
+          expect(response_body[:last_name]).to eq new_user.last_name
+          expect(response_body[:telephone]).to eq new_user.telephone
+          expect(response_body[:member_since]).to eq new_user.created_at.strftime('%d/%m/%Y')
+          expect(response_body[:image]).to eq nil
+        end
+
+        it 'sends a welcome email' do
+          post :create, user_params
+
+          welcome_mails = WelcomeMailer.deliveries
+          expect(welcome_mails).to have(1).item
+          expect(welcome_mails.last.to).to include user_params[:user][:email]
+          expect(welcome_mails.last.from).to include WelcomeMailer::INFO_MAIL
+          expect(welcome_mails.last.subject).to eq 'Bienvenido!'
+        end
       end
-    end
 
-    context 'when the request fails' do
-      context 'when a required parameter is missing' do
-        let(:mandatory_fields) { user_params[:user].except(:nickname).keys }
+      context 'when the request fails' do
+        context 'when a required parameter is missing' do
+          let(:mandatory_fields) { user_params[:user].except(:nickname).keys }
 
-        it 'does not create a user and renders a json with error messages' do
-          mandatory_fields.each do |param|
-            missing_params = user_params.deep_dup
-            missing_params[:user].delete(param)
+          it 'does not create a user and renders a json with error messages' do
+            mandatory_fields.each do |param|
+              missing_params = user_params.deep_dup
+              missing_params[:user].delete(param)
 
-            expect { post :create, missing_params }.to_not change { User.count }
+              expect { post :create, missing_params }.to_not change { User.count }
+
+              expect(response.status).to eq 200
+              expect(response_body[:errors][param]).to include "can't be blank"
+            end
+          end
+        end
+
+        context 'when an email is already taken' do
+          before { post :create, user_params }
+
+          it 'does not create a user and renders a json with error messages' do
+            expect { post :create, user_params }.to_not change { User.count }
 
             expect(response.status).to eq 200
-            expect(response_body[:errors][param]).to include "can't be blank"
+            expect(response_body[:errors][:email]).to include 'has already been taken'
+          end
+        end
+
+        context 'when a nickname is already taken' do
+          before { post :create, user_params }
+
+          it 'does not create a user and renders a json with error messages' do
+            expect { post :create, user_params }.to_not change { User.count }
+
+            expect(response.status).to eq 200
+            expect(response_body[:errors][:nickname]).to include 'has already been taken'
+          end
+        end
+
+        context 'when the password has less than 8 characters' do
+          before { user_params[:user][:password] = 1234567 }
+
+          it 'does not create a user and renders a json with error messages' do
+            expect { post :create, user_params }.to_not change { User.count }
+
+            expect(response.status).to eq 200
+            expect(response_body[:errors][:password]).to include 'is too short (minimum is 8 characters)'
           end
         end
       end
+    end
 
-      context 'when an email is already taken' do
-        before { post :create, user_params }
-
-        it 'does not create a user and renders a json with error messages' do
-          expect { post :create, user_params }.to_not change { User.count }
-
-          expect(response.status).to eq 200
-          expect(response_body[:errors][:email]).to include 'has already been taken'
-        end
+    context 'when the user has not been invited by another user' do
+      let(:existing_user) { FactoryGirl.create(:user) }
+      let(:invitation_request) { FactoryGirl.create(:invitation_request, user: existing_user) }
+      let(:user_params) do
+        {
+          user: {
+            first_name: 'Carlos',
+            last_name: 'Perez',
+            nickname: 'carlos_perez',
+            email: 'carlos_perez@jugaplay.com',
+            password: 12345678,
+          },
+          invitation_token: invitation_request.token
+        }
       end
 
-      context 'when a nickname is already taken' do
-        before { post :create, user_params }
+      context 'when request succeeds' do
+        it 'creates a user, add some coins to the user that has invited him, and renders a json of it' do
+          existing_user_initial_coins = existing_user.coins
 
-        it 'does not create a user and renders a json with error messages' do
-          expect { post :create, user_params }.to_not change { User.count }
+          expect { post :create, user_params }.to change { User.count }.by(1)
 
+          new_user = User.last
+          expect(new_user.first_name).to eq user_params[:user][:first_name]
+          expect(new_user.last_name).to eq user_params[:user][:last_name]
+          expect(new_user.nickname).to eq user_params[:user][:nickname]
+          expect(new_user.email).to eq user_params[:user][:email]
+          expect(new_user.encrypted_password).to be_present
+          expect(new_user.coins).to be >= 0
+          expect(new_user.facebook_id).to be_nil
+          expect(new_user.image).to be_nil
+          expect(new_user.provider).to be_nil
+          expect(existing_user.reload.coins).to eq existing_user_initial_coins + Wallet::COINS_PER_INVITATION
+          expect(invitation_request.invitation_acceptances).to have(1).item
+          expect(invitation_request.invitation_acceptances.first.user).to eq new_user
+
+          expect(response).to render_template :show
           expect(response.status).to eq 200
-          expect(response_body[:errors][:nickname]).to include 'has already been taken'
+          expect(response_body[:id]).to eq new_user.id
+          expect(response_body[:nickname]).to eq new_user.nickname
+          expect(response_body[:email]).to eq new_user.email
+          expect(response_body[:first_name]).to eq new_user.first_name
+          expect(response_body[:last_name]).to eq new_user.last_name
+          expect(response_body[:member_since]).to eq new_user.created_at.strftime('%d/%m/%Y')
+          expect(response_body[:image]).to eq nil
         end
-      end
 
-      context 'when the password has less than 8 characters' do
-        before { user_params[:user][:password] = 1234567 }
+        it 'sends a welcome email' do
+          post :create, user_params
 
-        it 'does not create a user and renders a json with error messages' do
-          expect { post :create, user_params }.to_not change { User.count }
-
-          expect(response.status).to eq 200
-          expect(response_body[:errors][:password]).to include 'is too short (minimum is 8 characters)'
+          welcome_mails = WelcomeMailer.deliveries
+          expect(welcome_mails).to have(1).item
+          expect(welcome_mails.last.to).to include user_params[:user][:email]
+          expect(welcome_mails.last.from).to include WelcomeMailer::INFO_MAIL
+          expect(welcome_mails.last.subject).to eq 'Bienvenido!'
         end
       end
     end
