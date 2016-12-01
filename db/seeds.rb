@@ -3,20 +3,20 @@ ActiveRecord::Base.transaction do
 
   ## ADMIN
   wallet =  Wallet.new(coins: 10)
-  channel1 = Channel.new(whatsapp: true, sms: true, push: true, mail: true)
-  admin = User.new(channel: channel1, wallet: wallet, email: 'admin@jugaplay.com', password: '12345678', first_name: 'Admin', last_name: 'Admin', nickname: 'Admin')
+  notifications_setting1 = NotificationsSetting.new(whatsapp: true, sms: true, push: true, mail: true)
+  admin = User.new(notifications_setting: notifications_setting1, wallet: wallet, email: 'admin@jugaplay.com', password: '12345678', first_name: 'Admin', last_name: 'Admin', nickname: 'Admin')
   admin.save!
    	
   ## USER1
   wallet2 =  Wallet.new(coins: 10)
-  channel2 = Channel.new(whatsapp: true, sms: true, push: true, mail: true)
-  user1 = User.new(channel: channel2, wallet: wallet2, email: 'user1@jugaplay.com', password: '12345678', first_name: 'User1', last_name: 'User1', nickname: 'User1')
+  notifications_setting2 = NotificationsSetting.new(whatsapp: true, sms: true, push: true, mail: true)
+  user1 = User.new(notifications_setting: notifications_setting2, wallet: wallet2, email: 'user1@jugaplay.com', password: '12345678', first_name: 'User1', last_name: 'User1', nickname: 'User1')
   user1.save!   
   
   ## USER2	
   wallet3 =  Wallet.new(coins: 10)
-  channel3 = Channel.new(whatsapp: true, sms: true, push: true, mail: true)
-  user2 = User.new(channel: channel3, wallet: wallet3, email: 'user2@jugaplay.com', password: '12345678', first_name: 'User2', last_name: 'User2', nickname: 'User2')
+  notifications_setting3 = NotificationsSetting.new(whatsapp: true, sms: true, push: true, mail: true)
+  user2 = User.new(notifications_setting: notifications_setting3, wallet: wallet3, email: 'user2@jugaplay.com', password: '12345678', first_name: 'User2', last_name: 'User2', nickname: 'User2')
   user2.save! 
   
   

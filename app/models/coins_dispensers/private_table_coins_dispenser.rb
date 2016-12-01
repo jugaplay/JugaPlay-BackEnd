@@ -5,6 +5,6 @@ class PrivateTableCoinsDispenser < CoinsDispenser
 
     table.update!(coins_for_winners: [coins])
     winner.win_coins! coins
-    UserPrize.create!(coins: coins, user: winner, table: table)
+    Prize.create!(coins: coins, user: winner, table: table)
   end
 end

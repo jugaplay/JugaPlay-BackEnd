@@ -64,12 +64,12 @@ describe User do
     let(:table) { FactoryGirl.create(:table) }
 
     context 'when the given user earned some coins' do
-      let!(:user_prize) { FactoryGirl.create(:user_prize, table: table, user: user, coins: 10) }
+      let!(:prize) { FactoryGirl.create(:prize, table: table, user: user, coins: 10) }
 
       it 'returns the coins that the user earned in that table' do
         earned_coins = user.earned_coins_in_table(table) { 0 }
 
-        expect(earned_coins).to eq user_prize.coins
+        expect(earned_coins).to eq prize.coins
       end
     end
 

@@ -27,9 +27,6 @@
       end
 
       resources :users, only: [:show, :create, :update] do
-        # TODO: Remove this out of here
-      	resources :channels, only: [:index, :update]
-
         collection do
           post 'search' => 'users#search', as: :search
         end
@@ -66,8 +63,13 @@
         end
       end
 
-      resources :notifications, only: [:index, :update]
       resources :explanations, only: [:index, :show, :create]
+      resources :notifications, only: [:index, :update]
+      resources :notifications_settings, only: [:update] do
+        collection do
+          get '' => 'notifications_settings#show', as: :show
+        end
+      end
 
 
 
@@ -95,7 +97,6 @@
 
       resources :teams, only: [:show]
       resources :plays, only: [:index]
-      resources :user_prizes, only: [:index, :create]
       post '/play' => 'croupier#play'
 
 
@@ -108,9 +109,9 @@
       ###########################################
 
       resources :comments, only: [:create]
-      resources :guests, only: [:index, :show]
+      resources :prizes, only: [:index]
+      resources :t_entry_fees, only: [:index]
       resources :transactions, only: [:index, :show, :create]
-      resources :t_entry_fees, only: [:index, :create]
       resources :t_deposits, only: [:index, :create]
       resources :t_withdraws, only: [:index, :create]
       resources :t_promotions, only: [:index, :create]

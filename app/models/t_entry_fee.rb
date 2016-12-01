@@ -1,12 +1,14 @@
 class TEntryFee < ActiveRecord::Base
   belongs_to :user
-  belongs_to :tournament
   belongs_to :table
+  belongs_to :tournament
 
-  validates :coins, numericality: { greater_than_or_equal_to: 0, allow_nil: false, only_integer: true }
   validates :user, presence: true
   validates :detail, presence: true, length: { maximum: 500 }, allow_blank: false
+  validates :coins, numericality: { greater_than_or_equal_to: 0, allow_nil: false, only_integer: true }
   validate :tournament_xor_table
+
+  scope :by_date, -> { order(created_at: :desc) }
 
   private
 

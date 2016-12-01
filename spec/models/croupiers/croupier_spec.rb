@@ -182,10 +182,10 @@ describe Croupier do
 
                 it 'gives 50 coins to the user' do
                   croupier.assign_scores(players_stats: players_stats)
-                  prize = UserPrize.last
+                  prize = Prize.last
 
                   expect(user.reload.coins).to eq 50
-                  expect(UserPrize.count).to eq 1
+                  expect(Prize.count).to eq 1
                   expect(prize.coins).to eq 50
                   expect(prize.user).to eq user
                   expect(prize.table).to eq table
@@ -226,10 +226,10 @@ describe Croupier do
 
                 it 'gives 50 coins to the user' do
                   croupier.assign_scores(players_stats: players_stats)
-                  prize = UserPrize.last
+                  prize = Prize.last
 
                   expect(user.reload.coins).to eq 50
-                  expect(UserPrize.count).to eq 1
+                  expect(Prize.count).to eq 1
                   expect(prize.coins).to eq 50
                   expect(prize.user).to eq user
                   expect(prize.table).to eq table
@@ -268,7 +268,7 @@ describe Croupier do
                   expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
 
                   expect(user.reload.coins).to eq 0
-                  expect(UserPrize.count).to eq 0
+                  expect(Prize.count).to eq 0
                 end
 
                 context 'when the user has no current ranking' do
@@ -468,10 +468,10 @@ describe Croupier do
 
                 it 'gives 99 coins to the user' do
                   croupier.assign_scores(players_stats: players_stats)
-                  prize = UserPrize.last
+                  prize = Prize.last
 
                   expect(user.reload.coins).to eq 99
-                  expect(UserPrize.count).to eq 1
+                  expect(Prize.count).to eq 1
                   expect(prize.coins).to eq 99
                   expect(prize.user).to eq user
                   expect(prize.table).to eq table
@@ -512,10 +512,10 @@ describe Croupier do
 
                 it 'gives 99 coins to the user' do
                   croupier.assign_scores(players_stats: players_stats)
-                  prize = UserPrize.last
+                  prize = Prize.last
 
                   expect(user.reload.coins).to eq 99
-                  expect(UserPrize.count).to eq 1
+                  expect(Prize.count).to eq 1
                   expect(prize.coins).to eq 99
                   expect(prize.user).to eq user
                   expect(prize.table).to eq table
@@ -554,7 +554,7 @@ describe Croupier do
                   expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
 
                   expect(user.reload.coins).to eq 0
-                  expect(UserPrize.count).to eq 0
+                  expect(Prize.count).to eq 0
                 end
 
                 context 'when the user has no current ranking' do

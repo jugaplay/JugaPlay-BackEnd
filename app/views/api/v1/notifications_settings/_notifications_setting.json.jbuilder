@@ -1,0 +1,5 @@
+json.sms notifications_setting.sms
+json.push notifications_setting.push
+json.mail notifications_setting.mail
+json.whatsapp notifications_setting.whatsapp
+json.facebook notifications_setting.facebook
