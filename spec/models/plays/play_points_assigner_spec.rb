@@ -1,146 +1,10 @@
 require 'spec_helper'
 
-describe Croupier do
-  let(:croupier) { Croupier.for(table) }
+describe PlayPointsAssigner do
+  let(:plays_creator) { PlaysCreator.for(table) }
+  let(:play_points_assigner) { PlayPointsAssigner.new(table) }
 
-  describe '#play' do
-    context 'when no user is given' do
-      let(:table) { FactoryGirl.create(:table) }
-
-      it 'raises an error' do
-        expect { croupier.play(players: []) }.to raise_error ArgumentError
-      end
-    end
-
-    context 'when no players are given' do
-      let(:table) { FactoryGirl.create(:table) }
-
-      it 'raises an error' do
-        expect { croupier.play(user: 'a user') }.to raise_error ArgumentError
-      end
-    end
-
-    context 'when a user and players are populated' do
-      let(:tournament) { FactoryGirl.create(:tournament) }
-      let(:table) { FactoryGirl.create(:table, matches: matches, number_of_players: number_of_players, tournament: tournament) }
-      let(:match) { FactoryGirl.create(:match, title: '20 PTS River - Boca', local_team: river, visitor_team: boca, tournament: tournament) }
-      let(:river) { FactoryGirl.create(:team, :river) }
-      let(:boca) { FactoryGirl.create(:team, :boca) }
-      let(:user) { FactoryGirl.create(:user) }
-
-      context 'when the table has one match' do
-        let(:matches) { [match] }
-
-        context 'when the table has 2 number of players' do
-          let(:number_of_players) { 2 }
-
-          context 'when the user selects 2 players' do
-            context 'when the user has not already played in that table' do
-              context 'when the user selects players of the available teams' do
-                context 'when the user selects the same player twice' do
-                  let(:player) { river.players.sample }
-                  let(:players) { [player, player] }
-
-                  it 'raises an error' do
-                    expect { croupier.play(user: user, players: players) }.to raise_error PlayWithDuplicatedPlayer
-                  end
-                end
-
-                context 'when the user selects different players' do
-                  let(:players) { [river.players.sample, boca.players.sample] }
-
-                  context 'when the user does not bet the table' do
-                    it 'creates a new play for the given user with the given players without bet coins' do
-                      initial_amount_of_coins = user.coins
-
-                      croupier.play(user: user, players: players)
-                      play = Play.last
-
-                      expect(play.user).to eq user
-                      expect(play.players).to have(2).items
-                      expect(play.players).to match_array(players)
-                      expect(play.bet_coins).to eq 0
-                      expect(user.coins).to eq initial_amount_of_coins
-                    end
-                  end
-
-                  context 'when the user bets the table' do
-                    let(:bet) { true }
-
-                    context 'when the given amount of coins is valid' do
-                      before { table.update_attributes(entry_coins_cost: user.coins) }
-
-                      context 'when the user has enough coins to play' do
-                        it 'creates a new play for the given user with the given players and subtracts coins from his wallet' do
-                          croupier.play(user: user, players: players, bet: bet)
-                          play = Play.last
-
-                          expect(play.user).to eq user
-                          expect(play.players).to have(2).items
-                          expect(play.players).to match_array(players)
-                          expect(play.bet_coins).to eq 10
-                          expect(user.coins).to eq 0
-                        end
-                      end
-
-                      context 'when the user has not enough coins to play' do
-                        before { table.update_attributes(entry_coins_cost: 10000) }
-
-                        it 'raises an error and does not subtract coins from his wallet' do
-                          initial_amount_of_coins = user.coins
-
-                          expect { croupier.play(user: user, players: players, bet: bet) }.to raise_error UserDoesNotHaveEnoughCoins
-
-                          expect(user.reload.coins).to eq initial_amount_of_coins
-                        end
-                      end
-                    end
-                  end
-                end
-              end
-
-              context 'when the user selects players of non available teams' do
-                let(:another_player) { FactoryGirl.create(:player) }
-                let(:players) { [river.players.sample, another_player] }
-
-                it 'raises an error' do
-                  expect { croupier.play(user: user, players: players) }.to raise_error PlayerDoesNotBelongToTable
-                  expect(Play.count).to be 0
-                end
-              end
-            end
-
-            context 'when the user has already played in that table' do
-              before { croupier.play(user: user, players: players) }
-              let(:players) { river.players.sample(2) }
-
-              it 'raises an error' do
-                expect { croupier.play(user: user, players: players) }.to raise_error UserHasAlreadyPlayedInThisTable
-              end
-            end
-          end
-
-          context 'when the user selects 1 players' do
-            let(:players) { [river.players.sample] }
-
-            it 'raises an error' do
-              expect { croupier.play(user: user, players: players) }.to raise_error CanNotPlayWithNumberOfPlayers
-            end
-          end
-
-          context 'when the user selects 3 players' do
-            let(:players) { river.players.sample(3) }
-
-            it 'raises an error' do
-              expect { croupier.play(user: user, players: players) }.to raise_error CanNotPlayWithNumberOfPlayers
-            end
-          end
-        end
-      end
-    end
-  end
-
-  describe '#assign_scores' do
+  describe '#assign_points' do
     let(:players_stats) { PlayerStats.for_table table }
 
     describe 'for public tables' do
@@ -162,7 +26,7 @@ describe Croupier do
               let!(:player_stats) { FactoryGirl.create(:player_stats, player: player, match: match, scored_goals: player_goals) }
 
               before do
-                croupier.play(user: user, players: [player])
+                plays_creator.create_play(user: user, players: [player])
                 create_empty_stats_for_all table.matches
               end
 
@@ -170,7 +34,7 @@ describe Croupier do
                 let(:player_goals) { 0 }
 
                 it 'closes the table, assigns 0 points to that play and places the user in the first position' do
-                  croupier.assign_scores(players_stats: players_stats)
+                  play_points_assigner.assign_points(players_stats: players_stats)
                   play = PlaysHistory.new.made_by(user).in_table(table).last
 
                   expect(table).to be_closed
@@ -181,7 +45,7 @@ describe Croupier do
                 end
 
                 it 'gives 50 coins to the user' do
-                  croupier.assign_scores(players_stats: players_stats)
+                  play_points_assigner.assign_points(players_stats: players_stats)
                   prize = Prize.last
 
                   expect(user.reload.coins).to eq 50
@@ -193,7 +57,7 @@ describe Croupier do
 
                 context 'when the user has no current ranking' do
                   it 'creates a tournament ranking for the user and assigns 200 points' do
-                    croupier.assign_scores(players_stats: players_stats)
+                    play_points_assigner.assign_points(players_stats: players_stats)
 
                     expect(user.ranking_on_tournament(tournament).points).to eq 200
                   end
@@ -203,7 +67,7 @@ describe Croupier do
                   let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
 
                   it 'updates the current ranking adding 200 points' do
-                    croupier.assign_scores(players_stats: players_stats)
+                    play_points_assigner.assign_points(players_stats: players_stats)
 
                     expect(ranking.reload.points).to eq 300
                   end
@@ -214,7 +78,7 @@ describe Croupier do
                 let(:player_goals) { 3 }
 
                 it 'closes the table, assigns 6 points to that play and places the user in the first position' do
-                  croupier.assign_scores(players_stats: players_stats)
+                  play_points_assigner.assign_points(players_stats: players_stats)
                   play = PlaysHistory.new.made_by(user).in_table(table).last
 
                   expect(table).to be_closed
@@ -225,7 +89,7 @@ describe Croupier do
                 end
 
                 it 'gives 50 coins to the user' do
-                  croupier.assign_scores(players_stats: players_stats)
+                  play_points_assigner.assign_points(players_stats: players_stats)
                   prize = Prize.last
 
                   expect(user.reload.coins).to eq 50
@@ -237,7 +101,7 @@ describe Croupier do
 
                 context 'when the user has no current ranking' do
                   it 'creates a ranking on the tournament and assigns points for the winners' do
-                    croupier.assign_scores(players_stats: players_stats)
+                    play_points_assigner.assign_points(players_stats: players_stats)
 
                     expect(user.ranking_on_tournament(tournament).points).to eq 200
                   end
@@ -247,7 +111,7 @@ describe Croupier do
                   let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
 
                   it 'updates the current ranking adding 200 points' do
-                    croupier.assign_scores(players_stats: players_stats)
+                    play_points_assigner.assign_points(players_stats: players_stats)
 
                     expect(ranking.reload.points).to eq 300
                   end
@@ -258,14 +122,14 @@ describe Croupier do
                 let(:player_goals) { 0 }
 
                 it 'raises an error and does not assign points' do
-                  expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+                  expect{ play_points_assigner.assign_points(players_stats: []) }.to raise_error MissingPlayerStats
                   play = PlaysHistory.new.made_by(user).in_table(table).last
 
                   expect(play.points).to be_nil
                 end
 
                 it 'raises an error and does not give coins to the user' do
-                  expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+                  expect{ play_points_assigner.assign_points(players_stats: []) }.to raise_error MissingPlayerStats
 
                   expect(user.reload.coins).to eq 0
                   expect(Prize.count).to eq 0
@@ -273,7 +137,7 @@ describe Croupier do
 
                 context 'when the user has no current ranking' do
                   it 'does not create a ranking on the tournament' do
-                    expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+                    expect{ play_points_assigner.assign_points(players_stats: []) }.to raise_error MissingPlayerStats
 
                     expect(user.ranking_on_tournament(tournament)).to be_nil
                   end
@@ -283,7 +147,7 @@ describe Croupier do
                   let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
 
                   it 'does not update the current ranking' do
-                    expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+                    expect{ play_points_assigner.assign_points(players_stats: []) }.to raise_error MissingPlayerStats
 
                     expect(ranking.reload.points).to eq 100
                   end
@@ -302,7 +166,7 @@ describe Croupier do
             let(:player_of_the_first_user) { last_match.local_team.players.last }
             let!(:first_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_first_user, match: last_match, scored_goals: 3, right_passes: 2) }
 
-            before { croupier.play(user: first_user, players: [player_of_the_first_user]) }
+            before { plays_creator.create_play(user: first_user, players: [player_of_the_first_user]) }
 
             context 'when the second user plays for a player that scores 1 goals and 5 passes' do
               let(:first_match) { table.matches.first }
@@ -310,7 +174,7 @@ describe Croupier do
               let!(:second_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_second_user, match: first_match, scored_goals: 1, right_passes: 5) }
 
               before do
-                croupier.play(user: second_user, players: [player_of_the_second_user])
+                plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
                 create_empty_stats_for_all table.matches
               end
 
@@ -319,7 +183,7 @@ describe Croupier do
                 let(:points_for_passes) { 0.5 }
 
                 it 'closes the table and updates the total points for each user' do
-                  croupier.assign_scores(players_stats: players_stats)
+                  play_points_assigner.assign_points(players_stats: players_stats)
 
                   first_user_play = PlaysHistory.new.made_by(first_user).in_table(table).last
                   second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
@@ -343,7 +207,7 @@ describe Croupier do
                 let(:points_for_passes) { 0.5 }
 
                 it 'closes the table and updates the total points for each user' do
-                  croupier.assign_scores(players_stats: players_stats)
+                  play_points_assigner.assign_points(players_stats: players_stats)
 
                   first_user_play = PlaysHistory.new.made_by(first_user).in_table(table).last
                   second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
@@ -368,8 +232,10 @@ describe Croupier do
 
       context 'when 2 tables are being calculated, where each table has 2 matches and one of them is share by both' do
         let(:tournament) { FactoryGirl.create(:tournament) }
-        let(:first_table_croupier) { Croupier.for(first_table) }
-        let(:second_table_croupier) { Croupier.for(second_table) }
+        let(:first_table_plays_creator) { PlaysCreator.for(first_table) }
+        let(:second_table_plays_creator) { PlaysCreator.for(second_table) }
+        let(:first_table_points_assigner) { PlayPointsAssigner.new(first_table) }
+        let(:second_table_points_assigner) { PlayPointsAssigner.new(second_table) }
 
         let(:shared_match) { FactoryGirl.create(:match, tournament: tournament) }
         let(:first_table_match) { FactoryGirl.create(:match, tournament: tournament) }
@@ -386,15 +252,15 @@ describe Croupier do
           let!(:second_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_second_user, match: shared_match, scored_goals: 2) }
 
           before do
-            first_table_croupier.play(user: first_user, players: [player_of_the_first_user])
-            first_table_croupier.play(user: second_user, players: [player_of_the_second_user])
-            second_table_croupier.play(user: second_user, players: [player_of_the_second_user])
+            first_table_plays_creator.create_play(user: first_user, players: [player_of_the_first_user])
+            first_table_plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
+            second_table_plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
             create_empty_stats_for_all first_table.matches
             create_empty_stats_for_all second_table.matches
           end
 
           it 'closes both tables and updates the total points for each user' do
-            first_table_croupier.assign_scores(players_stats: PlayerStats.for_table(first_table))
+            first_table_points_assigner.assign_points(players_stats: PlayerStats.for_table(first_table))
             first_user_first_table_play = PlaysHistory.new.made_by(first_user).in_table(first_table).last
             second_user_first_table_play = PlaysHistory.new.made_by(second_user).in_table(first_table).last
 
@@ -409,7 +275,7 @@ describe Croupier do
             expect(first_table.winners.second.user).to eq second_user
             expect(first_table.winners.second.position).to eq 2
 
-            second_table_croupier.assign_scores(players_stats: PlayerStats.for_table(second_table))
+            second_table_points_assigner.assign_points(players_stats: PlayerStats.for_table(second_table))
             first_user_second_table_play = PlaysHistory.new.made_by(first_user).in_table(second_table).last
             second_user_second_table_play = PlaysHistory.new.made_by(second_user).in_table(second_table).last
 
@@ -448,7 +314,7 @@ describe Croupier do
               let!(:player_stats) { FactoryGirl.create(:player_stats, player: player, match: match, scored_goals: player_goals) }
 
               before do
-                croupier.play(user: user, players: [player])
+                plays_creator.create_play(user: user, players: [player])
                 create_empty_stats_for_all table.matches
               end
 
@@ -456,7 +322,7 @@ describe Croupier do
                 let(:player_goals) { 0 }
 
                 it 'closes the table, assigns 0 points to that play and places the user in the first position' do
-                  croupier.assign_scores(players_stats: players_stats)
+                  play_points_assigner.assign_points(players_stats: players_stats)
                   play = PlaysHistory.new.made_by(user).in_table(table).last
 
                   expect(table).to be_closed
@@ -467,7 +333,7 @@ describe Croupier do
                 end
 
                 it 'gives 99 coins to the user' do
-                  croupier.assign_scores(players_stats: players_stats)
+                  play_points_assigner.assign_points(players_stats: players_stats)
                   prize = Prize.last
 
                   expect(user.reload.coins).to eq 99
@@ -479,7 +345,7 @@ describe Croupier do
 
                 context 'when the user has no current ranking' do
                   it 'does not create a tournament ranking for the user' do
-                    croupier.assign_scores(players_stats: players_stats)
+                    play_points_assigner.assign_points(players_stats: players_stats)
 
                     expect(user.ranking_on_tournament(tournament)).to be_nil
                   end
@@ -489,7 +355,7 @@ describe Croupier do
                   let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
 
                   it 'does not update the current ranking' do
-                    croupier.assign_scores(players_stats: players_stats)
+                    play_points_assigner.assign_points(players_stats: players_stats)
 
                     expect(ranking.reload.points).to eq 100
                   end
@@ -500,7 +366,7 @@ describe Croupier do
                 let(:player_goals) { 3 }
 
                 it 'closes the table, assigns 6 points to that play and places the user in the first position' do
-                  croupier.assign_scores(players_stats: players_stats)
+                  play_points_assigner.assign_points(players_stats: players_stats)
                   play = PlaysHistory.new.made_by(user).in_table(table).last
 
                   expect(table).to be_closed
@@ -511,7 +377,7 @@ describe Croupier do
                 end
 
                 it 'gives 99 coins to the user' do
-                  croupier.assign_scores(players_stats: players_stats)
+                  play_points_assigner.assign_points(players_stats: players_stats)
                   prize = Prize.last
 
                   expect(user.reload.coins).to eq 99
@@ -523,7 +389,7 @@ describe Croupier do
 
                 context 'when the user has no current ranking' do
                   it 'does not create a tournament ranking for the user' do
-                    croupier.assign_scores(players_stats: players_stats)
+                    play_points_assigner.assign_points(players_stats: players_stats)
 
                     expect(user.ranking_on_tournament(tournament)).to be_nil
                   end
@@ -533,7 +399,7 @@ describe Croupier do
                   let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
 
                   it 'does not update the current ranking' do
-                    croupier.assign_scores(players_stats: players_stats)
+                    play_points_assigner.assign_points(players_stats: players_stats)
 
                     expect(ranking.reload.points).to eq 100
                   end
@@ -544,14 +410,14 @@ describe Croupier do
                 let(:player_goals) { 0 }
 
                 it 'raises an error and does not assign points' do
-                  expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+                  expect{ play_points_assigner.assign_points(players_stats: []) }.to raise_error MissingPlayerStats
                   play = PlaysHistory.new.made_by(user).in_table(table).last
 
                   expect(play.points).to be_nil
                 end
 
                 it 'raises an error and does not give coins to the user' do
-                  expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+                  expect{ play_points_assigner.assign_points(players_stats: []) }.to raise_error MissingPlayerStats
 
                   expect(user.reload.coins).to eq 0
                   expect(Prize.count).to eq 0
@@ -559,7 +425,7 @@ describe Croupier do
 
                 context 'when the user has no current ranking' do
                   it 'does not create a ranking on the tournament' do
-                    expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+                    expect{ play_points_assigner.assign_points(players_stats: []) }.to raise_error MissingPlayerStats
 
                     expect(user.ranking_on_tournament(tournament)).to be_nil
                   end
@@ -569,7 +435,7 @@ describe Croupier do
                   let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
 
                   it 'does not update the current ranking' do
-                    expect{ croupier.assign_scores(players_stats: []) }.to raise_error MissingPlayerStats
+                    expect{ play_points_assigner.assign_points(players_stats: []) }.to raise_error MissingPlayerStats
 
                     expect(ranking.reload.points).to eq 100
                   end
@@ -591,7 +457,7 @@ describe Croupier do
               let(:player_of_the_first_user) { last_match.local_team.players.last }
               let!(:first_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_first_user, match: last_match, scored_goals: 3, right_passes: 2) }
 
-              before { croupier.play(user: first_user, players: [player_of_the_first_user]) }
+              before { plays_creator.create_play(user: first_user, players: [player_of_the_first_user]) }
 
               context 'when the second user plays for a player that scores 1 goals and 5 passes' do
                 let(:first_match) { table.matches.first }
@@ -599,7 +465,7 @@ describe Croupier do
                 let!(:second_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_second_user, match: first_match, scored_goals: 1, right_passes: 5) }
 
                 before do
-                  croupier.play(user: second_user, players: [player_of_the_second_user])
+                  plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
                   create_empty_stats_for_all table.matches
                 end
 
@@ -608,7 +474,7 @@ describe Croupier do
                   let(:points_for_passes) { 0.5 }
 
                   it 'closes the table, gives the pot to the first user and updates the points of each play' do
-                    croupier.assign_scores(players_stats: players_stats)
+                    play_points_assigner.assign_points(players_stats: players_stats)
 
                     first_user_play = PlaysHistory.new.made_by(first_user).in_table(table).last
                     second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
@@ -632,7 +498,7 @@ describe Croupier do
                   let(:points_for_passes) { 0.5 }
 
                   it 'closes the table, gives the pot to the second user and updates the points of each play' do
-                    croupier.assign_scores(players_stats: players_stats)
+                    play_points_assigner.assign_points(players_stats: players_stats)
 
                     first_user_play = PlaysHistory.new.made_by(first_user).in_table(table).last
                     second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
@@ -666,7 +532,7 @@ describe Croupier do
               first_user_old_amount_of_coins = first_user.coins
               second_user_old_amount_of_coins = second_user.coins
 
-              croupier.assign_scores(players_stats: players_stats)
+              play_points_assigner.assign_points(players_stats: players_stats)
 
               expect(table).to be_closed
               expect(table.winners).to be_empty
@@ -680,8 +546,10 @@ describe Croupier do
 
       context 'when 2 tables are being calculated, where each table has 2 matches and one of them is share by both' do
         let(:tournament) { FactoryGirl.create(:tournament) }
-        let(:first_table_croupier) { Croupier.for(first_table) }
-        let(:second_table_croupier) { Croupier.for(second_table) }
+        let(:first_table_plays_creator) { PlaysCreator.for(first_table) }
+        let(:second_table_plays_creator) { PlaysCreator.for(second_table) }
+        let(:first_table_points_assigner) { PlayPointsAssigner.new(first_table) }
+        let(:second_table_points_assigner) { PlayPointsAssigner.new(second_table) }
 
         let(:shared_match) { FactoryGirl.create(:match, tournament: tournament) }
         let(:first_table_match) { FactoryGirl.create(:match, tournament: tournament) }
@@ -699,15 +567,15 @@ describe Croupier do
           let!(:second_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_second_user, match: shared_match, scored_goals: 2) }
 
           before do
-            first_table_croupier.play(user: first_user, players: [player_of_the_first_user])
-            first_table_croupier.play(user: second_user, players: [player_of_the_second_user])
-            second_table_croupier.play(user: second_user, players: [player_of_the_second_user])
+            first_table_plays_creator.create_play(user: first_user, players: [player_of_the_first_user])
+            first_table_plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
+            second_table_plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
             create_empty_stats_for_all first_table.matches
             create_empty_stats_for_all second_table.matches
           end
 
           it 'closes both tables and updates the total points for each user' do
-            first_table_croupier.assign_scores(players_stats: PlayerStats.for_table(first_table))
+            first_table_points_assigner.assign_points(players_stats: PlayerStats.for_table(first_table))
             first_user_first_table_play = PlaysHistory.new.made_by(first_user).in_table(first_table).last
             second_user_first_table_play = PlaysHistory.new.made_by(second_user).in_table(first_table).last
 
@@ -722,7 +590,7 @@ describe Croupier do
             expect(first_table.winners.second.user).to eq second_user
             expect(first_table.winners.second.position).to eq 2
 
-            second_table_croupier.assign_scores(players_stats: PlayerStats.for_table(second_table))
+            second_table_points_assigner.assign_points(players_stats: PlayerStats.for_table(second_table))
             first_user_second_table_play = PlaysHistory.new.made_by(first_user).in_table(second_table).last
             second_user_second_table_play = PlaysHistory.new.made_by(second_user).in_table(second_table).last
 

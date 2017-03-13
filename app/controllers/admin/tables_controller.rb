@@ -45,7 +45,7 @@ class Admin::TablesController < Admin::BaseController
   end
 
   def close
-    croupier.assign_scores(players_stats: players_stats)
+    play_points_assigner.assign_points(players_stats: players_stats)
     RankingSorter.new(table.tournament).call
     ResultsMailer.for_table(table)
     redirect_with_success_message to_be_closed_admin_tables_path, CLOSE_SUCCESS_MESSAGE
@@ -65,8 +65,8 @@ class Admin::TablesController < Admin::BaseController
     permitted_params
   end
 
-  def croupier
-    Croupier.for(table)
+  def play_points_assigner
+    PlayPointsAssigner.new(table)
   end
 
   def players_stats
