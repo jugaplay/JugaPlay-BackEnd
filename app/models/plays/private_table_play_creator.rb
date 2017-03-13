@@ -1,12 +1,8 @@
-class PrivateTableCroupier < Croupier
+class PrivateTablePlayCreator < PlaysCreator
   protected
 
   def bet_coins(bet)
     table.entry_coins_cost
-  end
-
-  def update_ranking
-    # private tables do not add points for the tournament ranking
   end
 
   def validate_user_can_play(user)

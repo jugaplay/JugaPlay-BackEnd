@@ -201,7 +201,7 @@ describe Admin::TablesController do
   end
 
   describe 'POST #close' do
-    let(:croupier) { Croupier.for table }
+    let(:plays_creator) { PlaysCreator.for(table) }
     let(:tournament) { table.tournament }
     let(:table_rules) { FactoryGirl.create(:table_rules, scored_goals: 1) }
     let(:players_stats) { PlayerStats.for_table table }
@@ -225,8 +225,8 @@ describe Admin::TablesController do
         let(:second_user_play) { PlaysHistory.new.made_by(second_user).in_table(table).last }
 
         before do
-          croupier.play(user: first_user, players: [player_of_the_first_user])
-          croupier.play(user: second_user, players: [player_of_the_second_user])
+          plays_creator.create_play(user: first_user, players: [player_of_the_first_user])
+          plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
           create_empty_stats_for_all table.matches
         end
 
@@ -294,8 +294,8 @@ describe Admin::TablesController do
 
         before do
           group.update_attributes!(users: [first_user, second_user])
-          croupier.play(user: first_user, players: [player_of_the_first_user])
-          croupier.play(user: second_user, players: [player_of_the_second_user])
+          plays_creator.create_play(user: first_user, players: [player_of_the_first_user])
+          plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
           create_empty_stats_for_all table.matches
         end
 
