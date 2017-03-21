@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161126023900) do
+ActiveRecord::Schema.define(version: 20161128220541) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,18 +36,6 @@ ActiveRecord::Schema.define(version: 20161126023900) do
   end
 
   add_index "address_books", ["user_id"], name: "index_address_books_on_user_id", unique: true, using: :btree
-
-  create_table "channels", force: :cascade do |t|
-    t.integer  "user_id",                   null: false
-    t.boolean  "mail",       default: true, null: false
-    t.boolean  "sms",        default: true, null: false
-    t.boolean  "whatsapp",   default: true, null: false
-    t.boolean  "push",       default: true, null: false
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
-  end
-
-  add_index "channels", ["user_id"], name: "index_channels_on_user_id", unique: true, using: :btree
 
   create_table "comments", force: :cascade do |t|
     t.string   "sender_name"
@@ -204,6 +192,19 @@ ActiveRecord::Schema.define(version: 20161126023900) do
 
   add_index "notifications", ["user_id"], name: "index_notifications_on_user_id", using: :btree
 
+  create_table "notifications_settings", force: :cascade do |t|
+    t.integer  "user_id",                    null: false
+    t.boolean  "mail",       default: true,  null: false
+    t.boolean  "sms",        default: false, null: false
+    t.boolean  "whatsapp",   default: false, null: false
+    t.boolean  "push",       default: false, null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.boolean  "facebook",   default: false, null: false
+  end
+
+  add_index "notifications_settings", ["user_id"], name: "index_notifications_settings_on_user_id", unique: true, using: :btree
+
   create_table "player_stats", force: :cascade do |t|
     t.integer  "player_id",                             null: false
     t.integer  "match_id",                              null: false
@@ -275,6 +276,17 @@ ActiveRecord::Schema.define(version: 20161126023900) do
   add_index "plays", ["table_id"], name: "index_plays_on_table_id", using: :btree
   add_index "plays", ["user_id", "table_id"], name: "index_plays_on_user_id_and_table_id", unique: true, using: :btree
   add_index "plays", ["user_id"], name: "index_plays_on_user_id", using: :btree
+
+  create_table "prizes", force: :cascade do |t|
+    t.integer  "coins",      null: false
+    t.integer  "user_id",    null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "table_id",   null: false
+  end
+
+  add_index "prizes", ["table_id", "user_id"], name: "index_prizes_on_table_id_and_user_id", unique: true, using: :btree
+  add_index "prizes", ["user_id"], name: "index_prizes_on_user_id", using: :btree
 
   create_table "rankings", force: :cascade do |t|
     t.integer  "tournament_id",               null: false
@@ -437,17 +449,6 @@ ActiveRecord::Schema.define(version: 20161126023900) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "user_prizes", force: :cascade do |t|
-    t.integer  "coins",      null: false
-    t.integer  "user_id",    null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer  "table_id",   null: false
-  end
-
-  add_index "user_prizes", ["table_id", "user_id"], name: "index_user_prizes_on_table_id_and_user_id", unique: true, using: :btree
-  add_index "user_prizes", ["user_id"], name: "index_user_prizes_on_user_id", using: :btree
-
   create_table "users", force: :cascade do |t|
     t.string   "first_name",                          null: false
     t.string   "last_name",                           null: false
@@ -495,10 +496,10 @@ ActiveRecord::Schema.define(version: 20161126023900) do
   add_index "wallets", ["user_id"], name: "index_wallets_on_user_id", unique: true, using: :btree
 
   add_foreign_key "notifications", "users"
+  add_foreign_key "prizes", "users"
   add_foreign_key "t_deposits", "users"
   add_foreign_key "t_entry_fees", "tables"
   add_foreign_key "t_entry_fees", "tournaments"
   add_foreign_key "t_entry_fees", "users"
   add_foreign_key "t_promotions", "users"
-  add_foreign_key "user_prizes", "users"
 end

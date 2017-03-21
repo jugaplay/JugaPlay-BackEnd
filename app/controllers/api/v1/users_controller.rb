@@ -42,8 +42,8 @@ class Api::V1::UsersController < Api::BaseController
   def create_user_params
     user_params = params.require(:user).permit(:first_name, :last_name, :email, :nickname, :password, :password_confirmation)
     user_params[:wallet] = Wallet.new
-    user_params[:channel] = Channel.new
     user_params[:address_book] = AddressBook.new
+    user_params[:notifications_setting] = NotificationsSetting.new
     user_params[:nickname] = build_base_nickname if params[:user][:nickname].nil?
     user_params
   end

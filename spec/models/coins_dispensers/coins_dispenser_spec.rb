@@ -34,7 +34,7 @@ describe CoinsDispenser do
           it 'does not dispense coins for any user' do
             coins_dispenser.call
 
-            expect(UserPrize.count).to eq 0
+            expect(Prize.count).to eq 0
             expect(first_user.reload.coins).to eq 0
             expect(second_user.reload.coins).to eq 0
           end
@@ -45,14 +45,14 @@ describe CoinsDispenser do
 
           it 'gives the coins to the first user' do
             coins_dispenser.call
-            first_user_prize = UserPrize.last
+            first_prize = Prize.last
 
-            expect(UserPrize.count).to eq 1
+            expect(Prize.count).to eq 1
             expect(first_user.reload.coins).to eq 100
             expect(second_user.reload.coins).to eq 0
-            expect(first_user_prize.user).to eq first_user
-            expect(first_user_prize.table).to eq table
-            expect(first_user_prize.coins).to eq 100
+            expect(first_prize.user).to eq first_user
+            expect(first_prize.table).to eq table
+            expect(first_prize.coins).to eq 100
           end
         end
 
@@ -61,19 +61,19 @@ describe CoinsDispenser do
 
           it 'gives the coins to the first user' do
             coins_dispenser.call
-            first_user_prize = UserPrize.first
-            second_user_prize = UserPrize.second
+            first_prize = Prize.first
+            second_prize = Prize.second
 
-            expect(UserPrize.count).to eq 2
+            expect(Prize.count).to eq 2
             expect(first_user.reload.coins).to eq 100
-            expect(first_user_prize.user).to eq first_user
-            expect(first_user_prize.table).to eq table
-            expect(first_user_prize.coins).to eq 100
+            expect(first_prize.user).to eq first_user
+            expect(first_prize.table).to eq table
+            expect(first_prize.coins).to eq 100
 
             expect(second_user.reload.coins).to eq 20
-            expect(second_user_prize.user).to eq second_user
-            expect(second_user_prize.table).to eq table
-            expect(second_user_prize.coins).to eq 20
+            expect(second_prize.user).to eq second_user
+            expect(second_prize.table).to eq table
+            expect(second_prize.coins).to eq 20
           end
         end
       end
@@ -96,7 +96,7 @@ describe CoinsDispenser do
         it 'dispenses coins for the first user only' do
           coins_dispenser.call
 
-          expect(UserPrize.count).to eq 1
+          expect(Prize.count).to eq 1
           expect(first_user.reload.coins).to eq 20
           expect(second_user.reload.coins).to eq 0
         end
