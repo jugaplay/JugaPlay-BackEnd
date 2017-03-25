@@ -34,7 +34,7 @@
               </tr>
             </table>
             <% @play.players.each do |player| %>
-              <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;"> <%= "#{player.name}, sumo: #{@points_calculator.call_for_player(@play, player) } PTS"%> </p>
+              <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;"> <%= "#{player.name}, sumo: #{@player_points_calculator.call_for_player(@table, player) } PTS"%> </p>
             <% end %>
             <p><b style="font-size:16px; font-family:Arial, Helvetica, sans-serif;">TOTAL: <%= @play.points %> PTS</b></p>
           </td>
@@ -56,7 +56,7 @@
                 <td style="font-size: 12px; color: #959595; font-weight: normal; text-align: left; font-family: Georgia, Times, serif; line-height: 24px; vertical-align: top; padding:10px 8px 10px 8px">
                   <table>
                     <tr>
-                      <td valign="middle" style="padding:0 10px 10px 0"><a href="#" style="text-decoration: none; font-size: 16px; color: #ccc; font-weight: bold; font-family:Arial, sans-serif ">Saliste <%= @table.position(@user) { fail "Missing position for user #{@user.id}" } %> en el partido <%= @table.title %> !! </a>
+                      <td valign="middle" style="padding:0 10px 10px 0"><a href="#" style="text-decoration: none; font-size: 16px; color: #ccc; font-weight: bold; font-family:Arial, sans-serif ">Saliste <%= @play.position %> en el partido <%= @table.title %> !! </a>
                       </td>
                     </tr>
                   </table>

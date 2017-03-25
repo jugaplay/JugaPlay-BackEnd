@@ -1,24 +1,24 @@
 class RankingPointsUpdater
-  def initialize(tournament:, users:, points_for_winners:)
-    validate_arguments(tournament, users, points_for_winners)
-    @tournament, @users, @points_for_winners = tournament, users, points_for_winners
+  def initialize(table)
+    @table = table
     @ranking_ids_to_update, @ranking_points_to_update = [], []
   end
 
   def call
     Ranking.transaction do
-      users.each_with_index { |user, i| create_ranking_or_build_points_for_update(user.id, points_for_winners[i] || 0) }
+      table.table_rankings.each { |table_ranking| create_ranking_or_build_points_for_update(table_ranking) }
       Ranking.update(ranking_ids_to_update, ranking_points_to_update)
     end
   end
 
   private
-  attr_reader :tournament, :users, :points_for_winners, :ranking_ids_to_update, :ranking_points_to_update
+  attr_reader :table, :ranking_ids_to_update, :ranking_points_to_update
 
-  def create_ranking_or_build_points_for_update(user_id, points)
+  def create_ranking_or_build_points_for_update(table_ranking)
+    user_id = table_ranking.play.user_id
     existing_ranking = tournament_ranking.of_user(user_id).first
-    return create_ranking(user_id, points) unless existing_ranking.present?
-    add_points_to(existing_ranking, points)
+    return create_ranking(user_id, table_ranking.points) unless existing_ranking.present?
+    add_points_to(existing_ranking, table_ranking.points)
   end
 
   def add_points_to(existing_ranking, points)
@@ -45,9 +45,7 @@ class RankingPointsUpdater
     @tournament_ranking ||= Ranking.for_tournament(tournament)
   end
 
-  def validate_arguments(tournament, users, points_for_winners)
-    fail ArgumentError, 'Missing tournament' unless tournament.present?
-    fail ArgumentError, 'Missing users' unless users.present?
-    fail ArgumentError, 'Missing points for winners' unless points_for_winners.present?
+  def tournament
+    @tournament ||= table.tournament
   end
 end

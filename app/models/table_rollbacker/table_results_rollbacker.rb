@@ -7,7 +7,7 @@ class TableResultsRollbacker
     ActiveRecord::Base.transaction do
       rollback_rankings_earned_points
       restart_play_points
-      remove_table_winners
+      remove_table_rankings
       set_table_as_opened
     end
   end
@@ -16,9 +16,9 @@ class TableResultsRollbacker
   attr_reader :table
 
   def rollback_rankings_earned_points
-    table.winners.each do |winner|
-      ranking = winner.user.ranking_on_tournament(table.tournament)
-      ranking.points -= table.payed_points(winner.user) { fail "Missing points for user #{winner.user.id}" }
+    table.table_rankings.each do |table_ranking|
+      ranking = table_ranking.user.ranking_on_tournament(table.tournament)
+      ranking.points -= table_ranking.points
       ranking.save!
     end
   end
@@ -27,8 +27,8 @@ class TableResultsRollbacker
     table.plays.update_all(points: nil)
   end
 
-  def remove_table_winners
-    table.winners.each { |winner| winner.destroy }
+  def remove_table_rankings
+    table.table_rankings.each { |winner| winner.destroy }
   end
 
   def set_table_as_opened

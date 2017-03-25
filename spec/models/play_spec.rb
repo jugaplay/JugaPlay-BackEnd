@@ -46,4 +46,101 @@ describe Play do
       expect { FactoryGirl.create(:play, bet_coins: 5.5) }.to raise_error ActiveRecord::RecordInvalid, /Bet coins must be an integer/
     end
   end
+
+  describe '#earned_coins' do
+    let(:play) { FactoryGirl.create(:play) }
+
+    context 'when the play has a prize' do
+      let!(:table_ranking) { FactoryGirl.create(:table_ranking, play: play, position: 10) }
+      let!(:prize) { FactoryGirl.create(:prize, table: play.table, user: play.user, coins: 10) }
+
+      it 'returns the coins that the user earned in that table' do
+        expect(play.earned_coins).to eq 10
+      end
+    end
+
+    context 'when the play did not have a table ranking' do
+      it 'returns N/A when no block is given' do
+        expect(play.earned_coins).to eq 'N/A'
+      end
+
+      it 'returns calls the given block if given' do
+        earned_coins = play.earned_coins { 'unknown' }
+
+        expect(earned_coins).to eq 'unknown'
+      end
+    end
+  end
+
+  describe '#position' do
+    let(:play) { FactoryGirl.create(:play) }
+
+    context 'when the play has a table ranking' do
+      let!(:table_ranking) { FactoryGirl.create(:table_ranking, play: play, position: 10) }
+
+      it 'returns the coins that the user earned in that table' do
+        expect(play.position).to eq 10
+      end
+    end
+
+    context 'when the play did not have a table ranking' do
+      it 'returns N/A when no block is given' do
+        expect(play.position).to eq 'N/A'
+      end
+
+      it 'returns calls the given block if given' do
+        position = play.position { -1 }
+
+        expect(position).to eq -1
+      end
+    end
+  end
+
+  describe '#points_for_ranking' do
+    let(:play) { FactoryGirl.create(:play, points: 10) }
+
+    context 'when the play has a table ranking' do
+      let!(:table_ranking) { FactoryGirl.create(:table_ranking, play: play, position: 10, points: 200) }
+
+      it 'returns the points for the ranking that the user earned in that table' do
+        expect(play.points_for_ranking).to eq 200
+      end
+    end
+
+    context 'when the play did not have a table ranking' do
+      it 'returns N/A when no block is given' do
+        expect(play.points_for_ranking).to eq 'N/A'
+      end
+
+      it 'returns calls the given block if given' do
+        points_for_ranking = play.points_for_ranking { 0 }
+
+        expect(points_for_ranking).to eq 0
+      end
+    end
+  end
+
+  describe '#points' do
+    context 'when the play has some points' do
+      let!(:play) { FactoryGirl.create(:play, points: 10) }
+
+      it 'returns the points for the ranking that the user earned in that table' do
+        expect(play.points).to eq 10
+      end
+    end
+
+    context 'when the play does not have any points assigned yet' do
+      let!(:play) { FactoryGirl.create(:play) }
+
+      it 'returns nil when no block is given' do
+        expect(play.points).to be_nil
+      end
+
+      it 'returns calls the given block if given' do
+        points = play.points { 'N/A' }
+
+        expect(points).to eq 'N/A'
+      end
+    end
+  end
 end

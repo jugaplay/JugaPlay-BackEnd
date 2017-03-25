@@ -36,13 +36,13 @@ if table.private?
   end
 end
 
-json.winners(table.winners) do |winner|
-  json.user_id winner.user_id
-  json.user_email winner.user.email
-  json.nickname winner.user.nickname
-  json.bet_coins winner.user.bet_coins_in_table(table) { 0 }
-  json.position winner.position
-  json.points table.points_for_winners[winner.position - 1]
+json.winners(table.table_rankings) do |table_ranking|
+  json.user_id table_ranking.user_id
+  json.user_email table_ranking.user.email
+  json.nickname table_ranking.user.nickname
+  json.bet_coins table_ranking.bet_coins
+  json.position table_ranking.position
+  json.points table_ranking.points
 end
 
 json.matches do

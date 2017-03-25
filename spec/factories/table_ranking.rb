@@ -1,0 +1,18 @@
+FactoryGirl.define do
+  factory :table_ranking do
+    play
+    points { 0 }
+    position { TableRanking.last.nil? ? 1 : (TableRanking.last.position + 1) }
+
+    trait :for_user_and_table do
+      ignore do
+        user nil
+        table nil
+      end
+
+      after(:build) do |table_ranking, evaluator|
+        table_ranking.play = FactoryGirl.create(:play, user: evaluator.user, table: evaluator.table)
+      end
+    end
+  end
+end

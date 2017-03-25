@@ -46,17 +46,17 @@ describe Api::V1::PlaysController do
             user.plays.each do |play|
               play_data = {
                 id: play.id,
-                start_time: play.table.start_time,
-                points: 'N/A',
+                start_time: play.table.start_time.iso8601,
                 bet_coins: 0,
-                earn_coins: 0,
+                points: 'N/A',
+                earn_coins: 'N/A',
                 players: play.players.map { |player| {
                   id: player.id,
                   first_name: player.first_name,
                   last_name: player.last_name,
                   team: player.team.name,
                   team_id: player.team.id,
-                  points: PlayPointsCalculator.new.call_for_player(play, player)
+                  points: PlayerPointsCalculator.new.call_for_player(table, player)
                 }},
                 table: {
                   id: play.table.id,

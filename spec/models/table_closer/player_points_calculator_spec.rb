@@ -1,24 +1,10 @@
 require 'spec_helper'
 
-describe PlayPointsCalculator do
-  let(:calculator) { PlayPointsCalculator.new }
+describe PlayerPointsCalculator do
+  let(:calculator) { PlayerPointsCalculator.new }
 
   describe '#call' do
-    context 'when no table rules are given' do
-      let(:table_rules) { nil }
-
-      it 'raises an error' do
-        expect { calculator.call(table_rules, []) }.to raise_error ArgumentError
-      end
-    end
-
-    context 'when no players stats are given' do
-      let(:players_stats) { nil }
-
-      it 'raises an error' do
-        expect { calculator.call([], players_stats) }.to raise_error ArgumentError
-      end
-    end
+    let(:table) { FactoryGirl.create(:table, table_rules: table_rules) }
 
     context 'when table rules and players stats are populated' do
       let(:table_rules) { FactoryGirl.create(:table_rules, scored_goals: points_for_goal, right_passes: points_for_pass) }
@@ -37,7 +23,7 @@ describe PlayPointsCalculator do
               let(:scored_passes) { 0 }
 
               it 'returns 6 points' do
-                points = calculator.call(table_rules, [player_stats])
+                points = calculator.call(table, [player_stats])
 
                 expect(points).to eq 6
               end
@@ -47,7 +33,7 @@ describe PlayPointsCalculator do
               let(:scored_passes) { 8 }
 
               it 'returns 6.8 points' do
-                points = calculator.call(table_rules, [player_stats])
+                points = calculator.call(table, [player_stats])
 
                 expect(points).to eq 6.8
               end
@@ -64,7 +50,7 @@ describe PlayPointsCalculator do
             let(:scored_passes) { 0 }
 
             it 'rounds the total' do
-              points = calculator.call(table_rules, [player_stats])
+              points = calculator.call(table, [player_stats])
 
               expect(points).to eq 0.68
             end
@@ -75,7 +61,7 @@ describe PlayPointsCalculator do
             let(:scored_passes) { 1 }
 
             it 'rounds the total' do
-              points = calculator.call(table_rules, [player_stats])
+              points = calculator.call(table, [player_stats])
 
               expect(points).to eq 0.31
             end
@@ -91,7 +77,7 @@ describe PlayPointsCalculator do
             let(:scored_passes) { 1 }
 
             it 'returns -0.5 points' do
-              points = calculator.call(table_rules, [player_stats])
+              points = calculator.call(table, [player_stats])
 
               expect(points).to eq -0.5
             end
@@ -117,7 +103,7 @@ describe PlayPointsCalculator do
               let(:second_player_passes) { 0 }
 
               it 'returns .9 points' do
-                points = calculator.call(table_rules, players_stats)
+                points = calculator.call(table, players_stats)
 
                 expect(points).to eq 0.9
               end
@@ -128,7 +114,7 @@ describe PlayPointsCalculator do
               let(:second_player_passes) { 4 }
 
               it 'returns 2.9 points' do
-                points = calculator.call(table_rules, players_stats)
+                points = calculator.call(table, players_stats)
 
                 expect(points).to eq 2.9
               end

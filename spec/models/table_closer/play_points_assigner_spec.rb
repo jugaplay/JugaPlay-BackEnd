@@ -39,9 +39,9 @@ describe PlayPointsAssigner do
 
                   expect(table).to be_closed
                   expect(play.points).to eq 0
-                  expect(table.winners).to have(1).item
-                  expect(table.winners.first.user).to eq user
-                  expect(table.winners.first.position).to eq 1
+                  expect(table.table_rankings).to have(1).item
+                  expect(table.table_rankings.first.user).to eq user
+                  expect(table.table_rankings.first.position).to eq 1
                 end
 
                 it 'gives 50 coins to the user' do
@@ -83,9 +83,9 @@ describe PlayPointsAssigner do
 
                   expect(table).to be_closed
                   expect(play.points).to eq 6
-                  expect(table.winners).to have(1).item
-                  expect(table.winners.first.user).to eq user
-                  expect(table.winners.first.position).to eq 1
+                  expect(table.table_rankings).to have(1).item
+                  expect(table.table_rankings.first.user).to eq user
+                  expect(table.table_rankings.first.position).to eq 1
                 end
 
                 it 'gives 50 coins to the user' do
@@ -194,11 +194,11 @@ describe PlayPointsAssigner do
                   expect(first_user.reload.coins).to eq 60
                   expect(second_user.reload.coins).to eq 30
 
-                  expect(table.winners).to have(2).item
-                  expect(table.winners.first.user).to eq first_user
-                  expect(table.winners.first.position).to eq 1
-                  expect(table.winners.second.user).to eq second_user
-                  expect(table.winners.second.position).to eq 2
+                  expect(table.table_rankings).to have(2).item
+                  expect(table.table_rankings.first.user).to eq first_user
+                  expect(table.table_rankings.first.position).to eq 1
+                  expect(table.table_rankings.second.user).to eq second_user
+                  expect(table.table_rankings.second.position).to eq 2
                 end
               end
 
@@ -218,11 +218,11 @@ describe PlayPointsAssigner do
                   expect(first_user.reload.coins).to eq 30
                   expect(second_user.reload.coins).to eq 60
 
-                  expect(table.winners).to have(2).item
-                  expect(table.winners.first.user).to eq second_user
-                  expect(table.winners.first.position).to eq 1
-                  expect(table.winners.second.user).to eq first_user
-                  expect(table.winners.second.position).to eq 2
+                  expect(table.table_rankings).to have(2).item
+                  expect(table.table_rankings.first.user).to eq second_user
+                  expect(table.table_rankings.first.position).to eq 1
+                  expect(table.table_rankings.second.user).to eq first_user
+                  expect(table.table_rankings.second.position).to eq 2
                 end
               end
             end
@@ -269,11 +269,11 @@ describe PlayPointsAssigner do
             expect(second_user_first_table_play.points).to eq 2
             expect(first_user.reload.coins).to eq 60
             expect(second_user.reload.coins).to eq 30
-            expect(first_table.winners).to have(2).item
-            expect(first_table.winners.first.user).to eq first_user
-            expect(first_table.winners.first.position).to eq 1
-            expect(first_table.winners.second.user).to eq second_user
-            expect(first_table.winners.second.position).to eq 2
+            expect(first_table.table_rankings).to have(2).item
+            expect(first_table.table_rankings.first.user).to eq first_user
+            expect(first_table.table_rankings.first.position).to eq 1
+            expect(first_table.table_rankings.second.user).to eq second_user
+            expect(first_table.table_rankings.second.position).to eq 2
 
             second_table_points_assigner.assign_points(players_stats: PlayerStats.for_table(second_table))
             first_user_second_table_play = PlaysHistory.new.made_by(first_user).in_table(second_table).last
@@ -284,9 +284,9 @@ describe PlayPointsAssigner do
             expect(second_user_second_table_play.points).to eq 2
             expect(first_user.reload.coins).to eq 60
             expect(second_user.reload.coins).to eq 80
-            expect(second_table.winners).to have(1).item
-            expect(second_table.winners.first.user).to eq second_user
-            expect(second_table.winners.first.position).to eq 1
+            expect(second_table.table_rankings).to have(1).item
+            expect(second_table.table_rankings.first.user).to eq second_user
+            expect(second_table.table_rankings.first.position).to eq 1
           end
         end
       end
@@ -327,9 +327,9 @@ describe PlayPointsAssigner do
 
                   expect(table).to be_closed
                   expect(play.points).to eq 0
-                  expect(table.winners).to have(1).item
-                  expect(table.winners.first.user).to eq user
-                  expect(table.winners.first.position).to eq 1
+                  expect(table.table_rankings).to have(1).item
+                  expect(table.table_rankings.first.user).to eq user
+                  expect(table.table_rankings.first.position).to eq 1
                 end
 
                 it 'gives 99 coins to the user' do
@@ -371,9 +371,9 @@ describe PlayPointsAssigner do
 
                   expect(table).to be_closed
                   expect(play.points).to eq 6
-                  expect(table.winners).to have(1).item
-                  expect(table.winners.first.user).to eq user
-                  expect(table.winners.first.position).to eq 1
+                  expect(table.table_rankings).to have(1).item
+                  expect(table.table_rankings.first.user).to eq user
+                  expect(table.table_rankings.first.position).to eq 1
                 end
 
                 it 'gives 99 coins to the user' do
@@ -485,11 +485,11 @@ describe PlayPointsAssigner do
                     expect(first_user.reload.coins).to eq(99 * 2)
                     expect(second_user.reload.coins).to eq 0
 
-                    expect(table.winners).to have(2).item
-                    expect(table.winners.first.user).to eq first_user
-                    expect(table.winners.first.position).to eq 1
-                    expect(table.winners.second.user).to eq second_user
-                    expect(table.winners.second.position).to eq 2
+                    expect(table.table_rankings).to have(2).item
+                    expect(table.table_rankings.first.user).to eq first_user
+                    expect(table.table_rankings.first.position).to eq 1
+                    expect(table.table_rankings.second.user).to eq second_user
+                    expect(table.table_rankings.second.position).to eq 2
                   end
                 end
 
@@ -509,11 +509,11 @@ describe PlayPointsAssigner do
                     expect(second_user.reload.coins).to eq (99 * 2)
                     expect(first_user.reload.coins).to eq 0
 
-                    expect(table.winners).to have(2).item
-                    expect(table.winners.first.user).to eq second_user
-                    expect(table.winners.first.position).to eq 1
-                    expect(table.winners.second.user).to eq first_user
-                    expect(table.winners.second.position).to eq 2
+                    expect(table.table_rankings).to have(2).item
+                    expect(table.table_rankings.first.user).to eq second_user
+                    expect(table.table_rankings.first.position).to eq 1
+                    expect(table.table_rankings.second.user).to eq first_user
+                    expect(table.table_rankings.second.position).to eq 2
                   end
                 end
               end
@@ -535,10 +535,10 @@ describe PlayPointsAssigner do
               play_points_assigner.assign_points(players_stats: players_stats)
 
               expect(table).to be_closed
-              expect(table.winners).to be_empty
+              expect(table.table_rankings).to be_empty
               expect(first_user.reload.coins).to eq first_user_old_amount_of_coins
               expect(second_user.reload.coins).to eq second_user_old_amount_of_coins
-              expect(table.winners).to be_empty
+              expect(table.table_rankings).to be_empty
             end
           end
         end
@@ -584,11 +584,11 @@ describe PlayPointsAssigner do
             expect(second_user_first_table_play.points).to eq 2
             expect(first_user.reload.coins).to eq 1010
             expect(second_user.reload.coins).to eq 980
-            expect(first_table.winners).to have(2).item
-            expect(first_table.winners.first.user).to eq first_user
-            expect(first_table.winners.first.position).to eq 1
-            expect(first_table.winners.second.user).to eq second_user
-            expect(first_table.winners.second.position).to eq 2
+            expect(first_table.table_rankings).to have(2).item
+            expect(first_table.table_rankings.first.user).to eq first_user
+            expect(first_table.table_rankings.first.position).to eq 1
+            expect(first_table.table_rankings.second.user).to eq second_user
+            expect(first_table.table_rankings.second.position).to eq 2
 
             second_table_points_assigner.assign_points(players_stats: PlayerStats.for_table(second_table))
             first_user_second_table_play = PlaysHistory.new.made_by(first_user).in_table(second_table).last
@@ -599,9 +599,9 @@ describe PlayPointsAssigner do
             expect(second_user_second_table_play.points).to eq 2
             expect(first_user.reload.coins).to eq 1010
             expect(second_user.reload.coins).to eq 990
-            expect(second_table.winners).to have(1).item
-            expect(second_table.winners.first.user).to eq second_user
-            expect(second_table.winners.first.position).to eq 1
+            expect(second_table.table_rankings).to have(1).item
+            expect(second_table.table_rankings.first.user).to eq second_user
+            expect(second_table.table_rankings.first.position).to eq 1
           end
         end
       end
