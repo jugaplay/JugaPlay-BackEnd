@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161128220541) do
+ActiveRecord::Schema.define(version: 20170314011609) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -353,6 +353,16 @@ ActiveRecord::Schema.define(version: 20161128220541) do
 
   add_index "t_promotions", ["user_id"], name: "index_t_promotions_on_user_id", using: :btree
 
+  create_table "table_rankings", force: :cascade do |t|
+    t.integer  "position",                 null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "play_id",                  null: false
+    t.float    "points",     default: 0.0, null: false
+  end
+
+  add_index "table_rankings", ["play_id"], name: "index_table_rankings_on_play_id", unique: true, using: :btree
+
   create_table "table_rules", force: :cascade do |t|
     t.integer  "table_id",                                null: false
     t.datetime "created_at"
@@ -383,14 +393,6 @@ ActiveRecord::Schema.define(version: 20161128220541) do
   end
 
   add_index "table_rules", ["table_id"], name: "index_table_rules_on_table_id", unique: true, using: :btree
-
-  create_table "table_winners", force: :cascade do |t|
-    t.integer  "table_id",   null: false
-    t.integer  "user_id",    null: false
-    t.integer  "position",   null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "tables", force: :cascade do |t|
     t.string   "title",                                   null: false

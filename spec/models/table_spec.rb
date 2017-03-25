@@ -148,55 +148,6 @@ describe Table do
     end
   end
 
-  describe '#position' do
-    let(:table) { FactoryGirl.create(:table) }
-    let(:first_place_user) { FactoryGirl.create(:user) }
-    let(:second_place_user) { FactoryGirl.create(:user) }
-    let!(:first_winner) { FactoryGirl.create(:table_winner, table: table, position: 1, user: first_place_user) }
-    let!(:second_winner) { FactoryGirl.create(:table_winner, table: table, position: 2, user: second_place_user) }
-
-    context 'when the given user was a winner' do
-      it 'returns the winner of that play' do
-        expect(table.position(first_place_user)).to eq 1
-        expect(table.position(second_place_user)).to eq 2
-      end
-    end
-
-    context 'when the given user was not a winner' do
-      it 'evaluates the given block' do
-        unknown_user = FactoryGirl.create(:user)
-
-        expect(table.position(unknown_user) { 'unknown' }).to eq 'unknown'
-      end
-    end
-  end
-
-  describe '#payed_points' do
-    let(:table) { FactoryGirl.create(:table) }
-    let(:first_place_user) { FactoryGirl.create(:user) }
-    let(:second_place_user) { FactoryGirl.create(:user) }
-    let!(:first_winner) { FactoryGirl.create(:table_winner, table: table, position: 1, user: first_place_user) }
-    let!(:second_winner) { FactoryGirl.create(:table_winner, table: table, position: 2, user: second_place_user) }
-
-    context 'when the given user was a winner' do
-      it 'returns the points that the table payed to that winner position' do
-        expected_points_for_winner = table.points_for_winners[0]
-        expected_points_for_another_winner = table.points_for_winners[1]
-
-        expect(table.payed_points(first_place_user)).to eq expected_points_for_winner
-        expect(table.payed_points(second_place_user)).to eq expected_points_for_another_winner
-      end
-    end
-
-    context 'when the given user was not a winner' do
-      it 'evaluates the given block' do
-        unknown_user = FactoryGirl.create(:user)
-
-        expect(table.payed_points(unknown_user) { 'unknown' }).to eq 'unknown'
-      end
-    end
-  end
-
   describe '#amount_of_users_playing' do
     let!(:table) { FactoryGirl.create(:table) }
 

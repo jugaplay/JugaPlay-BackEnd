@@ -4,7 +4,7 @@ class Table < ActiveRecord::Base
   belongs_to :group
   belongs_to :tournament
   has_many :users, through: :plays
-  has_many :winners, class_name: 'TableWinner'
+  has_many :table_rankings, -> { order(position: :asc) }, through: :plays
   has_and_belongs_to_many :matches
 
   serialize :coins_for_winners, Array
@@ -21,8 +21,8 @@ class Table < ActiveRecord::Base
   validate :validate_all_matches_belong_to_tournament
   validate :validate_points_for_winners_if_public
 
-  scope :closed, -> { where(opened: false) }
   scope :opened, -> { where(opened: true) }
+  scope :closed, -> { where(opened: false) }
   scope :publics, -> { where(group_id: nil) }
   scope :privates_for, -> user { joins(group: :groups_users).where(groups_users: { user_id: user.id }).uniq }
   scope :recent_first, -> { order(start_time: :desc) }
@@ -45,6 +45,14 @@ class Table < ActiveRecord::Base
 
   def public?
     group.nil?
+  end
+
+  def has_ranking?
+    !table_rankings.empty?
+  end
+
+  def has_position?(position)
+    table_rankings.map(&:position).include? position
   end
 
   def amount_of_users_playing
@@ -86,14 +94,8 @@ class Table < ActiveRecord::Base
     !matches.empty? && matches.all? { |match| self.matches.include? match }
   end
 
-  def payed_points(user, &if_none_block)
-    return_block = proc { return if_none_block.call }
-    points_for_winners[position(user, &return_block) - 1]
-  end
-
-  def position(user, &if_none_block)
-    return_block = proc { return if_none_block.call }
-    winner(user, &return_block).position
+  def points_for_position(position)
+    points_for_winners[position - 1] || 0
   end
 
   private

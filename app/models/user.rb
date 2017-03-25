@@ -49,20 +49,6 @@ class User < ActiveRecord::Base
     rankings.find_by(tournament_id: tournament)
   end
 
-  def earned_coins_in_table(table)
-    return_block = proc { return 0 }
-    prize_of_table(table, &return_block).coins
-  end
-
-  def prize_of_table(table, &if_none_block)
-    prizes.detect(if_none_block) { |prize| prize.comes_from_table?(table) }
-  end
-
-  def bet_coins_in_table(table, &if_none_block)
-    return_block = proc { return if_none_block.call }
-    plays.detect(return_block) { |play| play.table.eql? table }.bet_coins
-  end
-
   def needs_to_login_with_facebook?
     facebook_id.present? && !has_facebook_token?
   end

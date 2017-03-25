@@ -235,11 +235,11 @@ describe Admin::TablesController do
           table.reload
 
           expect(table).to be_closed
-          expect(table.winners).to have(2).item
-          expect(table.winners.first.user).to eq second_user
-          expect(table.winners.first.position).to eq 1
-          expect(table.winners.second.user).to eq first_user
-          expect(table.winners.second.position).to eq 2
+          expect(table.table_rankings).to have(2).item
+          expect(table.table_rankings.first.user).to eq second_user
+          expect(table.table_rankings.first.position).to eq 1
+          expect(table.table_rankings.second.user).to eq first_user
+          expect(table.table_rankings.second.position).to eq 2
 
           expect(first_user_play.points).to eq 2
           expect(first_user.reload.coins).to eq 20
@@ -256,21 +256,19 @@ describe Admin::TablesController do
           results_emails = ResultsMailer.deliveries
           expect(results_emails).to have(2).items
 
-          points_of_the_player_of_the_first_user = PlayPointsCalculator.new.call_for_player(first_user_play, player_of_the_first_user)
           expect(results_emails.first.to).to include first_user.email
           expect(results_emails.first.from).to include ResultsMailer::INFO_MAIL
           expect(results_emails.first.body).to include "Los Resultados de #{table.title}"
-          expect(results_emails.first.body).to include "Saliste #{table.position(first_user)}"
-          expect(results_emails.first.body).to include "#{player_of_the_first_user.name}, sumo: #{points_of_the_player_of_the_first_user} PTS"
-          expect(results_emails.first.body).to include "TOTAL: #{points_of_the_player_of_the_first_user} PTS"
+          expect(results_emails.first.body).to include "Saliste 2"
+          expect(results_emails.first.body).to include "#{player_of_the_first_user.name}, sumo: 2.0 PTS"
+          expect(results_emails.first.body).to include "TOTAL: 2.0 PTS"
 
-          points_of_the_player_of_the_second_user = PlayPointsCalculator.new.call_for_player(second_user_play, player_of_the_second_user)
           expect(results_emails.second.to).to include second_user.email
           expect(results_emails.second.from).to include ResultsMailer::INFO_MAIL
           expect(results_emails.second.body).to include "Los Resultados de #{table.title}"
-          expect(results_emails.second.body).to include "Saliste #{table.position(second_user)}"
-          expect(results_emails.second.body).to include "#{player_of_the_second_user.name}, sumo: #{points_of_the_player_of_the_second_user} PTS"
-          expect(results_emails.second.body).to include "TOTAL: #{points_of_the_player_of_the_second_user} PTS"
+          expect(results_emails.second.body).to include "Saliste 1"
+          expect(results_emails.second.body).to include "#{player_of_the_second_user.name}, sumo: 5.0 PTS"
+          expect(results_emails.second.body).to include "TOTAL: 5.0 PTS"
         end
       end
     end
@@ -308,11 +306,11 @@ describe Admin::TablesController do
           expect(table).to be_closed
           expect(table.points_for_winners).to be_empty
           expect(table.coins_for_winners).to eq [pot_prize]
-          expect(table.winners).to have(2).item
-          expect(table.winners.first.user).to eq second_user
-          expect(table.winners.first.position).to eq 1
-          expect(table.winners.second.user).to eq first_user
-          expect(table.winners.second.position).to eq 2
+          expect(table.table_rankings).to have(2).item
+          expect(table.table_rankings.first.user).to eq second_user
+          expect(table.table_rankings.first.position).to eq 1
+          expect(table.table_rankings.second.user).to eq first_user
+          expect(table.table_rankings.second.position).to eq 2
 
           expect(first_user_play.points).to eq 2
           expect(first_user.reload.coins).to eq 0
@@ -329,21 +327,19 @@ describe Admin::TablesController do
           results_emails = ResultsMailer.deliveries
           expect(results_emails).to have(2).items
 
-          points_of_the_player_of_the_first_user = PlayPointsCalculator.new.call_for_player(first_user_play, player_of_the_first_user)
           expect(results_emails.first.to).to include first_user.email
           expect(results_emails.first.from).to include ResultsMailer::INFO_MAIL
           expect(results_emails.first.body).to include "Los Resultados de #{table.title}"
-          expect(results_emails.first.body).to include "Saliste #{table.position(first_user)}"
-          expect(results_emails.first.body).to include "#{player_of_the_first_user.name}, sumo: #{points_of_the_player_of_the_first_user} PTS"
-          expect(results_emails.first.body).to include "TOTAL: #{points_of_the_player_of_the_first_user} PTS"
+          expect(results_emails.first.body).to include "Saliste 2"
+          expect(results_emails.first.body).to include "#{player_of_the_first_user.name}, sumo: 2.0 PTS"
+          expect(results_emails.first.body).to include "TOTAL: 2.0 PTS"
 
-          points_of_the_player_of_the_second_user = PlayPointsCalculator.new.call_for_player(second_user_play, player_of_the_second_user)
           expect(results_emails.second.to).to include second_user.email
           expect(results_emails.second.from).to include ResultsMailer::INFO_MAIL
           expect(results_emails.second.body).to include "Los Resultados de #{table.title}"
-          expect(results_emails.second.body).to include "Saliste #{table.position(second_user)}"
-          expect(results_emails.second.body).to include "#{player_of_the_second_user.name}, sumo: #{points_of_the_player_of_the_second_user} PTS"
-          expect(results_emails.second.body).to include "TOTAL: #{points_of_the_player_of_the_second_user} PTS"
+          expect(results_emails.second.body).to include "Saliste 1"
+          expect(results_emails.second.body).to include "#{player_of_the_second_user.name}, sumo: 5.0 PTS"
+          expect(results_emails.second.body).to include "TOTAL: 5.0 PTS"
         end
       end
     end

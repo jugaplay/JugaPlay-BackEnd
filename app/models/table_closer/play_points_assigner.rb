@@ -1,14 +1,18 @@
 class PlayPointsAssigner
+
   def initialize(table)
     @table = table
-    @points_calculator = PlayPointsCalculator.new
-    @winners_calculator = TableWinnersCalculator.for(table)
+    @player_points_calculator = PlayerPointsCalculator.new
+    @table_ranking_calculator = TableRankingCalculator.new(table)
+    @coins_dispenser = CoinsDispenser.new(table)
+    @ranking_points_updater = RankingPointsUpdater.new(table)
   end
 
   def assign_points(players_stats:)
     validate_players_stats(players_stats)
     calculate_play_points(players_stats)
-    unless winner_users.empty?
+    table_ranking_calculator.call
+    if table.has_ranking?
       coins_dispenser.call
       ranking_points_updater.call if table.public?
     end
@@ -16,7 +20,7 @@ class PlayPointsAssigner
   end
 
   protected
-  attr_reader :table, :points_calculator, :winners_calculator, :play_ids_to_update, :play_data_to_update
+  attr_reader :table, :player_points_calculator, :table_ranking_calculator, :play_ids_to_update, :play_data_to_update, :coins_dispenser, :ranking_points_updater
 
   def calculate_play_points(players_stats)
     @play_ids_to_update, @play_data_to_update = [], []
@@ -28,19 +32,7 @@ class PlayPointsAssigner
     applicable_stats = players_stats.select { |player_stats| play.involves_player? (player_stats.player) }
     fail MissingPlayerStats if applicable_stats.empty?
     play_ids_to_update << play.id
-    play_data_to_update << { points: points_calculator.call(table.table_rules, applicable_stats) }
-  end
-
-  def winner_users
-    @winner_users ||= winners_calculator.call
-  end
-
-  def coins_dispenser
-    @coins_dispenser ||= CoinsDispenser.for(table: table, users: winner_users)
-  end
-
-  def ranking_points_updater
-    @ranking_points_updater ||= RankingPointsUpdater.new(tournament: table.tournament, points_for_winners: table.points_for_winners, users: winner_users)
+    play_data_to_update << { points: player_points_calculator.call(table, applicable_stats) }
   end
 
   def plays
