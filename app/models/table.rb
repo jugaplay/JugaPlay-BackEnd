@@ -19,7 +19,6 @@ class Table < ActiveRecord::Base
   validates_each_in_array(:coins_for_winners) { validates_numericality_of :value, greater_than: 0, only_integer: true, allow_nil: false }
   validates_each_in_array(:points_for_winners) { validates_numericality_of :value, greater_than: 0, only_integer: true, allow_nil: false }
   validate :validate_all_matches_belong_to_tournament
-  validate :validate_points_for_winners_if_public
 
   scope :opened, -> { where(opened: true) }
   scope :closed, -> { where(opened: false) }
@@ -49,6 +48,10 @@ class Table < ActiveRecord::Base
 
   def has_ranking?
     !table_rankings.empty?
+  end
+
+  def has_points_for_winners?
+    !points_for_winners.empty?
   end
 
   def amount_of_users_playing
@@ -107,9 +110,5 @@ class Table < ActiveRecord::Base
 
   def validate_all_matches_belong_to_tournament
     errors.add(:matches, 'do not belong to given tournament') unless matches.all? { |match| tournament == match.tournament }
-  end
-
-  def validate_points_for_winners_if_public
-    errors.add(:points_for_winners, "can't be blank") if public? && points_for_winners.empty?
   end
 end

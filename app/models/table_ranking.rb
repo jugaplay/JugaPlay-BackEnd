@@ -27,6 +27,10 @@ class TableRanking < ActiveRecord::Base
     self.position.eql? position
   end
 
+  def private?
+    table.private?
+  end
+
   private
 
   def validate_position_is_unique_per_table
