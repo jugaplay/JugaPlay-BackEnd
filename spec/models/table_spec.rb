@@ -44,20 +44,12 @@ describe Table do
       expect { Table.last.update_attributes!(start_time: DateTime.now, end_time: DateTime.now) }.to raise_error ActiveRecord::RecordInvalid, /End time must be after/
     end
 
-    it 'must have points for winners greater than 0 if the table is public' do
+    it 'can have no points for winners' do
+      expect { FactoryGirl.create(:table, points_for_winners: []) }.not_to raise_error
       expect { FactoryGirl.create(:table, points_for_winners: [100, 50, 20]) }.not_to raise_error
 
-      expect { FactoryGirl.create(:table, points_for_winners: []) }.to raise_error ActiveRecord::RecordInvalid, /Points for winners can't be blank/
       expect { FactoryGirl.create(:table, points_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
       expect { FactoryGirl.create(:table, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
-    end
-
-    it 'can have no points for winners if the table is private' do
-      group = FactoryGirl.create(:group)
-
-      expect { FactoryGirl.create(:table, group: group, points_for_winners: []) }.not_to raise_error
-      expect { FactoryGirl.create(:table, group: group, points_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
-      expect { FactoryGirl.create(:table, group: group, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
     end
 
     it 'can have no coins for winners or have coins for winners greater than 0' do

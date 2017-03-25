@@ -17,8 +17,9 @@ class RankingPointsUpdater
   def create_ranking_or_build_points_for_update(table_ranking)
     user_id = table_ranking.play.user_id
     existing_ranking = tournament_ranking.of_user(user_id).first
-    return create_ranking(user_id, table_ranking.points) unless existing_ranking.present?
-    add_points_to(existing_ranking, table_ranking.points)
+    points = points_for_tournament_ranking(table_ranking)
+    return create_ranking(user_id, points) unless existing_ranking.present?
+    add_points_to(existing_ranking, points)
   end
 
   def add_points_to(existing_ranking, points)
@@ -35,6 +36,11 @@ class RankingPointsUpdater
   def create_ranking(user_id, points)
     @last_ranking_position = last_ranking_position + 1
     Ranking.create!(tournament: tournament, user_id: user_id, points: points, position: last_ranking_position)
+  end
+
+  def points_for_tournament_ranking(table_ranking)
+    return 0 if table_ranking.private?
+    table_ranking.points
   end
 
   def last_ranking_position
