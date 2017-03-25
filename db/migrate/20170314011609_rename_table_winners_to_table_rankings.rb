@@ -4,10 +4,23 @@ class RenameTableWinnersToTableRankings < ActiveRecord::Migration
     rename_table :table_winners, :table_rankings
     add_reference :table_rankings, :play
 
-    table_rankings_data = ActiveRecord::Base.connection.execute('SELECT table_rankings.id AS ranking_id, plays.id AS play_id from table_rankings inner join plays ON table_rankings.table_id = plays.table_id WHERE table_rankings.user_id = plays.user_id')
+    table_rankings_data = ActiveRecord::Base.connection.execute('
+      SELECT table_rankings.id AS ranking_id, table_rankings.created_at AS created_at,
+             plays.id AS play_id, table_rankings.updated_at AS updated_at
+      FROM table_rankings INNER JOIN plays ON table_rankings.table_id = plays.table_id
+      WHERE table_rankings.user_id = plays.user_id'
+    )
+
     ranking_ids = table_rankings_data.map { |table_ranking_data| table_ranking_data['ranking_id'] }
-    play_ids = table_rankings_data.map { |table_ranking_data| { play_id: table_ranking_data['play_id'] } }
-    TableRanking.update(ranking_ids, play_ids)
+    rankings_data = table_rankings_data.map do |table_ranking_data|
+      {
+        play_id: table_ranking_data['play_id'],
+        update_at: table_ranking_data['updated_at'],
+        created_at: table_ranking_data['created_at'],
+      }
+    end
+
+    TableRanking.update(ranking_ids, rankings_data)
 
     change_column :table_rankings, :play_id, :integer, null: false
     add_index :table_rankings, :play_id, unique: true

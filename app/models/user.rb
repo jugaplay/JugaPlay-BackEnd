@@ -4,10 +4,10 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :recoverable, :trackable, :validatable #, :lockable #, :confirmable
   devise :omniauthable, omniauth_providers: [:facebook]
 
-  has_many :prizes
   has_many :notifications
   has_many :invitation_requests
   has_many :plays, dependent: :destroy
+  has_many :table_rankings, through: :plays
   has_many :t_entry_fees, dependent: :destroy
   has_many :rankings, dependent: :destroy
   has_one :wallet, dependent: :destroy

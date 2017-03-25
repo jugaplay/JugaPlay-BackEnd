@@ -18,7 +18,7 @@ class CoinsDispenser
 
   def dispense_coins_for_all_winners
     coins_for_winners = table.coins_for_winners
-    Prize.transaction do
+    TableRanking.transaction do
       table_winner_rankings.each do |table_ranking|
         coins = coins_for_winners[table_ranking.position - 1]
         dispense_coins(coins, table_ranking) if coins
@@ -28,7 +28,7 @@ class CoinsDispenser
 
   def dispense_coins(coins, table_ranking)
     table_ranking.user.win_coins! coins
-    Prize.create!(table: table_ranking.table, user: table_ranking.user, coins: coins)
+    table_ranking.update_attributes!(earned_coins: coins)
   end
 
   def table_winner_rankings

@@ -51,8 +51,7 @@ describe Play do
     let(:play) { FactoryGirl.create(:play) }
 
     context 'when the play has a prize' do
-      let!(:table_ranking) { FactoryGirl.create(:table_ranking, play: play, position: 10) }
-      let!(:prize) { FactoryGirl.create(:prize, table: play.table, user: play.user, coins: 10) }
+      let!(:table_ranking) { FactoryGirl.create(:table_ranking, play: play, position: 10, earned_coins: 10) }
 
       it 'returns the coins that the user earned in that table' do
         expect(play.earned_coins).to eq 10

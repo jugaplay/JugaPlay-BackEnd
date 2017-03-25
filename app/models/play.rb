@@ -1,7 +1,7 @@
 class Play < ActiveRecord::Base
   belongs_to :user
   belongs_to :table
-  has_one :table_ranking
+  has_one :table_ranking, dependent: :destroy
   has_and_belongs_to_many :players, unique: true
 
   validates_presence_of :user, :table, :players

@@ -9,7 +9,7 @@ class TableRankingCalculator
     winner_play_ids.each_with_index do |play_id, i|
       position = i + 1
       points = table.points_for_position(position)
-      rankings << TableRanking.new(play_id: play_id, position: position, points: points)
+      rankings << TableRanking.new(play_id: play_id, position: position, points: points, earned_coins: 0)
     end
     TableRanking.import(rankings)
   end

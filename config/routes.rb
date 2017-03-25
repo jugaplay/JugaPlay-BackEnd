@@ -99,6 +99,7 @@
       resources :plays, only: [:index]
       post '/play' => 'croupier#play'
 
+      resources :table_rankings, only: [:index]
 
 
 
@@ -109,7 +110,6 @@
       ###########################################
 
       resources :comments, only: [:create]
-      resources :prizes, only: [:index]
       resources :t_entry_fees, only: [:index]
       resources :transactions, only: [:index, :show, :create]
       resources :t_deposits, only: [:index, :create]

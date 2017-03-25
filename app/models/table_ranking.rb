@@ -6,7 +6,10 @@ class TableRanking < ActiveRecord::Base
   validates :play, presence: true
   validates :points, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :position, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
+  validates :earned_coins, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate :validate_position_is_unique_per_table
+
+  scope :by_user, -> user { joins(play: :user).where(plays: { user_id: user.id }) }
 
   def play_points
     play.points
@@ -16,20 +19,17 @@ class TableRanking < ActiveRecord::Base
     play.bet_coins
   end
 
-  def earned_coins
-    return 0 unless prize.present?
-    prize.coins
+  def detail
+    "Premio en #{table.title}"
   end
 
-  def prize
-    @prize ||= Prize.find_by(user: user, table: table)
+  def has_position?(position)
+    self.position.eql? position
   end
 
   private
 
   def validate_position_is_unique_per_table
-    if table.present? && table.has_position?(position)
-      errors.add(:position, 'has already been taken')
-    end
+    errors.add(:position, 'has already been taken') if table.try(:cant_place_ranking_in_position?, position, self)
   end
 end

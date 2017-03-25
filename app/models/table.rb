@@ -51,10 +51,6 @@ class Table < ActiveRecord::Base
     !table_rankings.empty?
   end
 
-  def has_position?(position)
-    table_rankings.map(&:position).include? position
-  end
-
   def amount_of_users_playing
     plays.count
   end
@@ -98,11 +94,16 @@ class Table < ActiveRecord::Base
     points_for_winners[position - 1] || 0
   end
 
-  private
-
-  def winner(user, &return_block)
-    winners.detect(return_block) { |winner| winner.user.eql? user }
+  def cant_place_ranking_in_position?(position, ranking)
+    ranking_in_position = ranking_in_position(position)
+    ranking_in_position.present? && !ranking_in_position.eql?(ranking)
   end
+
+  def ranking_in_position(position)
+    table_rankings.detect { |ranking| ranking.has_position? position }
+  end
+
+  private
 
   def validate_all_matches_belong_to_tournament
     errors.add(:matches, 'do not belong to given tournament') unless matches.all? { |match| tournament == match.tournament }
