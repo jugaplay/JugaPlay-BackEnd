@@ -30,7 +30,7 @@ describe TableRankingCalculator do
               it 'creates rankings for all the users giving points to the first winner on the table' do
                 calculator.call
 
-                table_rankings = table.table_rankings
+                table_rankings = table.reload.table_rankings
                 expect(table_rankings).to have(3).items
 
                 expect(table_rankings.first.play).to eq third_user_play

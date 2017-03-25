@@ -19,9 +19,8 @@ describe CoinsDispenser do
         it 'does not dispense coins for any user' do
           coins_dispenser.call
 
-          expect(Prize.count).to eq 0
-          expect(first_user.reload.coins).to eq 0
-          expect(second_user.reload.coins).to eq 0
+          expect(first_user_table_ranking.reload.earned_coins).to eq 0
+          expect(first_user_table_ranking.reload.earned_coins).to eq 0
         end
       end
 
@@ -30,14 +29,12 @@ describe CoinsDispenser do
 
         it 'gives the coins to the first user' do
           coins_dispenser.call
-          first_prize = Prize.last
 
-          expect(Prize.count).to eq 1
           expect(first_user.reload.coins).to eq 100
+          expect(first_user_table_ranking.reload.earned_coins).to eq 100
+
           expect(second_user.reload.coins).to eq 0
-          expect(first_prize.user).to eq first_user
-          expect(first_prize.table).to eq table
-          expect(first_prize.coins).to eq 100
+          expect(second_user_table_ranking.reload.earned_coins).to eq 0
         end
       end
 
@@ -46,19 +43,12 @@ describe CoinsDispenser do
 
         it 'gives the coins to the first user' do
           coins_dispenser.call
-          first_prize = Prize.first
-          second_prize = Prize.second
 
-          expect(Prize.count).to eq 2
           expect(first_user.reload.coins).to eq 100
-          expect(first_prize.user).to eq first_user
-          expect(first_prize.table).to eq table
-          expect(first_prize.coins).to eq 100
+          expect(first_user_table_ranking.reload.earned_coins).to eq 100
 
           expect(second_user.reload.coins).to eq 20
-          expect(second_prize.user).to eq second_user
-          expect(second_prize.table).to eq table
-          expect(second_prize.coins).to eq 20
+          expect(second_user_table_ranking.reload.earned_coins).to eq 20
         end
       end
     end
@@ -73,19 +63,20 @@ describe CoinsDispenser do
       let(:first_user) { group.users.first }
       let(:second_user) { group.users.second }
 
-      before do
-        first_user_play = FactoryGirl.create(:play, table: table, user: first_user, bet_coins: table.entry_coins_cost)
-        FactoryGirl.create(:table_ranking, play: first_user_play, position: 1)
-        second_user_play = FactoryGirl.create(:play, table: table, user: second_user, bet_coins: table.entry_coins_cost)
-        FactoryGirl.create(:table_ranking, play: second_user_play, position: 2)
-      end
+      let(:first_user_play) { FactoryGirl.create(:play, table: table, user: first_user, bet_coins: table.entry_coins_cost) }
+      let(:second_user_play) { FactoryGirl.create(:play, table: table, user: second_user, bet_coins: table.entry_coins_cost) }
+
+      let!(:first_user_table_ranking) { FactoryGirl.create(:table_ranking, play: first_user_play, position: 1) }
+      let!(:second_user_table_ranking) { FactoryGirl.create(:table_ranking, play: second_user_play, position: 2) }
 
       it 'dispenses coins for the first user only' do
         coins_dispenser.call
 
-        expect(Prize.count).to eq 1
         expect(first_user.reload.coins).to eq 20
+        expect(first_user_table_ranking.reload.earned_coins).to eq 20
+
         expect(second_user.reload.coins).to eq 0
+        expect(second_user_table_ranking.reload.earned_coins).to eq 0
       end
     end
   end

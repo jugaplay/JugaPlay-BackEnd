@@ -46,13 +46,10 @@ describe PlayPointsAssigner do
 
                 it 'gives 50 coins to the user' do
                   play_points_assigner.assign_points(players_stats: players_stats)
-                  prize = Prize.last
+                  table_ranking = PlaysHistory.new.made_by(user).in_table(table).last.table_ranking
 
                   expect(user.reload.coins).to eq 50
-                  expect(Prize.count).to eq 1
-                  expect(prize.coins).to eq 50
-                  expect(prize.user).to eq user
-                  expect(prize.table).to eq table
+                  expect(table_ranking.earned_coins).to eq 50
                 end
 
                 context 'when the user has no current ranking' do
@@ -90,13 +87,10 @@ describe PlayPointsAssigner do
 
                 it 'gives 50 coins to the user' do
                   play_points_assigner.assign_points(players_stats: players_stats)
-                  prize = Prize.last
+                  table_ranking = PlaysHistory.new.made_by(user).in_table(table).last.table_ranking
 
                   expect(user.reload.coins).to eq 50
-                  expect(Prize.count).to eq 1
-                  expect(prize.coins).to eq 50
-                  expect(prize.user).to eq user
-                  expect(prize.table).to eq table
+                  expect(table_ranking.earned_coins).to eq 50
                 end
 
                 context 'when the user has no current ranking' do
@@ -132,7 +126,7 @@ describe PlayPointsAssigner do
                   expect{ play_points_assigner.assign_points(players_stats: []) }.to raise_error MissingPlayerStats
 
                   expect(user.reload.coins).to eq 0
-                  expect(Prize.count).to eq 0
+                  expect(TableRanking.count).to eq 0
                 end
 
                 context 'when the user has no current ranking' do
@@ -334,13 +328,10 @@ describe PlayPointsAssigner do
 
                 it 'gives 99 coins to the user' do
                   play_points_assigner.assign_points(players_stats: players_stats)
-                  prize = Prize.last
+                  table_ranking = PlaysHistory.new.made_by(user).in_table(table).last.table_ranking
 
                   expect(user.reload.coins).to eq 99
-                  expect(Prize.count).to eq 1
-                  expect(prize.coins).to eq 99
-                  expect(prize.user).to eq user
-                  expect(prize.table).to eq table
+                  expect(table_ranking.earned_coins).to eq 99
                 end
 
                 context 'when the user has no current ranking' do
@@ -378,13 +369,10 @@ describe PlayPointsAssigner do
 
                 it 'gives 99 coins to the user' do
                   play_points_assigner.assign_points(players_stats: players_stats)
-                  prize = Prize.last
+                  table_ranking = PlaysHistory.new.made_by(user).in_table(table).last.table_ranking
 
                   expect(user.reload.coins).to eq 99
-                  expect(Prize.count).to eq 1
-                  expect(prize.coins).to eq 99
-                  expect(prize.user).to eq user
-                  expect(prize.table).to eq table
+                  expect(table_ranking.earned_coins).to eq 99
                 end
 
                 context 'when the user has no current ranking' do
@@ -420,7 +408,7 @@ describe PlayPointsAssigner do
                   expect{ play_points_assigner.assign_points(players_stats: []) }.to raise_error MissingPlayerStats
 
                   expect(user.reload.coins).to eq 0
-                  expect(Prize.count).to eq 0
+                  expect(TableRanking.count).to eq 0
                 end
 
                 context 'when the user has no current ranking' do
