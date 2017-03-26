@@ -4,7 +4,7 @@ class Api::V1::TablesController < Api::BaseController
   MATCH_NOT_FOUND = 'No se encontró el partido solicitado'
   GROUP_MUST_BE_GIVEN = 'No se ha indicado ningún grupo para la mesa'
   PRIVATE_TABLE_NOT_ALLOWED = 'No tienes permiso para acceder a la mesa privada solicitada'
-  ENTRY_COINS_COST_MUST_BE_GIVEN = 'No se ha indicado un monto de monedas para apostar'
+  ENTRY_COINS_COST_MUST_BE_GREATER_THAN_OR_EQ_TO_ZERO = 'El monto de monedas para apostar debe ser mayor o igual a cero'
 
   def index
     public_tables = Table.opened.publics
@@ -20,7 +20,7 @@ class Api::V1::TablesController < Api::BaseController
 
   def create
     return render_json_error GROUP_MUST_BE_GIVEN unless table_params[:group_id].present?
-    return render_json_error ENTRY_COINS_COST_MUST_BE_GIVEN unless table_params[:entry_coins_cost].to_i > 0
+    return render_json_error ENTRY_COINS_COST_MUST_BE_GREATER_THAN_OR_EQ_TO_ZERO unless table_params[:entry_coins_cost].to_i >= 0
     @table = Table.new private_table_params
     return render_json_errors table.errors unless table.save
     create_notifications_for_table_group
