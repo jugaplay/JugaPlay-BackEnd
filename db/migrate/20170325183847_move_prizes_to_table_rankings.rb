@@ -3,6 +3,7 @@ class MovePrizesToTableRankings < ActiveRecord::Migration
     add_column :table_rankings, :earned_coins, :integer, null: true
 
     prizes_data = ActiveRecord::Base.connection.execute('SELECT table_id, user_id, coins, updated_at, created_at FROM prizes')
+    puts "Moving #{prizes_data.count} prizes to table rankings"
     prizes_data.each do |prize_data|
       coins = prize_data['coins']
       user_id = prize_data['user_id']
@@ -18,6 +19,12 @@ class MovePrizesToTableRankings < ActiveRecord::Migration
 
       table_ranking.update_attributes!(earned_coins: coins, created_at: created_at, updated_at: updated_at)
     end
+
+    table_rankings_with_null_earned_coins = ActiveRecord::Base.connection.execute('SELECT id FROM table_rankings WHERE earned_coins IS NULL')
+    puts "#{table_rankings_with_null_earned_coins.count} table rankings where found with null earned coins, setting to 0"
+    updating_data = table_rankings_with_null_earned_coins.map { |_| { earned_coins: 0 } }
+    rankings_with_null_earned_coins_ids = table_rankings_with_null_earned_coins.map { |data| data['id']  }
+    TableRanking.update(rankings_with_null_earned_coins_ids, updating_data)
 
     change_column :table_rankings, :earned_coins, :integer, null: false
     drop_table :prizes
