@@ -10,6 +10,10 @@ class Play < ActiveRecord::Base
 
   scope :recent_finished_by, -> (user) { where(user: user).joins(:table).merge(Table.closed.recent_first) }
 
+  def private?
+    table.private?
+  end
+
   def points(&if_none_block)
     return_block = if_none_block || -> { nil }
     self[:points] || return_block.call
