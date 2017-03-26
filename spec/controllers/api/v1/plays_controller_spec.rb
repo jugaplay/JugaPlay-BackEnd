@@ -46,7 +46,7 @@ describe Api::V1::PlaysController do
             user.plays.each do |play|
               play_data = {
                 id: play.id,
-                start_time: play.table.start_time.iso8601,
+                start_time: play.table.start_time,
                 bet_coins: 0,
                 points: 'N/A',
                 earn_coins: 'N/A',

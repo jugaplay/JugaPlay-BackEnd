@@ -4,6 +4,7 @@ FactoryGirl.define do
     points { 0 }
     earned_coins { 0 }
     position { TableRanking.last.nil? ? 1 : (TableRanking.last.position + 1) }
+    created_at { DateTime.now }
 
     trait :for_user_and_table do
       ignore do

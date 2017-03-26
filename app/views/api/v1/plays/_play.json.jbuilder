@@ -1,5 +1,5 @@
 json.id play.id
-json.start_time play.table.start_time.iso8601
+json.start_time play.table.start_time
 json.bet_coins play.bet_coins
 json.points play.points { 'N/A' }
 json.earn_coins play.earned_coins
