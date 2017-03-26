@@ -45,8 +45,7 @@ class Admin::TablesController < Admin::BaseController
   end
 
   def close
-    play_points_assigner.assign_points(players_stats: players_stats)
-    RankingSorter.new(table.tournament).call
+    TableCloser.new(table).call
     ResultsMailer.for_table(table)
     redirect_with_success_message to_be_closed_admin_tables_path, CLOSE_SUCCESS_MESSAGE
   rescue MissingPlayerStats, ArgumentError, ActiveRecord::RecordInvalid => error
@@ -63,14 +62,6 @@ class Admin::TablesController < Admin::BaseController
     permitted_params[:start_time] = permitted_params[:matches].map(&:datetime).min
     permitted_params[:end_time] =  permitted_params[:matches].map(&:datetime).min + 2.hours
     permitted_params
-  end
-
-  def play_points_assigner
-    PlayPointsAssigner.new(table)
-  end
-
-  def players_stats
-    PlayerStats.for_table(table)
   end
 
   def table

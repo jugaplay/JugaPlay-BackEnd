@@ -46,7 +46,7 @@ class Table < ActiveRecord::Base
     group.nil?
   end
 
-  def has_ranking?
+  def has_rankings?
     !table_rankings.empty?
   end
 
@@ -60,11 +60,6 @@ class Table < ActiveRecord::Base
 
   def players
     matches.flat_map(&:players).uniq
-  end
-
-  def can_be_closed_with_stats?(player_stats)
-    player_stats_players = player_stats.map(&:player)
-    players.all? { |player| player_stats_players.include? player }
   end
 
   def can_play?(user)
