@@ -19,5 +19,11 @@ FactoryGirl.define do
         TableRules.create!(table: table)
       end
     end
+
+    trait :private do
+      after :create do |table|
+        table.update_attributes!(group: FactoryGirl.create(:group))
+      end
+    end
   end
 end

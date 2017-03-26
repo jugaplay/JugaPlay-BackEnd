@@ -44,22 +44,6 @@ describe Table do
       expect { Table.last.update_attributes!(start_time: DateTime.now, end_time: DateTime.now) }.to raise_error ActiveRecord::RecordInvalid, /End time must be after/
     end
 
-    it 'can have no points for winners' do
-      expect { FactoryGirl.create(:table, points_for_winners: []) }.not_to raise_error
-      expect { FactoryGirl.create(:table, points_for_winners: [100, 50, 20]) }.not_to raise_error
-
-      expect { FactoryGirl.create(:table, points_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
-      expect { FactoryGirl.create(:table, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
-    end
-
-    it 'can have no coins for winners or have coins for winners greater than 0' do
-      expect { FactoryGirl.create(:table, coins_for_winners: []) }.not_to raise_error
-      expect { FactoryGirl.create(:table, coins_for_winners: [100, 50, 20]) }.not_to raise_error
-
-      expect { FactoryGirl.create(:table, coins_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
-      expect { FactoryGirl.create(:table, coins_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
-    end
-
     it 'can have a set of matches belonging to the same tournament' do
       tournament = FactoryGirl.create(:tournament)
       another_tournament = FactoryGirl.create(:tournament)
@@ -68,6 +52,64 @@ describe Table do
       match_from_another_tournament = FactoryGirl.create(:match, tournament: another_tournament)
 
       expect { FactoryGirl.create(:table, tournament: tournament, matches: [match_from_same_tournament, match_from_another_tournament]) }.to raise_error ActiveRecord::RecordInvalid, /Matches do not belong to given tournament/
+    end
+
+    context 'for public tables' do
+      it 'can have no points for winners or have integer points for winners greater than 0 for public tables' do
+        expect { FactoryGirl.create(:table, points_for_winners: []) }.not_to raise_error
+        expect { FactoryGirl.create(:table, points_for_winners: [100, 50, 20]) }.not_to raise_error
+
+        expect { FactoryGirl.create(:table, points_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
+        expect { FactoryGirl.create(:table, points_for_winners: [1.5]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be an integer/
+        expect { FactoryGirl.create(:table, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
+      end
+
+      it 'can have no coins for winners or have integer coins for winners greater than 0' do
+        expect { FactoryGirl.create(:table, coins_for_winners: []) }.not_to raise_error
+        expect { FactoryGirl.create(:table, coins_for_winners: [100, 50, 20]) }.not_to raise_error
+
+        expect { FactoryGirl.create(:table, coins_for_winners: [-1]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
+        expect { FactoryGirl.create(:table, coins_for_winners: [1.5]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be an integer/
+        expect { FactoryGirl.create(:table, coins_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
+      end
+
+      it 'must have an integer entry coins cost grater than or equal to 0' do
+        expect { FactoryGirl.create(:table, entry_coins_cost: 0) }.not_to raise_error
+        expect { FactoryGirl.create(:table, entry_coins_cost: 20) }.not_to raise_error
+
+        expect { FactoryGirl.create(:table, entry_coins_cost: -1) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be greater than or equal to 0/
+        expect { FactoryGirl.create(:table, entry_coins_cost: 1.5) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be an integer/
+        expect { FactoryGirl.create(:table, entry_coins_cost: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost can't be blank/
+      end
+    end
+
+    context 'for private tables' do
+      it 'can have no points for winners or have integer points for winners greater than 0' do
+        expect { FactoryGirl.create(:table, :private, points_for_winners: []) }.not_to raise_error
+        expect { FactoryGirl.create(:table, :private, points_for_winners: [100, 50, 20]) }.not_to raise_error
+
+        expect { FactoryGirl.create(:table, :private, points_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
+        expect { FactoryGirl.create(:table, :private, points_for_winners: [1.5]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be an integer/
+        expect { FactoryGirl.create(:table, :private, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
+      end
+
+      it 'can have no coins for winners or have integer coins for winners greater than 0' do
+        expect { FactoryGirl.create(:table, :private, coins_for_winners: []) }.not_to raise_error
+        expect { FactoryGirl.create(:table, :private, coins_for_winners: [100, 50, 20]) }.not_to raise_error
+
+        expect { FactoryGirl.create(:table, :private, coins_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
+        expect { FactoryGirl.create(:table, :private, coins_for_winners: [1.5]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be an integer/
+        expect { FactoryGirl.create(:table, :private, coins_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
+      end
+
+      it 'must have an integer entry coins cost greater than or equal to 0' do
+        expect { FactoryGirl.create(:table, :private, entry_coins_cost: 0) }.not_to raise_error
+        expect { FactoryGirl.create(:table, :private, entry_coins_cost: 20) }.not_to raise_error
+
+        expect { FactoryGirl.create(:table, :private, entry_coins_cost: -1) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be greater than or equal to 0/
+        expect { FactoryGirl.create(:table, :private, entry_coins_cost: 1.5) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be an integer/
+        expect { FactoryGirl.create(:table, :private, entry_coins_cost: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost can't be blank/
+      end
     end
   end
   
