@@ -19,8 +19,10 @@ describe Api::V1::PlaysController do
       context 'when the user has made some plays' do
         let(:table) { FactoryGirl.create(:table, :with_table_rules) }
         let!(:play) { FactoryGirl.create(:play, user: user, table: table) }
-        let(:another_table) { FactoryGirl.create(:table, :with_table_rules) }
+        let(:another_table) { FactoryGirl.create(:table, :private, :with_table_rules) }
         let!(:another_play) { FactoryGirl.create(:play, user: user, table: another_table) }
+
+        before { another_table.group.add(user) }
 
         context 'when the table is still open' do
           it 'returns json of an empty list' do
@@ -65,6 +67,7 @@ describe Api::V1::PlaysController do
                   payed_points: 'N/A'
                 }
               }
+              play_data[:table][:group_name] = play.table.group.name if play.private?
               expect(response_body).to include play_data
             end
           end

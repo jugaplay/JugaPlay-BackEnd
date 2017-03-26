@@ -18,4 +18,5 @@ json.table do
   json.title play.table.title
   json.position play.position
   json.payed_points play.points_for_ranking
+  json.group_name play.table.group.name if play.private?
 end
