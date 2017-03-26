@@ -152,6 +152,7 @@
     resources :tables, only: [:index, :new, :create, :show, :edit, :update, :destroy] do    
       collection do
         get 'to_be_closed' => 'tables#to_be_closed', as: :to_be_closed
+        get 'close_all' => 'tables#close_all', as: :close_all
       end
 
       member do

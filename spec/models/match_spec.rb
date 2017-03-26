@@ -92,4 +92,63 @@ describe Match do
       end
     end
   end
+
+  describe 'scopes' do
+    let!(:match_without_stats) { FactoryGirl.create(:match) }
+    let!(:match_with_complete_stats) { FactoryGirl.create(:match) }
+    let!(:match_with_complete_local_stats_and_without_visitor_stats) { FactoryGirl.create(:match) }
+    let!(:match_with_complete_local_stats_and_incomplete_visitor_stats) { FactoryGirl.create(:match) }
+    let!(:match_with_complete_visitor_stats_and_without_local_stats) { FactoryGirl.create(:match) }
+    let!(:match_with_complete_visitor_stats_and_incomplete_local_stats) { FactoryGirl.create(:match) }
+
+    before do
+      create_empty_stats_for match_with_complete_stats
+
+      create_empty_stats_for_local_team match_with_complete_local_stats_and_without_visitor_stats
+      create_empty_stats_for_local_team match_with_complete_local_stats_and_incomplete_visitor_stats
+      create_empty_stats_for_player match_with_complete_local_stats_and_incomplete_visitor_stats, match_with_complete_local_stats_and_incomplete_visitor_stats.visitor_team.players.first
+
+      create_empty_stats_for_visitor_team match_with_complete_visitor_stats_and_without_local_stats
+      create_empty_stats_for_visitor_team match_with_complete_visitor_stats_and_incomplete_local_stats
+      create_empty_stats_for_player match_with_complete_visitor_stats_and_incomplete_local_stats, match_with_complete_visitor_stats_and_incomplete_local_stats.local_team.players.first
+
+      validator = CompleteStatsForMatchValidator.new
+      expect { validator.validate match_with_complete_stats }.not_to raise_error
+    end
+
+    describe '.with_incomplete_local_stats' do
+      it 'includes only the matches with incomplete local stats' do
+        matches = Match.with_incomplete_local_stats
+
+        expect(matches).to have(3).item
+        expect(matches).to include match_without_stats,
+                                   match_with_complete_visitor_stats_and_without_local_stats,
+                                   match_with_complete_visitor_stats_and_incomplete_local_stats
+      end
+    end
+
+    describe '.with_incomplete_visitor_stats' do
+      it 'includes only the matches with incomplete visitor stats' do
+        matches = Match.with_incomplete_visitor_stats
+
+        expect(matches).to have(3).item
+        expect(matches).to include match_without_stats,
+                                   match_with_complete_local_stats_and_without_visitor_stats,
+                                   match_with_complete_local_stats_and_incomplete_visitor_stats
+      end
+    end
+
+    describe '.with_incomplete_stats' do
+      it 'includes only the matches with incomplete stats' do
+        matches = Match.with_incomplete_stats
+
+        expect(matches).to have(5).item
+        expect(matches).to include match_without_stats,
+                                   match_with_complete_local_stats_and_without_visitor_stats,
+                                   match_with_complete_local_stats_and_incomplete_visitor_stats,
+                                   match_with_complete_visitor_stats_and_without_local_stats,
+                                   match_with_complete_visitor_stats_and_incomplete_local_stats
+      end
+    end
+  end
 end

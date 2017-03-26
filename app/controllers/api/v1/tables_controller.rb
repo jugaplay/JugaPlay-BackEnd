@@ -45,6 +45,7 @@ class Api::V1::TablesController < Api::BaseController
     private_table_params = table_params
     match = Match.find(private_table_params.delete(:match_id))
     private_table_params[:matches] = [match]
+    private_table_params[:status] = :opened
     private_table_params[:tournament_id] = match.tournament_id
     private_table_params[:number_of_players] = PRIVATE_TABLE_NUMBER_OF_PLAYERS
     private_table_params[:table_rules] = TableRules.new

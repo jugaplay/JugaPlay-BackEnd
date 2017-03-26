@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170325183847) do
+ActiveRecord::Schema.define(version: 20170326190033) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,22 @@ ActiveRecord::Schema.define(version: 20170325183847) do
   add_index "data_factory_players_mappings", ["data_factory_id"], name: "index_data_factory_players_mappings_on_data_factory_id", unique: true, using: :btree
   add_index "data_factory_players_mappings", ["player_id", "data_factory_id"], name: "index_data_factory_players_mappings_player_df_id", unique: true, using: :btree
   add_index "data_factory_players_mappings", ["player_id"], name: "index_data_factory_players_mappings_on_player_id", unique: true, using: :btree
+
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer  "priority",   default: 0, null: false
+    t.integer  "attempts",   default: 0, null: false
+    t.text     "handler",                null: false
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.string   "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
   create_table "directors", force: :cascade do |t|
     t.string   "first_name",  null: false
@@ -394,10 +410,10 @@ ActiveRecord::Schema.define(version: 20170325183847) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "tournament_id",                           null: false
-    t.boolean  "opened",             default: true,       null: false
     t.integer  "entry_coins_cost",   default: 0,          null: false
     t.text     "coins_for_winners",  default: "--- []\n"
     t.integer  "group_id"
+    t.integer  "status_cd",                               null: false
   end
 
   add_index "tables", ["title", "start_time", "end_time"], name: "index_tables_on_title_and_start_time_and_end_time", unique: true, using: :btree

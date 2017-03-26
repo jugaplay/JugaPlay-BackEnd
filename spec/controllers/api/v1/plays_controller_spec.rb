@@ -33,7 +33,7 @@ describe Api::V1::PlaysController do
           end
         end
 
-        context 'when the table is still open' do
+        context 'when the tables are closed' do
           before do
             table.close!
             another_table.close!
