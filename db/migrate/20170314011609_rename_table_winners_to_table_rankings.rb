@@ -15,7 +15,7 @@ class RenameTableWinnersToTableRankings < ActiveRecord::Migration
     rankings_data = table_rankings_data.map do |table_ranking_data|
       {
         play_id: table_ranking_data['play_id'],
-        update_at: table_ranking_data['updated_at'],
+        updated_at: table_ranking_data['updated_at'],
         created_at: table_ranking_data['created_at'],
       }
     end
