@@ -10,6 +10,7 @@ class TableRanking < ActiveRecord::Base
   validate :validate_position_is_unique_per_table
 
   scope :by_user, -> user { joins(play: :user).where(plays: { user_id: user.id }) }
+  scope :recent_first, -> { order(created_at: :desc) }
 
   def play_points
     play.points
