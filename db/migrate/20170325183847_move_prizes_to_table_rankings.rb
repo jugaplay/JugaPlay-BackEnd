@@ -11,10 +11,9 @@ class MovePrizesToTableRankings < ActiveRecord::Migration
     ')
     puts "Preparing #{prizes_data.count} prizes to be moved to table rankings"
 
-    table_rankigns_ids, table_rankigns_data = [], []
-    prizes_data.each do |prize_data|
-      table_rankigns_ids << prize_data['table_ranking_id']
-      table_rankigns_data << {
+    table_rankigns_data = prizes_data.map do |prize_data|
+      {
+        id: prize_data['table_ranking_id'],
         earned_coins: (prize_data['earned_coins'] || 0),
         created_at: prize_data['created_at'],
         updated_at: prize_data['updated_at'],
@@ -22,13 +21,25 @@ class MovePrizesToTableRankings < ActiveRecord::Migration
     end
 
     puts "Moving #{table_rankigns_data.count} prizes to table rankings"
-    TableRanking.update(table_rankigns_ids, table_rankigns_data)
+    table_rankigns_data.in_groups_of(200, false) do |rankings_data|
+      puts "Moving subgroup of #{rankings_data.count} prizes to table rankings"
+      queries = rankings_data.map do |ranking_data|
+        "UPDATE table_rankings
+         SET earned_coins = #{ranking_data[:earned_coins]}, created_at = '#{ranking_data[:created_at]}', updated_at = '#{ranking_data[:updated_at]}'
+         WHERE id = #{ranking_data[:id]}"
+      end
+      ActiveRecord::Base.connection.execute(queries.join('; '))
+    end
 
     table_rankings_with_null_earned_coins = ActiveRecord::Base.connection.execute('SELECT id FROM table_rankings WHERE earned_coins IS NULL')
     puts "#{table_rankings_with_null_earned_coins.count} table rankings where found with null earned coins, setting to 0"
-    updating_data = table_rankings_with_null_earned_coins.map { |_| { earned_coins: 0 } }
-    rankings_with_null_earned_coins_ids = table_rankings_with_null_earned_coins.map { |data| data['id']  }
-    TableRanking.update(rankings_with_null_earned_coins_ids, updating_data)
+    table_rankings_with_null_earned_coins.to_a.in_groups_of(200, false) do |rankings_data|
+      puts "Setting 0 earned coins for a subgroup of #{rankings_data.count} table rankings"
+      queries = rankings_data.map do |ranking_data|
+        "UPDATE table_rankings SET earned_coins = 0 WHERE id = #{ranking_data['id']}"
+      end
+      ActiveRecord::Base.connection.execute(queries.join('; '))
+    end
 
     change_column :table_rankings, :earned_coins, :integer, null: false
     drop_table :prizes
