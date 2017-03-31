@@ -15,8 +15,8 @@ class Api::V1::WalletHistoryController < Api::BaseController
 		 @last_month_t_deposits =  TDeposit.where(user: current_user).where(['created_at > ?', DateTime.now - 30.days]).sum("coins")
 		 @last_month_t_promotions =  TPromotion.where(user: current_user).where(['created_at > ?', DateTime.now - 30.days]).sum("coins")
 
-		 @table_rankings = TableRanking.by_user(current_user).limit(params[:to]).offset(params[:from]).order('created_at DESC' )
+		 @table_rankings = TableRanking.by_user(current_user).limit(params[:to]).offset(params[:from]).order('table_rankings.created_at DESC' )
 		 @total_earned_coins =  TableRanking.by_user(current_user).sum('earned_coins')
-		 @last_month_earned_coins =  TableRanking.by_user(current_user).where(['created_at > ?', DateTime.now - 30.days]).sum('earned_coins')
+		 @last_month_earned_coins =  TableRanking.by_user(current_user).where(['table_rankings.created_at > ?', DateTime.now - 30.days]).sum('earned_coins')
 	end
 end

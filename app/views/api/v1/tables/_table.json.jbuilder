@@ -37,7 +37,7 @@ if table.private?
 end
 
 json.winners(table.table_rankings) do |table_ranking|
-  json.user_id table_ranking.user_id
+  json.user_id table_ranking.user.id
   json.user_email table_ranking.user.email
   json.nickname table_ranking.user.nickname
   json.bet_coins table_ranking.bet_coins
