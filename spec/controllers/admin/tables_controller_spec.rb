@@ -206,7 +206,10 @@ describe Admin::TablesController do
     let(:table_rules) { FactoryGirl.create(:table_rules, scored_goals: 1) }
     let(:players_stats) { PlayerStats.for_table table }
 
-    before { sign_in admin_user }
+    before do
+      sign_in admin_user
+      Delayed::Worker.delay_jobs = false
+    end
 
     describe 'for public tables' do
       let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [200, 100], coins_for_winners: [50, 20]) }

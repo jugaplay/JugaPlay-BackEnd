@@ -2,6 +2,7 @@ class TableCloser
 
   def initialize(table)
     @table = table
+    @table_validator = CompleteStatsForMatchValidator.new
     @play_points_assigner = PlayPointsAssigner.new(table)
     @table_ranking_calculator = TableRankingCalculator.new(table)
     @coins_dispenser = CoinsDispenser.new(table)
@@ -10,7 +11,7 @@ class TableCloser
   end
 
   def call
-    validate_players_stats
+    table_validator.validate_table table
     play_points_assigner.call
     table_ranking_calculator.call
     if table.has_rankings?
@@ -22,14 +23,5 @@ class TableCloser
   end
 
   private
-  attr_reader :table, :play_points_assigner, :table_ranking_calculator, :coins_dispenser, :ranking_points_updater, :ranking_sorter
-
-  def validate_players_stats
-    table.matches.each do |match|
-      match.players.each do |player|
-        exists = PlayerStats.where(match: match, player: player).exists?
-        raise MissingPlayerStats.for(player, match) unless exists
-      end
-    end
-  end
+  attr_reader :table, :table_validator, :play_points_assigner, :table_ranking_calculator, :coins_dispenser, :ranking_points_updater, :ranking_sorter
 end

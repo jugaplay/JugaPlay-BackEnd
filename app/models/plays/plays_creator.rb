@@ -44,7 +44,7 @@ class PlaysCreator
   def validate_table_is_opened
     # TODO: Manejar time zones acá, esto no escala - El servidor esta atrasado 3 horas desde argentina
     # TODO falta agregar condicion de si ya finalizo el partido
-    fail TableIsClosed unless (table.opened && (table.start_time > (Time.now - 182.minutes)))
+    fail TableIsClosed unless (table.opened? && (table.start_time > (Time.now - 182.minutes)))
   end
 
   def validate_all_players(players)

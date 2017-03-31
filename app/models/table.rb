@@ -9,8 +9,10 @@ class Table < ActiveRecord::Base
 
   serialize :coins_for_winners, Array
   serialize :points_for_winners, Array
+  as_enum :status, opened: 1, being_closed: 2, closed: 3
 
   validates :title, presence: true
+  validates :status, presence: true
   validates :description, presence: true
   validates :start_time, presence: true
   validates :end_time, presence: true, date: { after: :start_time }
@@ -20,8 +22,11 @@ class Table < ActiveRecord::Base
   validates_each_in_array(:points_for_winners) { validates_numericality_of :value, greater_than: 0, only_integer: true, allow_nil: false }
   validate :validate_all_matches_belong_to_tournament
 
-  scope :opened, -> { where(opened: true) }
-  scope :closed, -> { where(opened: false) }
+  scope :opened, -> { openeds }
+  scope :closed, -> { closeds }
+  scope :not_closed, -> { where.not(id: closed) }
+  scope :can_be_closed, -> { opened.where.not(id: with_matches_with_incomplete_stats.pluck(:id)).uniq }
+  scope :with_matches_with_incomplete_stats, -> { joins(:matches).merge(Match.with_incomplete_stats).uniq }
   scope :publics, -> { where(group_id: nil) }
   scope :privates_for, -> user { joins(group: :groups_users).where(groups_users: { user_id: user.id }).uniq }
   scope :recent_first, -> { order(start_time: :desc) }
@@ -30,12 +35,19 @@ class Table < ActiveRecord::Base
     coins_for_winners.sum
   end
 
-  def closed?
-    !opened?
+  def open!
+    opened!
+    save!
   end
 
   def close!
-    update_attributes(opened: false)
+    closed!
+    save!
+  end
+
+  def start_closing!
+    being_closed!
+    save!
   end
 
   def private?
