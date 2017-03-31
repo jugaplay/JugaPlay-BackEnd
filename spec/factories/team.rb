@@ -6,7 +6,7 @@ FactoryGirl.define do
     director
 
     after(:build) do |team|
-      team.players = Faker::Number.between(1, 5).times.collect { FactoryGirl.create(:player, team: team) }
+      team.players = Faker::Number.between(3, 5).times.collect { FactoryGirl.create(:player, team: team) }
     end
 
     trait :river do

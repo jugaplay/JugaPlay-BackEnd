@@ -1,7 +1,8 @@
 class Player < ActiveRecord::Base
   belongs_to :team
   has_many :player_stats
-  has_and_belongs_to_many :plays, unique: true
+  has_many :player_selections
+  has_many :plays, through: :player_selections
   has_one :data_factory_players_mapping, dependent: :destroy
 
   validates :first_name, presence: true

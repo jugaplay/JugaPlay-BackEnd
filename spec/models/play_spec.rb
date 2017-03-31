@@ -14,11 +14,11 @@ describe Play do
       expect { FactoryGirl.create(:play, table: nil) }.to raise_error ActiveRecord::RecordInvalid, /Table can't be blank/
     end
 
-    it 'must have unique players and at least one' do
-      expect { FactoryGirl.create(:play, players: [FactoryGirl.create(:player)]) }.not_to raise_error
+    it 'must can have multiple unique player selections' do
+      play = FactoryGirl.create(:play, player_selections: [])
 
-      expect { Play.create!(user: FactoryGirl.create(:user), table: FactoryGirl.create(:table)) }.to raise_error ActiveRecord::RecordInvalid, /Players can't be blank/
-      expect { Play.last.players << Play.last.players.first }.to raise_error
+      expect { FactoryGirl.create(:player_selection, play: play, position: 1, points: 0) }.not_to raise_error
+      expect { FactoryGirl.create(:player_selection, play: play, position: 1, points: 0) }.to raise_error ActiveRecord::RecordInvalid, /Position has already been taken/
     end
 
     it 'can be only one play per user on the same table' do

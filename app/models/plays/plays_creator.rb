@@ -30,7 +30,9 @@ class PlaysCreator
   def create_play_with(players, user, bet_coins)
     user.pay_coins! bet_coins
     TEntryFee.create!(user: user, coins: bet_coins, table: table, detail: "Entrada a : #{table.title}") if bet_coins > 0
-    Play.create!(user: user, table: table, players: players, bet_coins: bet_coins)
+    play = Play.create!(user: user, table: table, bet_coins: bet_coins)
+    players.each_with_index { |player, index| PlayerSelection.create!(play: play, player: player, points: 0, position: index + 1) }
+    play
   end
 
   def validate_user_did_not_play_yet(user)
