@@ -10,45 +10,94 @@ describe CoinsDispenser do
       let(:first_user) { FactoryGirl.create(:user, :without_coins) }
       let(:second_user) { FactoryGirl.create(:user, :without_coins) }
 
-      let!(:first_user_table_ranking) { FactoryGirl.create(:table_ranking, :for_user_and_table, table: table, user: first_user, position: 1) }
-      let!(:second_user_table_ranking) { FactoryGirl.create(:table_ranking, :for_user_and_table, table: table, user: second_user, position: 2) }
+      let!(:first_user_table_ranking) { FactoryGirl.create(:table_ranking, :for_user_and_table, table: table, user: first_user, position: first_user_position) }
+      let!(:second_user_table_ranking) { FactoryGirl.create(:table_ranking, :for_user_and_table, table: table, user: second_user, position: second_user_position) }
 
-      context 'when there are no coins' do
-        let(:coins_for_winners) { [] }
+      context 'when there the users have different positions' do
+        let(:first_user_position) { 1 }
+        let(:second_user_position) { 2 }
 
-        it 'does not dispense coins for any user' do
-          coins_dispenser.call
+        context 'when there are no coins' do
+          let(:coins_for_winners) { [] }
 
-          expect(first_user_table_ranking.reload.earned_coins).to eq 0
-          expect(first_user_table_ranking.reload.earned_coins).to eq 0
+          it 'does not dispense coins for any user' do
+            coins_dispenser.call
+
+            expect(first_user_table_ranking.reload.earned_coins).to eq 0
+            expect(first_user_table_ranking.reload.earned_coins).to eq 0
+          end
+        end
+
+        context 'when there are coins for one user' do
+          let(:coins_for_winners) { [100] }
+
+          it 'gives the coins to the first user' do
+            coins_dispenser.call
+
+            expect(first_user.reload.coins).to eq 100
+            expect(first_user_table_ranking.reload.earned_coins).to eq 100
+
+            expect(second_user.reload.coins).to eq 0
+            expect(second_user_table_ranking.reload.earned_coins).to eq 0
+          end
+        end
+
+        context 'when there are points for two users' do
+          let(:coins_for_winners) { [100, 20] }
+
+          it 'gives the coins to the first user' do
+            coins_dispenser.call
+
+            expect(first_user.reload.coins).to eq 100
+            expect(first_user_table_ranking.reload.earned_coins).to eq 100
+
+            expect(second_user.reload.coins).to eq 20
+            expect(second_user_table_ranking.reload.earned_coins).to eq 20
+          end
         end
       end
 
-      context 'when there are coins for one user' do
-        let(:coins_for_winners) { [100] }
+      context 'when there the users have the same positions' do
+        let(:first_user_position) { 1 }
+        let(:second_user_position) { 1 }
 
-        it 'gives the coins to the first user' do
-          coins_dispenser.call
+        context 'when there are no coins' do
+          let(:coins_for_winners) { [] }
 
-          expect(first_user.reload.coins).to eq 100
-          expect(first_user_table_ranking.reload.earned_coins).to eq 100
+          it 'does not dispense coins for any user' do
+            coins_dispenser.call
 
-          expect(second_user.reload.coins).to eq 0
-          expect(second_user_table_ranking.reload.earned_coins).to eq 0
+            expect(first_user_table_ranking.reload.earned_coins).to eq 0
+            expect(first_user_table_ranking.reload.earned_coins).to eq 0
+          end
         end
-      end
 
-      context 'when there are points for two users' do
-        let(:coins_for_winners) { [100, 20] }
+        context 'when there are coins for one user' do
+          let(:coins_for_winners) { [100] }
 
-        it 'gives the coins to the first user' do
-          coins_dispenser.call
+          it 'gives the coins to the first user' do
+            coins_dispenser.call
 
-          expect(first_user.reload.coins).to eq 100
-          expect(first_user_table_ranking.reload.earned_coins).to eq 100
+            expect(first_user.reload.coins).to eq 50
+            expect(first_user_table_ranking.reload.earned_coins).to eq 50
 
-          expect(second_user.reload.coins).to eq 20
-          expect(second_user_table_ranking.reload.earned_coins).to eq 20
+            expect(second_user.reload.coins).to eq 50
+            expect(second_user_table_ranking.reload.earned_coins).to eq 50
+          end
+        end
+
+        context 'when there are points for two users' do
+          let(:coins_for_winners) { [100, 20] }
+
+          it 'gives the coins to the first user' do
+            coins_dispenser.call
+
+            expect(first_user.reload.coins).to eq 50
+            expect(first_user_table_ranking.reload.earned_coins).to eq 50
+
+            expect(second_user.reload.coins).to eq 50
+            expect(second_user_table_ranking.reload.earned_coins).to eq 50
+          end
         end
       end
     end
@@ -68,17 +117,37 @@ describe CoinsDispenser do
         let(:first_user_play) { FactoryGirl.create(:play, table: table, user: first_user, bet_coins: table.entry_coins_cost) }
         let(:second_user_play) { FactoryGirl.create(:play, table: table, user: second_user, bet_coins: table.entry_coins_cost) }
 
-        let!(:first_user_table_ranking) { FactoryGirl.create(:table_ranking, play: first_user_play, position: 1) }
-        let!(:second_user_table_ranking) { FactoryGirl.create(:table_ranking, play: second_user_play, position: 2) }
+        let!(:first_user_table_ranking) { FactoryGirl.create(:table_ranking, play: first_user_play, position: first_user_position) }
+        let!(:second_user_table_ranking) { FactoryGirl.create(:table_ranking, play: second_user_play, position: second_user_position) }
 
-        it 'dispenses coins for the first user only' do
-          coins_dispenser.call
+        context 'when there the users have different positions' do
+          let(:first_user_position) { 1 }
+          let(:second_user_position) { 2 }
 
-          expect(first_user.reload.coins).to eq 20
-          expect(first_user_table_ranking.reload.earned_coins).to eq 20
+          it 'dispenses coins for the first user only' do
+            coins_dispenser.call
 
-          expect(second_user.reload.coins).to eq 0
-          expect(second_user_table_ranking.reload.earned_coins).to eq 0
+            expect(first_user.reload.coins).to eq 20
+            expect(first_user_table_ranking.reload.earned_coins).to eq 20
+
+            expect(second_user.reload.coins).to eq 0
+            expect(second_user_table_ranking.reload.earned_coins).to eq 0
+          end
+        end
+
+        context 'when there the users have the same positions' do
+          let(:first_user_position) { 1 }
+          let(:second_user_position) { 1 }
+
+          it 'dispenses coins for the first user only' do
+            coins_dispenser.call
+
+            expect(first_user.reload.coins).to eq 10
+            expect(first_user_table_ranking.reload.earned_coins).to eq 10
+
+            expect(second_user.reload.coins).to eq 10
+            expect(second_user_table_ranking.reload.earned_coins).to eq 10
+          end
         end
       end
     end

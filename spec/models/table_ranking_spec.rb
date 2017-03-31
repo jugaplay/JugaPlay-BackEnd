@@ -3,9 +3,12 @@ require 'spec_helper'
 describe TableRanking do
   describe 'validations' do
     it 'must have a play' do
-      expect { FactoryGirl.create(:table_ranking, play: FactoryGirl.create(:play)) }.not_to raise_error
+      play = FactoryGirl.create(:play)
+
+      expect { FactoryGirl.create(:table_ranking, play: play) }.not_to raise_error
 
       expect { FactoryGirl.create(:table_ranking, play: nil) }.to raise_error ActiveRecord::RecordInvalid, /Play can't be blank/
+      expect { FactoryGirl.create(:table_ranking, play: play) }.to raise_error ActiveRecord::RecordInvalid, /Play has already been taken/
     end
     
     it 'must have some points' do
@@ -17,20 +20,23 @@ describe TableRanking do
 
     it 'must have some earned coins' do
       expect { FactoryGirl.create(:table_ranking, earned_coins: 0) }.not_to raise_error
+      expect { FactoryGirl.create(:table_ranking, earned_coins: 1.5) }.not_to raise_error
 
       expect { FactoryGirl.create(:table_ranking, earned_coins: nil) }.to raise_error ActiveRecord::RecordInvalid, /Earned coins can't be blank/
       expect { FactoryGirl.create(:table_ranking, earned_coins: -1) }.to raise_error ActiveRecord::RecordInvalid, /Earned coins must be greater than or equal to 0/
     end
 
-    it 'must have a unique position greater than 0 per table' do
+    it 'must have a unique position greater than 0 per play per table' do
       table = FactoryGirl.create(:table)
       play = FactoryGirl.create(:play, table: table)
+      another_play = FactoryGirl.create(:play, table: table)
 
       expect { FactoryGirl.create(:table_ranking, play: play, position: 1) }.not_to raise_error
+      expect { FactoryGirl.create(:table_ranking, play: another_play, position: 1) }.not_to raise_error
 
+      expect { FactoryGirl.create(:table_ranking, play: play) }.to raise_error ActiveRecord::RecordInvalid, /Play has already been taken/
       expect { FactoryGirl.create(:table_ranking, position: nil) }.to raise_error ActiveRecord::RecordInvalid, /Position can't be blank/
       expect { FactoryGirl.create(:table_ranking, position: 0) }.to raise_error ActiveRecord::RecordInvalid, /Position must be greater than or equal to 1/
-      expect { FactoryGirl.create(:table_ranking, play: FactoryGirl.create(:play, table: table), position: 1) }.to raise_error ActiveRecord::RecordInvalid, /Position has already been taken/
     end
   end
 

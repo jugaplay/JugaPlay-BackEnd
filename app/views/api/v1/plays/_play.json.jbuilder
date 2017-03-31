@@ -10,7 +10,7 @@ json.players(play.players) do |player|
   json.last_name player.last_name
   json.team player.team_name_if_none { 'N/A' }
   json.team_id player.team_id { 'N/A' }
-  json.points PlayerPointsCalculator.new.call_for_player(play.table, player) unless play.table.opened?
+  json.points PlayerPointsCalculator.new.call(play.table, player) unless play.table.opened?
 end
 
 json.table do

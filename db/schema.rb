@@ -167,11 +167,11 @@ ActiveRecord::Schema.define(version: 20170414114646) do
   add_index "invitation_acceptances", ["user_id"], name: "index_invitation_acceptances_on_user_id", using: :btree
 
   create_table "invitation_requests", force: :cascade do |t|
-    t.integer  "user_id",                     null: false
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-    t.string   "token",                       null: false
-    t.string   "type",       default: "Link", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string   "token",      null: false
+    t.integer  "user_id",    null: false
+    t.string   "type",       null: false
   end
 
   add_index "invitation_requests", ["token"], name: "index_invitation_requests_on_token", unique: true, using: :btree
@@ -233,6 +233,20 @@ ActiveRecord::Schema.define(version: 20170414114646) do
 
   add_index "notifications_settings", ["user_id"], name: "index_notifications_settings_on_user_id", unique: true, using: :btree
 
+  create_table "player_selections", force: :cascade do |t|
+    t.integer  "play_id",    null: false
+    t.integer  "player_id",  null: false
+    t.integer  "position",   null: false
+    t.float    "points",     null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "player_selections", ["play_id", "player_id"], name: "index_player_selections_on_play_id_and_player_id", unique: true, using: :btree
+  add_index "player_selections", ["play_id", "position"], name: "index_player_selections_on_play_id_and_position", unique: true, using: :btree
+  add_index "player_selections", ["play_id"], name: "index_player_selections_on_play_id", using: :btree
+  add_index "player_selections", ["player_id"], name: "index_player_selections_on_player_id", using: :btree
+
   create_table "player_stats", force: :cascade do |t|
     t.integer  "player_id",                             null: false
     t.integer  "match_id",                              null: false
@@ -280,16 +294,6 @@ ActiveRecord::Schema.define(version: 20170414114646) do
   add_index "players", ["first_name", "last_name", "team_id", "position"], name: "index_players_first_last_team_position", unique: true, using: :btree
   add_index "players", ["first_name"], name: "index_players_on_first_name", using: :btree
   add_index "players", ["last_name"], name: "index_players_on_last_name", using: :btree
-
-  create_table "players_plays", force: :cascade do |t|
-    t.integer  "play_id",    null: false
-    t.integer  "player_id",  null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "players_plays", ["play_id", "player_id"], name: "index_players_plays_on_play_id_and_player_id", unique: true, using: :btree
-  add_index "players_plays", ["play_id"], name: "index_players_plays_on_play_id", using: :btree
 
   create_table "plays", force: :cascade do |t|
     t.integer  "user_id",                null: false
@@ -376,7 +380,7 @@ ActiveRecord::Schema.define(version: 20170414114646) do
     t.datetime "updated_at"
     t.integer  "play_id",                    null: false
     t.float    "points",       default: 0.0, null: false
-    t.integer  "earned_coins",               null: false
+    t.float    "earned_coins",               null: false
   end
 
   add_index "table_rankings", ["play_id"], name: "index_table_rankings_on_play_id", unique: true, using: :btree
@@ -508,7 +512,7 @@ ActiveRecord::Schema.define(version: 20170414114646) do
 
   create_table "wallets", force: :cascade do |t|
     t.integer  "user_id"
-    t.integer  "coins",      default: 10, null: false
+    t.float    "coins",      default: 10.0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

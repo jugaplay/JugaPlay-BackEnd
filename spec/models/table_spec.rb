@@ -330,15 +330,15 @@ describe Table do
   end
 
   describe 'can and can not be closed' do
-    let!(:opened_table_without_stats) { FactoryGirl.create(:table, :opened, end_time: Time.now - 2.days) }
-    let!(:opened_table_with_local_team_stats) { FactoryGirl.create(:table, :opened, end_time: Time.now - 2.days) }
-    let!(:opened_table_with_visitor_team_stats) { FactoryGirl.create(:table, :opened, end_time: Time.now - 2.days) }
-    let!(:opened_table_with_first_match_stats) { FactoryGirl.create(:table, :opened, end_time: Time.now - 2.days) }
-    let!(:opened_table_with_complete_stats) { FactoryGirl.create(:table, :opened, end_time: Time.now - 2.days) }
-    let!(:closed_table_without_stats) { FactoryGirl.create(:table, :closed, end_time: Time.now - 2.days) }
-    let!(:closed_table_with_complete_stats) { FactoryGirl.create(:table, :closed, end_time: Time.now - 2.days) }
-    let!(:being_closed_table_without_stats) { FactoryGirl.create(:table, :being_closed, end_time: Time.now - 2.days) }
-    let!(:being_closed_table_with_complete_stats) { FactoryGirl.create(:table, :being_closed, end_time: Time.now - 2.days) }
+    let!(:opened_table_without_stats) { FactoryGirl.create(:table, :opened, title: 'opened without stats', end_time: Time.now - 2.days) }
+    let!(:opened_table_with_local_team_stats) { FactoryGirl.create(:table, :opened, title: 'opened with local team stats', end_time: Time.now - 2.days) }
+    let!(:opened_table_with_visitor_team_stats) { FactoryGirl.create(:table, :opened, title: 'opened with visitor team stats', end_time: Time.now - 2.days) }
+    let!(:opened_table_with_first_match_stats) { FactoryGirl.create(:table, :opened, title: 'opened with first match stats', end_time: Time.now - 2.days) }
+    let!(:opened_table_with_complete_stats) { FactoryGirl.create(:table, :opened, title: 'opened with complete stats', end_time: Time.now - 2.days) }
+    let!(:closed_table_without_stats) { FactoryGirl.create(:table, :closed, title: 'closed without stats', end_time: Time.now - 2.days) }
+    let!(:closed_table_with_complete_stats) { FactoryGirl.create(:table, :closed, title: 'closed with complete stats', end_time: Time.now - 2.days) }
+    let!(:being_closed_table_without_stats) { FactoryGirl.create(:table, :being_closed, title: 'being closed without stats', end_time: Time.now - 2.days) }
+    let!(:being_closed_table_with_complete_stats) { FactoryGirl.create(:table, :being_closed, title: 'being closed with complete stats', end_time: Time.now - 2.days) }
 
     before do
       create_empty_stats_for_all opened_table_with_complete_stats.matches

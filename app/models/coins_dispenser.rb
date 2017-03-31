@@ -19,9 +19,14 @@ class CoinsDispenser
   def dispense_coins_for_all_winners
     coins_for_winners = table.coins_for_winners
     TableRanking.transaction do
-      table_winner_rankings.each do |table_ranking|
-        coins = coins_for_winners[table_ranking.position - 1]
-        dispense_coins(coins, table_ranking) if coins
+      table_winner_rankings.group_by(&:position).each do |position, table_rankings|
+        table_coins = coins_for_winners[position - 1]
+        if table_coins
+          final_coins = (table_coins/table_rankings.size).round(2)
+          table_rankings.each do |table_ranking|
+            dispense_coins(final_coins, table_ranking)
+          end
+        end
       end
     end
   end
@@ -32,6 +37,6 @@ class CoinsDispenser
   end
 
   def table_winner_rankings
-    table.table_rankings.limit table.coins_for_winners.count
+    @table_winner_rankings ||= table.table_rankings
   end
 end

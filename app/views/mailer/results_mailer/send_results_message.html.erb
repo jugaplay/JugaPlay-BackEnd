@@ -34,7 +34,7 @@
               </tr>
             </table>
             <% @play.players.each do |player| %>
-              <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;"> <%= "#{player.name}, sumo: #{@player_points_calculator.call_for_player(@table, player) } PTS"%> </p>
+              <p style="font-size:14px; font-family:Arial, Helvetica, sans-serif;"> <%= "#{player.name}, sumo: #{@player_points_calculator.call(@table, player) } PTS"%> </p>
             <% end %>
             <p><b style="font-size:16px; font-family:Arial, Helvetica, sans-serif;">TOTAL: <%= @play.points %> PTS</b></p>
           </td>

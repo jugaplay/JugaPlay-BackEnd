@@ -1,24 +1,30 @@
 class PlayerPointsCalculator
 
-  def call_for_player(table, player)
-    matches_ids = table.matches.map(&:id)
-    player_stats = PlayerStats.where(player_id: player, match_id: matches_ids)
-    call(table, player_stats)
-  end
-
-  def call(table, players_stats)
-    @table_rules, @players_stats = table.table_rules, players_stats
-    PlayerStats::FEATURES.map { |feature| calculate_points_for_feature(feature) }.sum.round(2)
+  def call(table, player)
+    @table, @player = table, player
+    calculate_points_for_player(player, table)
   end
 
   private
-  attr_reader :table_rules, :players_stats
+  attr_reader :table, :player
 
-  def calculate_points_for_feature(feature)
-    total_scored_for_feature(feature) * table_rules.send(feature)
+  def calculate_points_for_player(player, table)
+    player_stats = PlayerStats.for_table_and_player(table, player)
+    fail MissingPlayerStats if player_stats.empty?
+    player_stats.map do |stat|
+      calculate_for_player_stat(stat)
+    end.sum.round(2)
   end
 
-  def total_scored_for_feature(feature)
-    players_stats.map { |player_stats| player_stats.send(feature) }.sum
+  def calculate_for_player_stat(player_stat)
+    PlayerStats::FEATURES.map { |feature| scored_points(player_stat, feature) }.sum.round(2)
+  end
+
+  def scored_points(player_stat, feature)
+    player_stat.send(feature) * table_rules.send(feature)
+  end
+
+  def table_rules
+    @table_rules ||= table.table_rules
   end
 end

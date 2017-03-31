@@ -9,7 +9,7 @@ class PlayPointsAssigner
 
   def call
     plays.find_each do |play|
-      update_data_for_play_with(play, players_stats)
+      update_data_for_play(play)
     end
     Play.update(play_ids_to_update, play_data_to_update)
   end
@@ -17,18 +17,20 @@ class PlayPointsAssigner
   protected
   attr_reader :table, :play_ids_to_update, :play_data_to_update, :player_points_calculator
 
-  def update_data_for_play_with(play, players_stats)
-    applicable_stats = players_stats.select { |player_stats| play.involves_player? (player_stats.player) }
-    fail MissingPlayerStats if applicable_stats.empty?
+  def update_data_for_play(play)
     play_ids_to_update << play.id
-    play_data_to_update << { points: player_points_calculator.call(table, applicable_stats) }
+    play_data_to_update << { points: calculate_points_for_play(play)}
   end
 
-  def players_stats
-    @players_stats ||= PlayerStats.for_table(table)
+  def calculate_points_for_play(play)
+    play.player_selections.map do |player_selection|
+      points = player_points_calculator.call(table, player_selection.player)
+      player_selection.update_attributes!(points: points)
+      points
+    end.sum.round(2)
   end
 
   def plays
-    @plays ||= Play.where(table: table)
+    @plays ||= table.plays
   end
 end
