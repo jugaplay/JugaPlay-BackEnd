@@ -5,7 +5,7 @@ class Wallet < ActiveRecord::Base
   belongs_to :user
   
   validates :user, presence: true, uniqueness: true
-  validates :coins, numericality: { greater_than_or_equal_to: 0, allow_nil: false, only_integer: true }
+  validates :coins, numericality: { greater_than_or_equal_to: 0, allow_nil: false }
 
   def subtract_coins!(amount_of_coins)
     update_attributes!(coins: coins - amount_of_coins)

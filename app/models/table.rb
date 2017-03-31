@@ -4,6 +4,7 @@ class Table < ActiveRecord::Base
   belongs_to :group
   belongs_to :tournament
   has_many :users, through: :plays
+  has_many :player_selections, through: :plays
   has_many :table_rankings, -> { order(position: :asc) }, through: :plays
   has_and_belongs_to_many :matches
 

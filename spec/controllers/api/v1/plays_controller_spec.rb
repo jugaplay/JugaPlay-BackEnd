@@ -37,6 +37,9 @@ describe Api::V1::PlaysController do
           before do
             table.close!
             another_table.close!
+
+            create_empty_stats_for_all table.matches
+            create_empty_stats_for_all another_table.matches
           end
 
           it 'returns json of them' do
@@ -58,7 +61,7 @@ describe Api::V1::PlaysController do
                   last_name: player.last_name,
                   team: player.team.name,
                   team_id: player.team.id,
-                  points: PlayerPointsCalculator.new.call_for_player(table, player)
+                  points: PlayerPointsCalculator.new.call(table, player)
                 }},
                 table: {
                   id: play.table.id,

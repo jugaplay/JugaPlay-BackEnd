@@ -31,7 +31,7 @@ describe Api::V1::CroupierController do
         end
 
         context 'when the user bets for the table' do
-          before { table.update_attributes(entry_coins_cost: entry_coins_cost) }
+          before { table.update_attributes!(entry_coins_cost: entry_coins_cost.to_i) }
 
           context 'when the user can pay the table entry coins cost' do
             let(:entry_coins_cost) { user.coins }
