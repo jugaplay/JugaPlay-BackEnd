@@ -3,12 +3,14 @@ class AddStatusToTables < ActiveRecord::Migration
     add_column :tables, :status_cd, :integer, null: true
 
     tables_data = ActiveRecord::Base.connection.execute('SELECT id, opened FROM tables')
-    table_statuses = tables_data.map do |table_data|
-      status = table_data['opened'] ? Table.statuses[:opened] : Table.statuses[:closed]
-      { status_cd: status }
+    tables_data.to_a.in_groups_of(200, false) do |tables_data_group|
+      puts "Setting status for a subgroup of #{tables_data_group.count} tables"
+      queries = tables_data_group.map do |table_data|
+        status = table_data['opened'] ? Table.statuses[:opened] : Table.statuses[:closed]
+        "UPDATE tables SET status_cd = #{status} WHERE id = #{table_data['id']}"
+      end
+      ActiveRecord::Base.connection.execute(queries.join('; '))
     end
-    tables_ids = tables_data.map { |table_data| table_data['id'] }
-    Table.update(tables_ids, table_statuses)
 
     change_column :tables, :status_cd, :integer, null: false
     remove_column :tables, :opened
