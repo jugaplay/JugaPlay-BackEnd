@@ -7,9 +7,18 @@ class Play < ActiveRecord::Base
 
   validates :table, presence: true
   validates :user, presence: true, uniqueness: { scope: :table }
-  validates :bet_coins, presence: true, numericality: { only_integer: true, allow_nil: false, greater_than_or_equal_to: 0 }
+  validates :bet_base_coins, presence: true, numericality: { only_integer: true, allow_nil: false, greater_than_or_equal_to: 0 }
+  validates :bet_multiplier, numericality: { allow_blank: true, only_integer: true, greater_than_or_equal_to: 2 }
 
   scope :recent_finished_by, -> user { where(user: user).joins(:table).merge(Table.closed.recent_first) }
+
+  def coins_bet_multiplier
+    bet_multiplier || 1
+  end
+
+  def bet_multiplier_by(multiplier)
+    update_attributes!(bet_multiplier: multiplier)
+  end
 
   def private?
     table.private?

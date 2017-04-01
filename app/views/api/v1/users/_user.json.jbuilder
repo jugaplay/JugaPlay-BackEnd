@@ -6,6 +6,7 @@ json.email user.email
 json.member_since user.created_at.strftime('%d/%m/%Y')
 json.image user.image
 json.coins user.coins
+json.chips user.chips
 json.telephone user.telephone
 json.push_token user.push_token
 json.has_facebook_login user.has_facebook_token?

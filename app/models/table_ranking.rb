@@ -15,8 +15,8 @@ class TableRanking < ActiveRecord::Base
     play.points
   end
 
-  def bet_coins
-    play.bet_coins
+  def bet_base_coins
+    play.bet_base_coins
   end
 
   def detail

@@ -96,7 +96,11 @@
       end
 
       resources :teams, only: [:show]
-      resources :plays, only: [:index]
+      resources :plays, only: [:index, :show] do
+        member do
+          post 'multiply/:multiplier' => 'plays#multiply', as: :multiply
+        end
+      end
       post '/play' => 'croupier#play'
 
       resources :table_rankings, only: [:index]

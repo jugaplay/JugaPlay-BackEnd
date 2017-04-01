@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170331111946) do
+ActiveRecord::Schema.define(version: 20170331235345) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -284,13 +284,14 @@ ActiveRecord::Schema.define(version: 20170331111946) do
   add_index "players", ["last_name"], name: "index_players_on_last_name", using: :btree
 
   create_table "plays", force: :cascade do |t|
-    t.integer  "user_id",                null: false
-    t.integer  "table_id",               null: false
+    t.integer  "user_id",                    null: false
+    t.integer  "table_id",                   null: false
     t.float    "points"
     t.float    "coins"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "bet_coins",  default: 0, null: false
+    t.integer  "bet_base_coins", default: 0, null: false
+    t.integer  "bet_multiplier"
   end
 
   add_index "plays", ["table_id"], name: "index_plays_on_table_id", using: :btree
@@ -503,6 +504,7 @@ ActiveRecord::Schema.define(version: 20170331111946) do
     t.float    "coins",      default: 10.0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.float    "chips",      default: 0.0,  null: false
   end
 
   add_index "wallets", ["user_id"], name: "index_wallets_on_user_id", unique: true, using: :btree
