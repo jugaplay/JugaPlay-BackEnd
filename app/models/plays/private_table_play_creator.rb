@@ -1,7 +1,7 @@
 class PrivateTablePlayCreator < PlaysCreator
   protected
 
-  def bet_coins(bet)
+  def bet_base_coins(bet)
     table.entry_coins_cost
   end
 

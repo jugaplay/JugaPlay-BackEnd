@@ -182,6 +182,28 @@ describe TableCloser do
                 expect(second_user_play.earned_coins).to eq 50
                 expect(table.table_rankings).to have(2).items
               end
+
+              context 'when the first user has bet a multiplier by 3' do
+                before { PlaysHistory.new.made_by(first_user).in_table(table).last.bet_multiplier_by(3) }
+
+                it 'closes the table and updates the total points for each user' do
+                  table_closer.call
+
+                  first_user_play = PlaysHistory.new.made_by(first_user).in_table(table).last
+                  second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
+
+                  expect(table).to be_closed
+                  expect(first_user.reload.coins).to eq 70
+                  expect(first_user_play.points).to eq 1.3
+                  expect(first_user_play.position).to eq 2
+                  expect(first_user_play.earned_coins).to eq 60
+                  expect(second_user.reload.coins).to eq 60
+                  expect(second_user_play.points).to eq 2.6
+                  expect(second_user_play.position).to eq 1
+                  expect(second_user_play.earned_coins).to eq 50
+                  expect(table.table_rankings).to have(2).items
+                end
+              end
             end
           end
         end

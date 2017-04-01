@@ -50,7 +50,7 @@ describe PlaysCreator do
                   let(:players) { [river.players.sample, boca.players.sample] }
 
                   context 'when the user does not bet the table' do
-                    it 'creates a new play for the given user with the given players without bet coins' do
+                    it 'creates a new play for the given user with the given players without bet base coins' do
                       initial_amount_of_coins = user.coins
 
                       plays_creator.create_play(user: user, players: players)
@@ -59,7 +59,7 @@ describe PlaysCreator do
                       expect(play.user).to eq user
                       expect(play.players).to have(2).items
                       expect(play.players).to match_array(players)
-                      expect(play.bet_coins).to eq 0
+                      expect(play.bet_base_coins).to eq 0
                       expect(user.coins).to eq initial_amount_of_coins
                     end
                   end
@@ -78,7 +78,7 @@ describe PlaysCreator do
                           expect(play.user).to eq user
                           expect(play.players).to have(2).items
                           expect(play.players).to match_array(players)
-                          expect(play.bet_coins).to eq 10
+                          expect(play.bet_base_coins).to eq 10
                           expect(user.coins).to eq 0
                         end
                       end

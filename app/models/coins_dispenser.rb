@@ -35,7 +35,8 @@ class CoinsDispenser
 
   def dispense_coins_for_each_ranking(table_rankings, coins_per_ranking)
     table_rankings.each do |table_ranking|
-      dispense_coins(coins_per_ranking, table_ranking)
+      final_coins = coins_per_ranking * table_ranking.play.coins_bet_multiplier
+      dispense_coins(final_coins, table_ranking)
     end
   end
 

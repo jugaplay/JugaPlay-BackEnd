@@ -296,13 +296,14 @@ ActiveRecord::Schema.define(version: 20170414114646) do
   add_index "players", ["last_name"], name: "index_players_on_last_name", using: :btree
 
   create_table "plays", force: :cascade do |t|
-    t.integer  "user_id",                null: false
-    t.integer  "table_id",               null: false
+    t.integer  "user_id",                    null: false
+    t.integer  "table_id",                   null: false
     t.float    "points"
     t.float    "coins"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "bet_coins",  default: 0, null: false
+    t.integer  "bet_base_coins", default: 0, null: false
+    t.integer  "bet_multiplier"
   end
 
   add_index "plays", ["table_id"], name: "index_plays_on_table_id", using: :btree

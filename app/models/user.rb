@@ -33,6 +33,10 @@ class User < ActiveRecord::Base
     wallet.coins
   end
 
+  def chips
+    wallet.chips
+  end
+
   def has_coins?(amount_of_coins)
     coins >= amount_of_coins
   end

@@ -31,12 +31,12 @@ describe Api::V1::CroupierController do
             expect(play.player_selections.first.player).to eq first_player
             expect(play.player_selections.second.player).to eq second_player
             expect(play.table).to eq table
-            expect(play.bet_coins).to eq 0
+            expect(play.bet_base_coins).to eq 0
 
             expect(response).to render_template(partial: 'api/v1/plays/_play')
             expect(response.status).to eq 200
             expect(response_body[:id]).to eq play.id
-            expect(response_body[:bet_coins]).to eq play.bet_coins
+            expect(response_body[:bet_base_coins]).to eq play.bet_base_coins
             expect(response_body[:table][:title]).to eq table.title
             expect(response_body[:players]).to have(player_ids.count).items
           end
@@ -59,12 +59,12 @@ describe Api::V1::CroupierController do
               expect(play.player_selections.first.player).to eq first_player
               expect(play.player_selections.second.player).to eq second_player
               expect(play.table).to eq table
-              expect(play.bet_coins).to eq table.entry_coins_cost
+              expect(play.bet_base_coins).to eq table.entry_coins_cost
 
               expect(response).to render_template(partial: 'api/v1/plays/_play')
               expect(response.status).to eq 200
               expect(response_body[:id]).to eq play.id
-              expect(response_body[:bet_coins]).to eq play.bet_coins
+              expect(response_body[:bet_base_coins]).to eq play.bet_base_coins
               expect(response_body[:table][:title]).to eq table.title
               expect(response_body[:players]).to have(player_ids.count).items
             end
