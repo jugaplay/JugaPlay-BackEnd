@@ -24,6 +24,7 @@ class Table < ActiveRecord::Base
 
   scope :opened, -> { openeds }
   scope :closed, -> { closeds }
+  scope :being_closed, -> { being_closeds }
   scope :not_closed, -> { where.not(id: closed) }
   scope :can_be_closed, -> { opened.where.not(id: with_matches_with_incomplete_stats.pluck(:id)).uniq }
   scope :with_matches_with_incomplete_stats, -> { joins(:matches).merge(Match.with_incomplete_stats).uniq }
