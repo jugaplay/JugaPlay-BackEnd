@@ -29,13 +29,13 @@ json.detail_deposits(@t_deposits) do |t_deposit|
 	json.date t_deposit.created_at
 end
 
-json.total_prizes @total_prizes
-json.last_month_prizes @last_month_prizes
+json.total_prizes @total_earned_coins
+json.last_month_prizes @last_month_earned_coins
 
-json.detail_prizes(@prizes) do |prize|
-	json.coins prize.coins
-	json.detail prize.detail
-	json.date prize.created_at
+json.detail_prizes(@table_rankings) do |table_ranking|
+	json.coins table_ranking.earned_coins
+	json.detail table_ranking.detail
+	json.date table_ranking.created_at
 end
 
 json.total_promotions @total_of_t_promotions

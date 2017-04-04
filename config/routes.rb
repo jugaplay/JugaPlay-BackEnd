@@ -99,6 +99,7 @@
       resources :plays, only: [:index]
       post '/play' => 'croupier#play'
 
+      resources :table_rankings, only: [:index]
 
 
 
@@ -109,7 +110,6 @@
       ###########################################
 
       resources :comments, only: [:create]
-      resources :prizes, only: [:index]
       resources :t_entry_fees, only: [:index]
       resources :transactions, only: [:index, :show, :create]
       resources :t_deposits, only: [:index, :create]
@@ -152,6 +152,7 @@
     resources :tables, only: [:index, :new, :create, :show, :edit, :update, :destroy] do    
       collection do
         get 'to_be_closed' => 'tables#to_be_closed', as: :to_be_closed
+        get 'close_all' => 'tables#close_all', as: :close_all
       end
 
       member do

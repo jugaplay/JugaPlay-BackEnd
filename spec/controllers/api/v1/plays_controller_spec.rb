@@ -19,8 +19,10 @@ describe Api::V1::PlaysController do
       context 'when the user has made some plays' do
         let(:table) { FactoryGirl.create(:table, :with_table_rules) }
         let!(:play) { FactoryGirl.create(:play, user: user, table: table) }
-        let(:another_table) { FactoryGirl.create(:table, :with_table_rules) }
+        let(:another_table) { FactoryGirl.create(:table, :private, :with_table_rules) }
         let!(:another_play) { FactoryGirl.create(:play, user: user, table: another_table) }
+
+        before { another_table.group.add(user) }
 
         context 'when the table is still open' do
           it 'returns json of an empty list' do
@@ -31,7 +33,7 @@ describe Api::V1::PlaysController do
           end
         end
 
-        context 'when the table is still open' do
+        context 'when the tables are closed' do
           before do
             table.close!
             another_table.close!
@@ -47,16 +49,16 @@ describe Api::V1::PlaysController do
               play_data = {
                 id: play.id,
                 start_time: play.table.start_time,
-                points: 'N/A',
                 bet_coins: 0,
-                earn_coins: 0,
+                points: 'N/A',
+                earn_coins: 'N/A',
                 players: play.players.map { |player| {
                   id: player.id,
                   first_name: player.first_name,
                   last_name: player.last_name,
                   team: player.team.name,
                   team_id: player.team.id,
-                  points: PlayPointsCalculator.new.call_for_player(play, player)
+                  points: PlayerPointsCalculator.new.call_for_player(table, player)
                 }},
                 table: {
                   id: play.table.id,
@@ -65,6 +67,7 @@ describe Api::V1::PlaysController do
                   payed_points: 'N/A'
                 }
               }
+              play_data[:table][:group_name] = play.table.group.name if play.private?
               expect(response_body).to include play_data
             end
           end

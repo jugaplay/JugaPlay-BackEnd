@@ -2,7 +2,8 @@ class Admin::TablesController < Admin::BaseController
   CREATE_SUCCESS_MESSAGE = 'Mesa creada'
   UPDATE_SUCCESS_MESSAGE = 'Mesa actualizada'
   DESTROY_SUCCESS_MESSAGE = 'Mesa eliminada'
-  CLOSE_SUCCESS_MESSAGE = 'Mesa cerrada y mails con resultados enviados'
+  CLOSING_TABLE_ENQUEUED_MESSAGE = 'Se está cerrando la mesa en background'
+  CLOSING_TABLES_ENQUEUED_MESSAGE = 'Se están cerrando la mesas en background'
 
   before_action :table, only: [:edit, :show]
 
@@ -12,6 +13,7 @@ class Admin::TablesController < Admin::BaseController
 
   def index
     @tables = Table.all
+    @can_be_closed_tables = Table.can_be_closed
   end
 
   def new
@@ -41,16 +43,25 @@ class Admin::TablesController < Admin::BaseController
   end
 
   def to_be_closed
-    @tables_to_be_closed = Table.opened.where('end_time < ?', Time.now)
+    @tables_to_be_closed = Table.not_closed
   end
 
   def close
-    croupier.assign_scores(players_stats: players_stats)
-    RankingSorter.new(table.tournament).call
-    ResultsMailer.for_table(table)
-    redirect_with_success_message to_be_closed_admin_tables_path, CLOSE_SUCCESS_MESSAGE
-  rescue MissingPlayerStats, ArgumentError, ActiveRecord::RecordInvalid => error
-    redirect_with_error_message to_be_closed_admin_tables_path, error
+    CompleteStatsForMatchValidator.new.validate_table(table)
+    table.start_closing!
+    TableClosingJob.perform_later(table_id)
+    redirect_with_success_message to_be_closed_admin_tables_path, CLOSING_TABLE_ENQUEUED_MESSAGE
+  rescue MissingPlayerStats => error
+    redirect_with_error_message to_be_closed_admin_tables_path, error.message
+  end
+
+  def close_all
+    titles = Table.can_be_closed.pluck('id, title').map do |table_data|
+      TableClosingJob.perform_later(table_data[0])
+      table_data[1]
+    end
+    message = "#{CLOSING_TABLES_ENQUEUED_MESSAGE}: #{titles.join(', ')}"
+    redirect_with_success_message admin_tables_path, message
   end
 
   private
@@ -58,6 +69,7 @@ class Admin::TablesController < Admin::BaseController
   def table_params
     permitted_params = params.require(:table).permit(:title, :entry_coins_cost, :number_of_players, :description, :tournament_id, match_ids: [])
     permitted_params[:matches] = Match.where(id: permitted_params.delete(:match_ids))
+    permitted_params[:status] = :opened
     permitted_params[:coins_for_winners] = []
     permitted_params[:points_for_winners] = PointsForWinners.default
     permitted_params[:start_time] = permitted_params[:matches].map(&:datetime).min
@@ -65,15 +77,11 @@ class Admin::TablesController < Admin::BaseController
     permitted_params
   end
 
-  def croupier
-    Croupier.for(table)
-  end
-
-  def players_stats
-    PlayerStats.for_table(table)
-  end
-
   def table
-    @table ||= Table.find(params[:id])
+    @table ||= Table.find(table_id)
+  end
+
+  def table_id
+    @table_id ||= params[:id]
   end
 end

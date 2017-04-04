@@ -44,30 +44,6 @@ describe Table do
       expect { Table.last.update_attributes!(start_time: DateTime.now, end_time: DateTime.now) }.to raise_error ActiveRecord::RecordInvalid, /End time must be after/
     end
 
-    it 'must have points for winners greater than 0 if the table is public' do
-      expect { FactoryGirl.create(:table, points_for_winners: [100, 50, 20]) }.not_to raise_error
-
-      expect { FactoryGirl.create(:table, points_for_winners: []) }.to raise_error ActiveRecord::RecordInvalid, /Points for winners can't be blank/
-      expect { FactoryGirl.create(:table, points_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
-      expect { FactoryGirl.create(:table, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
-    end
-
-    it 'can have no points for winners if the table is private' do
-      group = FactoryGirl.create(:group)
-
-      expect { FactoryGirl.create(:table, group: group, points_for_winners: []) }.not_to raise_error
-      expect { FactoryGirl.create(:table, group: group, points_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
-      expect { FactoryGirl.create(:table, group: group, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
-    end
-
-    it 'can have no coins for winners or have coins for winners greater than 0' do
-      expect { FactoryGirl.create(:table, coins_for_winners: []) }.not_to raise_error
-      expect { FactoryGirl.create(:table, coins_for_winners: [100, 50, 20]) }.not_to raise_error
-
-      expect { FactoryGirl.create(:table, coins_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
-      expect { FactoryGirl.create(:table, coins_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
-    end
-
     it 'can have a set of matches belonging to the same tournament' do
       tournament = FactoryGirl.create(:tournament)
       another_tournament = FactoryGirl.create(:tournament)
@@ -77,8 +53,100 @@ describe Table do
 
       expect { FactoryGirl.create(:table, tournament: tournament, matches: [match_from_same_tournament, match_from_another_tournament]) }.to raise_error ActiveRecord::RecordInvalid, /Matches do not belong to given tournament/
     end
+
+    context 'for public tables' do
+      it 'can have no points for winners or have integer points for winners greater than 0 for public tables' do
+        expect { FactoryGirl.create(:table, points_for_winners: []) }.not_to raise_error
+        expect { FactoryGirl.create(:table, points_for_winners: [100, 50, 20]) }.not_to raise_error
+
+        expect { FactoryGirl.create(:table, points_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
+        expect { FactoryGirl.create(:table, points_for_winners: [1.5]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be an integer/
+        expect { FactoryGirl.create(:table, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
+      end
+
+      it 'can have no coins for winners or have integer coins for winners greater than 0' do
+        expect { FactoryGirl.create(:table, coins_for_winners: []) }.not_to raise_error
+        expect { FactoryGirl.create(:table, coins_for_winners: [100, 50, 20]) }.not_to raise_error
+
+        expect { FactoryGirl.create(:table, coins_for_winners: [-1]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
+        expect { FactoryGirl.create(:table, coins_for_winners: [1.5]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be an integer/
+        expect { FactoryGirl.create(:table, coins_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
+      end
+
+      it 'must have an integer entry coins cost grater than or equal to 0' do
+        expect { FactoryGirl.create(:table, entry_coins_cost: 0) }.not_to raise_error
+        expect { FactoryGirl.create(:table, entry_coins_cost: 20) }.not_to raise_error
+
+        expect { FactoryGirl.create(:table, entry_coins_cost: -1) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be greater than or equal to 0/
+        expect { FactoryGirl.create(:table, entry_coins_cost: 1.5) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be an integer/
+        expect { FactoryGirl.create(:table, entry_coins_cost: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost can't be blank/
+      end
+    end
+
+    context 'for private tables' do
+      it 'can have no points for winners or have integer points for winners greater than 0' do
+        expect { FactoryGirl.create(:table, :private, points_for_winners: []) }.not_to raise_error
+        expect { FactoryGirl.create(:table, :private, points_for_winners: [100, 50, 20]) }.not_to raise_error
+
+        expect { FactoryGirl.create(:table, :private, points_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
+        expect { FactoryGirl.create(:table, :private, points_for_winners: [1.5]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be an integer/
+        expect { FactoryGirl.create(:table, :private, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
+      end
+
+      it 'can have no coins for winners or have integer coins for winners greater than 0' do
+        expect { FactoryGirl.create(:table, :private, coins_for_winners: []) }.not_to raise_error
+        expect { FactoryGirl.create(:table, :private, coins_for_winners: [100, 50, 20]) }.not_to raise_error
+
+        expect { FactoryGirl.create(:table, :private, coins_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
+        expect { FactoryGirl.create(:table, :private, coins_for_winners: [1.5]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be an integer/
+        expect { FactoryGirl.create(:table, :private, coins_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
+      end
+
+      it 'must have an integer entry coins cost greater than or equal to 0' do
+        expect { FactoryGirl.create(:table, :private, entry_coins_cost: 0) }.not_to raise_error
+        expect { FactoryGirl.create(:table, :private, entry_coins_cost: 20) }.not_to raise_error
+
+        expect { FactoryGirl.create(:table, :private, entry_coins_cost: -1) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be greater than or equal to 0/
+        expect { FactoryGirl.create(:table, :private, entry_coins_cost: 1.5) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be an integer/
+        expect { FactoryGirl.create(:table, :private, entry_coins_cost: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost can't be blank/
+      end
+    end
   end
-  
+
+  describe '#status' do
+    let(:table) { FactoryGirl.create(:table, status: status) }
+
+    context 'when a table is closed' do
+      let(:status) { :closed }
+
+      it 'is closed, and not opened neither being closed' do
+        expect(table).to be_closed
+        expect(table).not_to be_opened
+        expect(table).not_to be_being_closed
+      end
+    end
+
+    context 'when a table is opened' do
+      let(:status) { :opened }
+
+      it 'is opened, and not closed neither being closed' do
+        expect(table).to be_opened
+        expect(table).not_to be_closed
+        expect(table).not_to be_being_closed
+      end
+    end
+
+    context 'when a table is being closed' do
+      let(:status) { :being_closed }
+
+      it 'is being closed, and not opened neither closed' do
+        expect(table).to be_being_closed
+        expect(table).not_to be_opened
+        expect(table).not_to be_closed
+      end
+    end
+  end
+
   describe '#did_not_play?' do
     let!(:table) { FactoryGirl.create(:table) }
     let!(:user) { FactoryGirl.create(:user) }
@@ -92,7 +160,7 @@ describe Table do
     context 'when a user has played in that table' do
       it 'returns false' do
         players = Player.all.sample(table.number_of_players)
-        Croupier.for(table).play(players: players, user: user)
+        PlaysCreator.for(table).create_play(players: players, user: user)
 
         expect(table.did_not_play? user).to eq false
       end
@@ -144,55 +212,6 @@ describe Table do
 
       it 'returns false' do
         expect(table.include_all_players? players).to eq false
-      end
-    end
-  end
-
-  describe '#position' do
-    let(:table) { FactoryGirl.create(:table) }
-    let(:first_place_user) { FactoryGirl.create(:user) }
-    let(:second_place_user) { FactoryGirl.create(:user) }
-    let!(:first_winner) { FactoryGirl.create(:table_winner, table: table, position: 1, user: first_place_user) }
-    let!(:second_winner) { FactoryGirl.create(:table_winner, table: table, position: 2, user: second_place_user) }
-
-    context 'when the given user was a winner' do
-      it 'returns the winner of that play' do
-        expect(table.position(first_place_user)).to eq 1
-        expect(table.position(second_place_user)).to eq 2
-      end
-    end
-
-    context 'when the given user was not a winner' do
-      it 'evaluates the given block' do
-        unknown_user = FactoryGirl.create(:user)
-
-        expect(table.position(unknown_user) { 'unknown' }).to eq 'unknown'
-      end
-    end
-  end
-
-  describe '#payed_points' do
-    let(:table) { FactoryGirl.create(:table) }
-    let(:first_place_user) { FactoryGirl.create(:user) }
-    let(:second_place_user) { FactoryGirl.create(:user) }
-    let!(:first_winner) { FactoryGirl.create(:table_winner, table: table, position: 1, user: first_place_user) }
-    let!(:second_winner) { FactoryGirl.create(:table_winner, table: table, position: 2, user: second_place_user) }
-
-    context 'when the given user was a winner' do
-      it 'returns the points that the table payed to that winner position' do
-        expected_points_for_winner = table.points_for_winners[0]
-        expected_points_for_another_winner = table.points_for_winners[1]
-
-        expect(table.payed_points(first_place_user)).to eq expected_points_for_winner
-        expect(table.payed_points(second_place_user)).to eq expected_points_for_another_winner
-      end
-    end
-
-    context 'when the given user was not a winner' do
-      it 'evaluates the given block' do
-        unknown_user = FactoryGirl.create(:user)
-
-        expect(table.payed_points(unknown_user) { 'unknown' }).to eq 'unknown'
       end
     end
   end
@@ -268,6 +287,89 @@ describe Table do
       expect(tables_for_another_user).to include private_table_for_another_user
       expect(tables_for_another_user).not_to include private_table_for_user
       expect(tables_for_another_user).not_to include public_table
+    end
+  end
+
+  describe '.opened' do
+    let!(:opened_table) { FactoryGirl.create(:table, :opened) }
+    let!(:closed_table) { FactoryGirl.create(:table, :closed) }
+    let!(:being_closed_table) { FactoryGirl.create(:table, :being_closed) }
+
+    it 'only returns the opened table' do
+      opened_tables = Table.opened
+
+      expect(opened_tables).to have(1).item
+      expect(opened_tables).to include opened_table
+    end
+  end
+
+  describe '.closed' do
+    let!(:opened_table) { FactoryGirl.create(:table, :opened) }
+    let!(:closed_table) { FactoryGirl.create(:table, :closed) }
+    let!(:being_closed_table) { FactoryGirl.create(:table, :being_closed) }
+
+    it 'only returns the closed table' do
+      closed_tables = Table.closed
+
+      expect(closed_tables).to have(1).item
+      expect(closed_tables).to include closed_table
+    end
+  end
+
+  describe '.not_closed' do
+    let!(:opened_table) { FactoryGirl.create(:table, :opened) }
+    let!(:closed_table) { FactoryGirl.create(:table, :closed) }
+    let!(:being_closed_table) { FactoryGirl.create(:table, :being_closed) }
+
+    it 'returns the opened and being closed tables' do
+      not_closed_tables = Table.not_closed
+
+      expect(not_closed_tables).to have(2).items
+      expect(not_closed_tables).to include opened_table, being_closed_table
+    end
+  end
+
+  describe 'can and can not be closed' do
+    let!(:opened_table_without_stats) { FactoryGirl.create(:table, :opened) }
+    let!(:opened_table_with_local_team_stats) { FactoryGirl.create(:table, :opened) }
+    let!(:opened_table_with_visitor_team_stats) { FactoryGirl.create(:table, :opened) }
+    let!(:opened_table_with_first_match_stats) { FactoryGirl.create(:table, :opened) }
+    let!(:opened_table_with_complete_stats) { FactoryGirl.create(:table, :opened) }
+    let!(:closed_table_without_stats) { FactoryGirl.create(:table, :closed) }
+    let!(:closed_table_with_complete_stats) { FactoryGirl.create(:table, :closed) }
+    let!(:being_closed_table_without_stats) { FactoryGirl.create(:table, :being_closed) }
+    let!(:being_closed_table_with_complete_stats) { FactoryGirl.create(:table, :being_closed) }
+
+    before do
+      create_empty_stats_for_all opened_table_with_complete_stats.matches
+      create_empty_stats_for_all closed_table_with_complete_stats.matches
+      create_empty_stats_for_all being_closed_table_with_complete_stats.matches
+      create_empty_stats_for opened_table_with_first_match_stats.matches.first
+      opened_table_with_local_team_stats.matches.each { |match| create_empty_stats_for_local_team match }
+      opened_table_with_visitor_team_stats.matches.each { |match| create_empty_stats_for_visitor_team match }
+    end
+
+    describe '.with_matches_with_incomplete_stats' do
+      it 'returns all the tables with incomplete stats' do
+        can_be_closed_tables = Table.with_matches_with_incomplete_stats
+
+        expect(can_be_closed_tables).to have(6).items
+        expect(can_be_closed_tables).to include opened_table_without_stats,
+                                                opened_table_with_local_team_stats,
+                                                opened_table_with_visitor_team_stats,
+                                                opened_table_with_first_match_stats,
+                                                closed_table_without_stats,
+                                                being_closed_table_without_stats
+      end
+    end
+
+    describe '.can_be_closed' do
+      it 'returns the opened table with all stats' do
+        can_be_closed_tables = Table.can_be_closed
+
+        expect(can_be_closed_tables).to have(1).item
+        expect(can_be_closed_tables).to include opened_table_with_complete_stats
+      end
     end
   end
 end

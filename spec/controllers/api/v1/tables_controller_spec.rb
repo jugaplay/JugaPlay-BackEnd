@@ -178,6 +178,24 @@ describe Api::V1::TablesController do
             expect(group.users).to include notification.user
           end
         end
+
+        context 'when no entry coins cost was given' do
+          it 'creates a table with no entry coins cost for the given group' do
+            params = table_params
+            params[:table].delete(:entry_coins_cost)
+
+            expect { post :create, params }.to change { Table.count }.by(1)
+
+            expect(response.status).to eq 200
+            expect(response).to render_template :show
+
+            table = Table.last
+            expect(table).to be_opened
+            expect(table).to be_private
+            expect(table.group).to eq group
+            expect(table.entry_coins_cost).to eq 0
+          end
+        end
       end
 
       context 'when request fails' do
@@ -211,16 +229,16 @@ describe Api::V1::TablesController do
           end
         end
 
-        context 'when the entry coins cost is zero' do
+        context 'when the entry coins cost is negative' do
           it 'does not create a table and renders an error' do
             params = table_params
-            params[:table][:entry_coins_cost] = 0
+            params[:table][:entry_coins_cost] = -1
 
             expect { post :create, params }.not_to change { Table.count }
 
             expect(Notification.count).to eq 0
             expect(response.status).to eq 400
-            expect(response_body[:errors]).to include Api::V1::TablesController::ENTRY_COINS_COST_MUST_BE_GIVEN
+            expect(response_body[:errors]).to include Api::V1::TablesController::ENTRY_COINS_COST_MUST_BE_GREATER_THAN_OR_EQ_TO_ZERO
           end
         end
 

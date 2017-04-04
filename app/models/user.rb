@@ -4,10 +4,10 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :recoverable, :trackable, :validatable #, :lockable #, :confirmable
   devise :omniauthable, omniauth_providers: [:facebook]
 
-  has_many :prizes
   has_many :notifications
   has_many :invitation_requests
   has_many :plays, dependent: :destroy
+  has_many :table_rankings, through: :plays
   has_many :t_entry_fees, dependent: :destroy
   has_many :rankings, dependent: :destroy
   has_one :wallet, dependent: :destroy
@@ -47,20 +47,6 @@ class User < ActiveRecord::Base
 
   def ranking_on_tournament(tournament)
     rankings.find_by(tournament_id: tournament)
-  end
-
-  def earned_coins_in_table(table)
-    return_block = proc { return 0 }
-    prize_of_table(table, &return_block).coins
-  end
-
-  def prize_of_table(table, &if_none_block)
-    prizes.detect(if_none_block) { |prize| prize.comes_from_table?(table) }
-  end
-
-  def bet_coins_in_table(table, &if_none_block)
-    return_block = proc { return if_none_block.call }
-    plays.detect(return_block) { |play| play.table.eql? table }.bet_coins
   end
 
   def needs_to_login_with_facebook?

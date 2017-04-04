@@ -35,5 +35,7 @@ module JugaplayApi
                  max_age: 0
       end
     end
+
+    config.active_job.queue_adapter = :delayed_job
   end
 end

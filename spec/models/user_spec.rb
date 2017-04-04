@@ -59,52 +59,6 @@ describe User do
     end
   end
 
-  describe '#earned_coins_in_table' do
-    let(:user) { FactoryGirl.create(:user) }
-    let(:table) { FactoryGirl.create(:table) }
-
-    context 'when the given user earned some coins' do
-      let!(:prize) { FactoryGirl.create(:prize, table: table, user: user, coins: 10) }
-
-      it 'returns the coins that the user earned in that table' do
-        earned_coins = user.earned_coins_in_table(table) { 0 }
-
-        expect(earned_coins).to eq prize.coins
-      end
-    end
-
-    context 'when the given user did not earn coins' do
-      it 'evaluates the given block' do
-        earned_coins = user.earned_coins_in_table(table) { 0 }
-
-        expect(earned_coins).to eq 0
-      end
-    end
-  end
-
-  describe '#bet_coins_in_table' do
-    let(:user) { FactoryGirl.create(:user) }
-    let(:table) { FactoryGirl.create(:table) }
-
-    context 'when the given user played in that table' do
-      let!(:play) { FactoryGirl.create(:play, user: user, table: table, bet_coins: 10) }
-
-      it 'returns the coins that the user bet in that table' do
-        earned_coins = user.bet_coins_in_table(table) { 0 }
-
-        expect(earned_coins).to eq play.bet_coins
-      end
-    end
-
-    context 'when the given user did not play in that table' do
-      it 'evaluates the given block' do
-        bet_coins = user.bet_coins_in_table(table) { 0 }
-
-        expect(bet_coins).to eq 0
-      end
-    end
-  end
-
   describe '#groups' do
     let(:user) { FactoryGirl.create(:user)}
     let!(:user_group) { FactoryGirl.create(:group, users: [user])}
