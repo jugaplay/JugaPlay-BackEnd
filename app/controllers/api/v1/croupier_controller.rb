@@ -22,7 +22,11 @@ class Api::V1::CroupierController < Api::BaseController
   end
 
   def players
-    @players ||= Player.where(id: params[:player_ids])
+    @players ||= begin
+      requested_ids = params[:player_ids].map(&:to_i)
+      players = Player.find(requested_ids)
+      players.index_by(&:id).values_at(*requested_ids)
+    end
   end
 
   def bet?

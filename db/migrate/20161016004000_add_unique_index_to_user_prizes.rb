@@ -1,5 +1,6 @@
 class AddUniqueIndexToUserPrizes < ActiveRecord::Migration
   def change
+    # OLD MIGRATION
     # Prize.find_each do |prize|
     #   prizes = Prize.where(table_id: prize.table_id, user_id: prize.user_id)
     #   if prizes.many?
