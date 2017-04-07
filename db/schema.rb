@@ -167,11 +167,11 @@ ActiveRecord::Schema.define(version: 20170414114646) do
   add_index "invitation_acceptances", ["user_id"], name: "index_invitation_acceptances_on_user_id", using: :btree
 
   create_table "invitation_requests", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string   "token",      null: false
-    t.integer  "user_id",    null: false
-    t.string   "type",       null: false
+    t.integer  "user_id",                     null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.string   "token",                       null: false
+    t.string   "type",       default: "Link", null: false
   end
 
   add_index "invitation_requests", ["token"], name: "index_invitation_requests_on_token", unique: true, using: :btree
