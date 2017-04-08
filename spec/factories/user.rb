@@ -25,6 +25,14 @@ FactoryGirl.define do
       end
     end
 
+    trait :with_chips do
+      transient { chips 0 }
+
+      after :create do |user, evaluator|
+        user.wallet.update_attributes!(chips: evaluator.chips)
+      end
+    end
+
     trait :admin do
       first_name { 'Admin' }
       last_name { 'Admin' }
