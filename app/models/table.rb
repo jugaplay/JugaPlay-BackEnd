@@ -106,6 +106,10 @@ class Table < ActiveRecord::Base
     points_for_winners[position - 1] || 0
   end
 
+  def coins_for_position(position)
+    coins_for_winners[position - 1] || 0
+  end
+
   def cant_place_ranking_in_position?(position, ranking)
     ranking_in_position = ranking_in_position(position)
     ranking_in_position.present? && !ranking_in_position.eql?(ranking)

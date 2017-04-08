@@ -42,7 +42,7 @@ describe CoinsDispenser do
           end
         end
 
-        context 'when there are points for two users' do
+        context 'when there are coins for two users' do
           let(:coins_for_winners) { [100, 20] }
 
           it 'gives the coins to the first user' do
@@ -86,17 +86,31 @@ describe CoinsDispenser do
           end
         end
 
-        context 'when there are points for two users' do
+        context 'when there are coins for two users' do
           let(:coins_for_winners) { [100, 20] }
 
-          it 'gives the coins to the first user' do
+          it 'divides the first and second position coins between the two users' do
             coins_dispenser.call
 
-            expect(first_user.reload.coins).to eq 50
-            expect(first_user_table_ranking.reload.earned_coins).to eq 50
+            expect(first_user.reload.coins).to eq 60
+            expect(first_user_table_ranking.reload.earned_coins).to eq 60
 
-            expect(second_user.reload.coins).to eq 50
-            expect(second_user_table_ranking.reload.earned_coins).to eq 50
+            expect(second_user.reload.coins).to eq 60
+            expect(second_user_table_ranking.reload.earned_coins).to eq 60
+          end
+        end
+
+        context 'when there are coins for three users' do
+          let(:coins_for_winners) { [100, 20, 10] }
+
+          it 'divides the first and second position coins between the two users' do
+            coins_dispenser.call
+
+            expect(first_user.reload.coins).to eq 60
+            expect(first_user_table_ranking.reload.earned_coins).to eq 60
+
+            expect(second_user.reload.coins).to eq 60
+            expect(second_user_table_ranking.reload.earned_coins).to eq 60
           end
         end
       end
