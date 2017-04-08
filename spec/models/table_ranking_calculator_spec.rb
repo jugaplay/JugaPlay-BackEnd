@@ -288,6 +288,81 @@ describe TableRankingCalculator do
             end
           end
         end
+
+        context 'when some users have made same scores' do
+          let(:first_user_points) { 6 }
+          let(:second_user_points) { 6 }
+          let(:third_user_points) { 4 }
+
+          context 'when the table does not give points for winners' do
+            let(:points_for_winners) { [] }
+
+            it 'creates rankings for all the users assigning the play points' do
+              calculator.call
+
+              table_rankings = table.table_rankings
+              expect(table_rankings).to have(3).items
+
+              expect(table_rankings.first.play).to eq first_user_play
+              expect(table_rankings.first.points).to eq 6
+              expect(table_rankings.first.position).to eq 1
+
+              expect(table_rankings.second.play).to eq second_user_play
+              expect(table_rankings.second.points).to eq 6
+              expect(table_rankings.second.position).to eq 1
+
+              expect(table_rankings.third.play).to eq third_user_play
+              expect(table_rankings.third.points).to eq 4
+              expect(table_rankings.third.position).to eq 3
+            end
+          end
+
+          context 'when the table gives points to one user' do
+            let(:points_for_winners) { [100] }
+
+            it 'creates rankings for all the users giving points to the oldest user' do
+              calculator.call
+
+              table_rankings = table.table_rankings
+              expect(table_rankings).to have(3).items
+
+              expect(table_rankings.first.play).to eq first_user_play
+              expect(table_rankings.first.points).to eq 100
+              expect(table_rankings.first.position).to eq 1
+
+              expect(table_rankings.second.play).to eq second_user_play
+              expect(table_rankings.second.points).to eq 100
+              expect(table_rankings.second.position).to eq 1
+
+              expect(table_rankings.third.play).to eq third_user_play
+              expect(table_rankings.third.points).to eq 0
+              expect(table_rankings.third.position).to eq 3
+            end
+          end
+
+          context 'when the table gives points to two users' do
+            let(:points_for_winners) { [200, 100] }
+
+            it 'creates rankings for all the users giving points to the firsts two oldest users' do
+              calculator.call
+
+              table_rankings = table.table_rankings
+              expect(table_rankings).to have(3).items
+
+              expect(table_rankings.first.play).to eq first_user_play
+              expect(table_rankings.first.points).to eq 200
+              expect(table_rankings.first.position).to eq 1
+
+              expect(table_rankings.second.play).to eq second_user_play
+              expect(table_rankings.second.points).to eq 200
+              expect(table_rankings.second.position).to eq 1
+
+              expect(table_rankings.third.play).to eq third_user_play
+              expect(table_rankings.third.points).to eq 0
+              expect(table_rankings.third.position).to eq 3
+            end
+          end
+        end
       end
 
       context 'when the users have played before' do
