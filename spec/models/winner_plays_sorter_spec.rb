@@ -297,4 +297,102 @@ describe WinnerPlaysSorter do
       end
     end
   end
+
+  context 'custom scenario' do
+    let(:table) { FactoryGirl.create(:table, number_of_players: 3) }
+    let(:player_848) { table.players[0] }
+    let(:player_86) { table.players[1] }
+    let(:player_411) { table.players[2] }
+    let(:player_846) { table.players[3] }
+    let(:player_2850) { table.players[4] }
+    let(:player_21) { table.players[5] }
+    let(:player_397) { table.players[6] }
+    let(:player_413) { table.players[7] }
+    let(:player_88) { table.players[8] }
+    let(:player_812) { table.players[9] }
+    let(:player_3696) { table.players[10] }
+    let(:player_84) { table.players[11] }
+    let(:player_84) { table.players[12] }
+
+    let(:user_16036) { FactoryGirl.create(:user, first_name: '16036') }
+    let(:user_16036_play) { FactoryGirl.create(:play, user: user_16036, table: table, points: 65.5) }
+    let(:user_16035) { FactoryGirl.create(:user, first_name: '16035') }
+    let(:user_16035_play) { FactoryGirl.create(:play, user: user_16035, table: table, points: 65.5) }
+    let(:user_20) { FactoryGirl.create(:user, first_name: '20') }
+    let(:user_20_play) { FactoryGirl.create(:play, user: user_20, table: table, points: 65.5) }
+    let(:user_19) { FactoryGirl.create(:user, first_name: '19') }
+    let(:user_19_play) { FactoryGirl.create(:play, user: user_19, table: table, points: 65.5) }
+    let(:user_16) { FactoryGirl.create(:user, first_name: '16') }
+    let(:user_16_play) { FactoryGirl.create(:play, user: user_16, table: table, points: 52.5) }
+    let(:user_8) { FactoryGirl.create(:user, first_name: '8') }
+    let(:user_8_play) { FactoryGirl.create(:play, user: user_8, table: table, points: 0) }
+    let(:user_3) { FactoryGirl.create(:user, first_name: '3') }
+    let(:user_3_play) { FactoryGirl.create(:play, user: user_3, table: table, points: 31.0) }
+    let(:user_74) { FactoryGirl.create(:user, first_name: '74') }
+    let(:user_74_play) { FactoryGirl.create(:play, user: user_74, table: table, points: 65.5) }
+    let(:user_730) { FactoryGirl.create(:user, first_name: '730') }
+    let(:user_730_play) { FactoryGirl.create(:play, user: user_730, table: table, points: 65.5) }
+    let(:user_12) { FactoryGirl.create(:user, first_name: '12') }
+    let(:user_12_play) { FactoryGirl.create(:play, user: user_12, table: table, points: 65.5) }
+
+    before do
+      FactoryGirl.create(:player_selection, play: user_16036_play, player: player_848, position: 1, points: 5.5)
+      FactoryGirl.create(:player_selection, play: user_16036_play, player: player_86, position: 2, points: 33.0)
+      FactoryGirl.create(:player_selection, play: user_16036_play, player: player_84, position: 3, points: 27.0)
+
+      FactoryGirl.create(:player_selection, play: user_16035_play, player: player_848, position: 1, points: 5.5)
+      FactoryGirl.create(:player_selection, play: user_16035_play, player: player_86, position: 2, points: 33.0)
+      FactoryGirl.create(:player_selection, play: user_16035_play, player: player_84, position: 3, points: 27.0)
+
+      FactoryGirl.create(:player_selection, play: user_20_play, player: player_848, position: 1, points: 5.5)
+      FactoryGirl.create(:player_selection, play: user_20_play, player: player_86, position: 2, points: 33.0)
+      FactoryGirl.create(:player_selection, play: user_20_play, player: player_84, position: 3, points: 27.0)
+
+      FactoryGirl.create(:player_selection, play: user_19_play, player: player_848, position: 1, points: 5.5)
+      FactoryGirl.create(:player_selection, play: user_19_play, player: player_86, position: 2, points: 33.0)
+      FactoryGirl.create(:player_selection, play: user_19_play, player: player_84, position: 3, points: 27.0)
+
+      FactoryGirl.create(:player_selection, play: user_16_play, player: player_411, position: 1, points: 4.5)
+      FactoryGirl.create(:player_selection, play: user_16_play, player: player_846, position: 2, points: 48.0)
+      FactoryGirl.create(:player_selection, play: user_16_play, player: player_2850, position: 3, points: 0.0)
+
+      FactoryGirl.create(:player_selection, play: user_8_play, player: player_21, position: 1, points: 0.0)
+      FactoryGirl.create(:player_selection, play: user_8_play, player: player_397, position: 2, points: 0.0)
+      FactoryGirl.create(:player_selection, play: user_8_play, player: player_413, position: 3, points: 0.0)
+
+      FactoryGirl.create(:player_selection, play: user_3_play, player: player_88, position: 1, points: 31.0)
+      FactoryGirl.create(:player_selection, play: user_3_play, player: player_812, position: 2, points: 0.0)
+      FactoryGirl.create(:player_selection, play: user_3_play, player: player_3696, position: 3, points: 0.0)
+
+      FactoryGirl.create(:player_selection, play: user_74_play, player: player_84, position: 1, points: 27.0)
+      FactoryGirl.create(:player_selection, play: user_74_play, player: player_86, position: 2, points: 33.0)
+      FactoryGirl.create(:player_selection, play: user_74_play, player: player_848, position: 3, points: 5.5)
+
+      FactoryGirl.create(:player_selection, play: user_730_play, player: player_84, position: 1, points: 27.0)
+      FactoryGirl.create(:player_selection, play: user_730_play, player: player_86, position: 2, points: 33.0)
+      FactoryGirl.create(:player_selection, play: user_730_play, player: player_848, position: 3, points: 5.5)
+
+      FactoryGirl.create(:player_selection, play: user_12_play, player: player_86, position: 1, points: 33.0)
+      FactoryGirl.create(:player_selection, play: user_12_play, player: player_84, position: 2, points: 27.0)
+      FactoryGirl.create(:player_selection, play: user_12_play, player: player_848, position: 3, points: 5.5)
+    end
+
+    it 'returns the plays well sorted' do
+      plays = finder.call
+
+      expect(plays).to have(6).items
+      expect(plays[0]).to have(1).item
+      expect(plays[0]).to include user_12_play
+      expect(plays[1]).to have(2).items
+      expect(plays[1]).to include user_730_play, user_74_play
+      expect(plays[2]).to have(4).items
+      expect(plays[2]).to include user_16036_play, user_16035_play, user_19_play, user_20_play
+      expect(plays[3]).to have(1).item
+      expect(plays[3]).to include user_16_play
+      expect(plays[4]).to have(1).item
+      expect(plays[4]).to include user_3_play
+      expect(plays[5]).to have(1).item
+      expect(plays[5]).to include user_8_play
+    end
+  end
 end

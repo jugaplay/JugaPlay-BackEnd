@@ -12,7 +12,7 @@ FactoryGirl.define do
     end
 
     trait :with_players do
-      ignore do
+      transient do
         players nil
       end
 
