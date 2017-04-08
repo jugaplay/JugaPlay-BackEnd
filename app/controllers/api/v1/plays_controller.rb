@@ -12,13 +12,17 @@ class Api::V1::PlaysController < Api::BaseController
   def multiply
     multiplier = params[:multiplier].to_i
     play { |error| return error }
-    play.bet_multiplier_by(multiplier)
+    bet_multiplier_calculator.call(play, multiplier)
     render :show
-  rescue ActiveRecord::RecordInvalid => error
+  rescue UserDoesNotHaveEnoughChips, TableDoesNotHaveAMultiplierChipsCostDefined, ActiveRecord::RecordInvalid => error
     render_json_error error.message
   end
 
   private
+
+  def bet_multiplier_calculator
+    @bet_multiplier_calculator ||= BetMultiplierCalculator.new
+  end
 
   def play(&not_found_block)
     @play ||= current_user.plays.find(params[:id])

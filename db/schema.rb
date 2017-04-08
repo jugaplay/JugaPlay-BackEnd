@@ -167,11 +167,11 @@ ActiveRecord::Schema.define(version: 20170414114646) do
   add_index "invitation_acceptances", ["user_id"], name: "index_invitation_acceptances_on_user_id", using: :btree
 
   create_table "invitation_requests", force: :cascade do |t|
-    t.integer  "user_id",                     null: false
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-    t.string   "token",                       null: false
-    t.string   "type",       default: "Link", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string   "token",      null: false
+    t.integer  "user_id",    null: false
+    t.string   "type",       null: false
   end
 
   add_index "invitation_requests", ["token"], name: "index_invitation_requests_on_token", unique: true, using: :btree
@@ -418,19 +418,20 @@ ActiveRecord::Schema.define(version: 20170414114646) do
   add_index "table_rules", ["table_id"], name: "index_table_rules_on_table_id", unique: true, using: :btree
 
   create_table "tables", force: :cascade do |t|
-    t.string   "title",                                   null: false
-    t.integer  "number_of_players",  default: 1,          null: false
-    t.datetime "start_time",                              null: false
-    t.datetime "end_time",                                null: false
-    t.text     "description",                             null: false
-    t.text     "points_for_winners", default: "--- []\n"
+    t.string   "title",                                      null: false
+    t.integer  "number_of_players",     default: 1,          null: false
+    t.datetime "start_time",                                 null: false
+    t.datetime "end_time",                                   null: false
+    t.text     "description",                                null: false
+    t.text     "points_for_winners",    default: "--- []\n"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "tournament_id",                           null: false
-    t.integer  "entry_coins_cost",   default: 0,          null: false
-    t.text     "coins_for_winners",  default: "--- []\n"
+    t.integer  "tournament_id",                              null: false
+    t.integer  "entry_coins_cost",      default: 0,          null: false
+    t.text     "coins_for_winners",     default: "--- []\n"
     t.integer  "group_id"
-    t.integer  "status_cd",                               null: false
+    t.integer  "status_cd",                                  null: false
+    t.float    "multiplier_chips_cost", default: 0.0,        null: false
   end
 
   add_index "tables", ["title", "start_time", "end_time"], name: "index_tables_on_title_and_start_time_and_end_time", unique: true, using: :btree
@@ -516,6 +517,7 @@ ActiveRecord::Schema.define(version: 20170414114646) do
     t.float    "coins",      default: 10.0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.float    "chips",      default: 0.0,  null: false
   end
 
   add_index "wallets", ["user_id"], name: "index_wallets_on_user_id", unique: true, using: :btree

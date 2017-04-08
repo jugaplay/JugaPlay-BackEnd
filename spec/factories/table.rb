@@ -7,6 +7,7 @@ FactoryGirl.define do
     description { Faker::Lorem.sentence }
     points_for_winners { [Faker::Number.number(5), Faker::Number.number(3), Faker::Number.number(2)] }
     entry_coins_cost { 0 }
+    multiplier_chips_cost { 0 }
     coins_for_winners { [] }
 
     after :build do |table|

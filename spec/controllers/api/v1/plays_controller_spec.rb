@@ -50,26 +50,25 @@ describe Api::V1::PlaysController do
 
             user.plays.each do |play|
               play_data = {
-                  id: play.id,
-                  start_time: play.table.start_time,
-                  bet_base_coins: 0,
-                  bet_multiplier: nil,
-                  points: 'N/A',
-                  earn_coins: 'N/A',
-                  players: play.players.map { |player| {
-                      id: player.id,
-                      first_name: player.first_name,
-                      last_name: player.last_name,
-                      team: player.team.name,
-                      team_id: player.team.id,
-                      points: PlayerPointsCalculator.new.call(table, player)
-                  }},
-                  table: {
-                      id: play.table.id,
-                      title: play.table.title,
-                      position: 'N/A',
-                      payed_points: 'N/A'
-                  }
+                id: play.id,
+                start_time: play.table.start_time,
+                bet_base_coins: 0,
+                points: 'N/A',
+                earn_coins: 'N/A',
+                players: play.players.map { |player| {
+                  id: player.id,
+                  first_name: player.first_name,
+                  last_name: player.last_name,
+                  team: player.team.name,
+                  team_id: player.team.id,
+                  points: PlayerPointsCalculator.new.call(table, player)
+                }},
+                table: {
+                  id: play.table.id,
+                  title: play.table.title,
+                  position: 'N/A',
+                  payed_points: 'N/A'
+                }
               }
               play_data[:table][:group_name] = play.table.group.name if play.private?
               expect(response_body).to include play_data
@@ -147,10 +146,14 @@ describe Api::V1::PlaysController do
       before { sign_in user }
 
       context 'when the play exists' do
-        let(:play) { FactoryGirl.create(:play) }
+        let(:table) { FactoryGirl.create(:table, multiplier_chips_cost: 1) }
+        let(:play) { FactoryGirl.create(:play, table: table) }
 
         context 'when the play belongs to the logged user' do
-          before { play.update_attributes!(user: user) }
+          before do
+            user.win_chips! 100
+            play.update_attributes!(user: user)
+          end
 
           context 'when a multiplier is given' do
             let(:params) do

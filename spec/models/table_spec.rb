@@ -22,13 +22,22 @@ describe Table do
       expect { FactoryGirl.create(:table, number_of_players: nil) }.to raise_error ActiveRecord::RecordInvalid, /Number of players can't be blank/
     end
 
-    it 'must have an integer number of players greater than or equal 0' do
+    it 'must have an integer entry coins cost greater than or equal 0' do
       expect { FactoryGirl.create(:table, entry_coins_cost: 0) }.not_to raise_error
       expect { FactoryGirl.create(:table, entry_coins_cost: 5) }.not_to raise_error
 
       expect { FactoryGirl.create(:table, entry_coins_cost: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost can't be blank/
       expect { FactoryGirl.create(:table, entry_coins_cost: -1) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be greater than or equal to 0/
       expect { FactoryGirl.create(:table, entry_coins_cost: 1.5) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be an integer/
+    end
+
+    it 'must have a multiplier chips cost greater than or equal 0' do
+      expect { FactoryGirl.create(:table, multiplier_chips_cost: 0) }.not_to raise_error
+      expect { FactoryGirl.create(:table, multiplier_chips_cost: 5) }.not_to raise_error
+      expect { FactoryGirl.create(:table, multiplier_chips_cost: 1.5) }.not_to raise_error
+
+      expect { FactoryGirl.create(:table, multiplier_chips_cost: nil) }.to raise_error ActiveRecord::RecordInvalid, /Multiplier chips cost can't be blank/
+      expect { FactoryGirl.create(:table, multiplier_chips_cost: -1) }.to raise_error ActiveRecord::RecordInvalid, /Multiplier chips cost must be greater than or equal to 0/
     end
 
     it 'must have an start time' do
