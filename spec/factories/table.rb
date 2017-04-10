@@ -10,9 +10,10 @@ FactoryGirl.define do
     coins_for_winners { [] }
 
     after :build do |table|
-      table.matches = Faker::Number.between(1, 5).times.collect { FactoryGirl.create(:match, tournament: table.tournament) } if table.matches.empty?
-      table.start_time = table.matches.map(&:datetime).min
-      table.end_time = table.matches.map(&:datetime).max.end_of_day
+      datetime = table.end_time.nil? ? Time.now : (table.end_time - 3.hours)
+      table.matches = Faker::Number.between(2, 5).times.collect { FactoryGirl.create(:match, tournament: table.tournament, datetime: datetime) } if table.matches.empty?
+      table.start_time = datetime
+      table.end_time = datetime + 3.hours
     end
 
     trait :with_table_rules do

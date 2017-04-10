@@ -26,7 +26,7 @@ class Table < ActiveRecord::Base
   scope :closed, -> { closeds }
   scope :being_closed, -> { being_closeds }
   scope :not_closed, -> { where.not(id: closed) }
-  scope :can_be_closed, -> { opened.where.not(id: with_matches_with_incomplete_stats.pluck(:id)).uniq }
+  scope :can_be_closed, -> { opened.where('end_time < ?', Time.now).where.not(id: with_matches_with_incomplete_stats.pluck(:id)).uniq }
   scope :with_matches_with_incomplete_stats, -> { joins(:matches).merge(Match.with_incomplete_stats).uniq }
   scope :publics, -> { where(group_id: nil) }
   scope :privates_for, -> user { joins(group: :groups_users).where(groups_users: { user_id: user.id }).uniq }
