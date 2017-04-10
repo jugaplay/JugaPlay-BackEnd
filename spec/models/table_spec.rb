@@ -347,6 +347,8 @@ describe Table do
       create_empty_stats_for opened_table_with_first_match_stats.matches.first
       opened_table_with_local_team_stats.matches.each { |match| create_empty_stats_for_local_team match }
       opened_table_with_visitor_team_stats.matches.each { |match| create_empty_stats_for_visitor_team match }
+
+      TableCloserValidator.new.send(:validate_matches, closed_table_with_complete_stats.matches)
     end
 
     describe '.with_matches_with_incomplete_stats' do

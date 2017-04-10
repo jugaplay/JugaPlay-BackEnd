@@ -2,7 +2,7 @@ class TableCloser
 
   def initialize(table)
     @table = table
-    @table_validator = CompleteStatsForMatchValidator.new
+    @table_closer_validator = TableCloserValidator.new
     @play_points_assigner = PlayPointsAssigner.new(table)
     @table_ranking_calculator = TableRankingCalculator.new(table)
     @coins_dispenser = CoinsDispenser.new(table)
@@ -11,7 +11,7 @@ class TableCloser
   end
 
   def call
-    table_validator.validate_table table
+    table_closer_validator.validate_to_finish_closing table
     play_points_assigner.call
     table_ranking_calculator.call
     if table.has_rankings?
@@ -23,5 +23,5 @@ class TableCloser
   end
 
   private
-  attr_reader :table, :table_validator, :play_points_assigner, :table_ranking_calculator, :coins_dispenser, :ranking_points_updater, :ranking_sorter
+  attr_reader :table, :table_closer_validator, :play_points_assigner, :table_ranking_calculator, :coins_dispenser, :ranking_points_updater, :ranking_sorter
 end

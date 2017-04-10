@@ -13,7 +13,7 @@ class Admin::TablesController < Admin::BaseController
 
   def index
     @tables = Table.all
-    @can_be_closed_tables = Table.can_be_closed
+    can_be_closed_tables
   end
 
   def new
@@ -47,24 +47,28 @@ class Admin::TablesController < Admin::BaseController
   end
 
   def close
-    CompleteStatsForMatchValidator.new.validate_table(table)
-    table.start_closing!
-    TableClosingJob.perform_later(table_id)
+    enqueue_closing_table_job(table) { |redirect_error| return redirect_error }
     redirect_with_success_message to_be_closed_admin_tables_path, CLOSING_TABLE_ENQUEUED_MESSAGE
-  rescue MissingPlayerStats => error
-    redirect_with_error_message to_be_closed_admin_tables_path, error.message
   end
 
   def close_all
-    titles = Table.can_be_closed.pluck('id, title').map do |table_data|
-      TableClosingJob.perform_later(table_data[0])
-      table_data[1]
+    can_be_closed_tables.each do |table|
+      enqueue_closing_table_job(table) { |redirect_error| return redirect_error }
     end
-    message = "#{CLOSING_TABLES_ENQUEUED_MESSAGE}: #{titles.join(', ')}"
+    message = "#{CLOSING_TABLES_ENQUEUED_MESSAGE}: #{can_be_closed_tables.map(&:title).join(', ')}"
     redirect_with_success_message admin_tables_path, message
   end
 
   private
+
+  def enqueue_closing_table_job(table, &if_fail_block)
+    table_closer_validator.validate_to_start_closing(table)
+    table.start_closing!
+    TableClosingJob.perform_later(table.id)
+  rescue MissingPlayerStats, TableIsClosed => error
+    redirect = redirect_with_error_message to_be_closed_admin_tables_path, error
+    if_fail_block.call(redirect)
+  end
 
   def table_params
     permitted_params = params.require(:table).permit(:title, :entry_coins_cost, :number_of_players, :description, :tournament_id, match_ids: [])
@@ -75,6 +79,14 @@ class Admin::TablesController < Admin::BaseController
     permitted_params[:start_time] = permitted_params[:matches].map(&:datetime).min
     permitted_params[:end_time] =  permitted_params[:matches].map(&:datetime).min + 2.hours
     permitted_params
+  end
+
+  def table_closer_validator
+    @table_closer_validator ||= TableCloserValidator.new
+  end
+
+  def can_be_closed_tables
+    @can_be_closed_tables ||= Table.can_be_closed
   end
 
   def table

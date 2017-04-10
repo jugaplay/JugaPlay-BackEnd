@@ -3,7 +3,7 @@ class MissingPlayerStats < StandardError
     new "Missing required stats for #{player.name} for match #{match.title}"
   end
 
-  def initialize(msg = nil)
-    super (msg || 'Missing required player stats')
+  def initialize(message = 'Missing required player stats')
+    super message
   end
 end

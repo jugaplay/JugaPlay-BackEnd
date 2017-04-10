@@ -25,6 +25,7 @@ describe TableCloser do
             before do
               plays_creator.create_play(user: user, players: [player])
               create_empty_stats_for_all table.matches
+              table.start_closing!
             end
 
             context 'when the user plays for a player that does not score any goal' do
@@ -134,6 +135,7 @@ describe TableCloser do
             before do
               plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
               create_empty_stats_for_all table.matches
+              table.start_closing!
             end
 
             context 'when the table pays 1 point for each goal and .5 for each pass' do
@@ -213,6 +215,8 @@ describe TableCloser do
           second_table_plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
           create_empty_stats_for_all first_table.matches
           create_empty_stats_for_all second_table.matches
+          first_table.start_closing!
+          second_table.start_closing!
         end
 
         it 'closes both tables and updates the total points for each user' do
@@ -272,6 +276,7 @@ describe TableCloser do
             before do
               plays_creator.create_play(user: user, players: [player])
               create_empty_stats_for_all table.matches
+              table.start_closing!
             end
 
             context 'when the user plays for a player that does not score any goal' do
@@ -384,6 +389,7 @@ describe TableCloser do
               before do
                 plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
                 create_empty_stats_for_all table.matches
+                table.start_closing!
               end
 
               context 'when the table pays 1 point for each goal and .5 for each pass' do
@@ -446,6 +452,7 @@ describe TableCloser do
             create_empty_stats_for_all table.matches
             first_user_old_amount_of_coins = first_user.coins
             second_user_old_amount_of_coins = second_user.coins
+            table.start_closing!
 
             table_closer.call
 
@@ -487,6 +494,8 @@ describe TableCloser do
           second_table_plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
           create_empty_stats_for_all first_table.matches
           create_empty_stats_for_all second_table.matches
+          first_table.start_closing!
+          second_table.start_closing!
         end
 
         it 'closes both tables and updates the total points for each user' do

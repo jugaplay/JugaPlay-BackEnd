@@ -111,9 +111,6 @@ describe Match do
       create_empty_stats_for_visitor_team match_with_complete_visitor_stats_and_without_local_stats
       create_empty_stats_for_visitor_team match_with_complete_visitor_stats_and_incomplete_local_stats
       create_empty_stats_for_player match_with_complete_visitor_stats_and_incomplete_local_stats, match_with_complete_visitor_stats_and_incomplete_local_stats.local_team.players.first
-
-      validator = CompleteStatsForMatchValidator.new
-      expect { validator.validate match_with_complete_stats }.not_to raise_error
     end
 
     describe '.with_incomplete_local_stats' do
