@@ -1,12 +1,16 @@
 <h4 class="page-title">Mesas</h4>
 
 <div>
-  <p><b>Hay <%= @can_be_closed_tables.count %> mesas listas para cerrar: </b></p>
-  <% @can_be_closed_tables.each do |table| %>
-    <p>- <%= table.title %></p>
+  <% if @can_be_closed_tables.any? %>
+    <p><b>Hay <%= @can_be_closed_tables.count %> mesas listas para cerrar: </b></p>
+    <% @can_be_closed_tables.each do |table| %>
+      <p>- <%= table.title %></p>
+    <% end %>
+    <br>
+    <%= link_to 'Cerrar todas las mesas', close_all_admin_tables_path, method: :post, class: 'close-table-link' %>
+  <% else %>
+    <p>No hay mesas para cerrar</p>
   <% end %>
-  <br>
-  <%= link_to 'Cerrar todas las mesas', close_all_admin_tables_path, method: :post, class: 'close-table-link' %>
 </div>
 
 <div class="table-container">
