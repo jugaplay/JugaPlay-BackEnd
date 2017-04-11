@@ -7,7 +7,7 @@
       <p>- <%= table.title %></p>
     <% end %>
     <br>
-    <%= link_to 'Cerrar todas las mesas', close_all_admin_tables_path, method: :post, class: 'close-table-link' %>
+    <%= link_to 'Cerrar todas las mesas', close_all_admin_tables_path, method: :get, class: 'close-table-link' %>
   <% else %>
     <p>No hay mesas para cerrar</p>
   <% end %>
