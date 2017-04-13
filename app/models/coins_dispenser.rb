@@ -13,7 +13,7 @@ class CoinsDispenser
 
   def update_private_table_coins_for_winners
     coins = table.entry_coins_cost * table.amount_of_users_playing
-    table.update!(coins_for_winners: [coins])
+    table.update!(coins_for_winners: [coins]) if coins > 0
   end
 
   def dispense_coins_for_all_winners
