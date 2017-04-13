@@ -47,15 +47,20 @@ class Admin::TablesController < Admin::BaseController
   end
 
   def close
-    enqueue_closing_table_job(table) { |redirect_error| return redirect_error }
+    enqueue_closing_table_job(table) do |error_message|
+      return redirect_with_error_message to_be_closed_admin_tables_path, error_message
+    end
     redirect_with_success_message to_be_closed_admin_tables_path, CLOSING_TABLE_ENQUEUED_MESSAGE
   end
 
   def close_all
+    error_messages = []
     can_be_closed_tables.each do |table|
-      enqueue_closing_table_job(table) { |redirect_error| return redirect_error }
+      enqueue_closing_table_job(table) { |error_message| error_messages << error_message }
     end
-    message = "#{CLOSING_TABLES_ENQUEUED_MESSAGE}: #{can_be_closed_tables.map(&:title).join(', ')}"
+    success = can_be_closed_tables.count - error_messages.count
+    message = "Se están cerrando #{success} mesas en background. Las siguientes mesas tuvieron errores: \n"
+    message += error_messages.join('\n')
     redirect_with_success_message admin_tables_path, message
   end
 
@@ -66,8 +71,7 @@ class Admin::TablesController < Admin::BaseController
     table.start_closing!
     TableClosingJob.perform_later(table.id)
   rescue MissingPlayerStats, TableIsClosed => error
-    redirect = redirect_with_error_message to_be_closed_admin_tables_path, error
-    if_fail_block.call(redirect)
+    if_fail_block.call("#{table.title}: #{error.message}")
   end
 
   def table_params
