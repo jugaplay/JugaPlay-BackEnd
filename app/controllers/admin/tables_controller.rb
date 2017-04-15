@@ -42,7 +42,7 @@ class Admin::TablesController < Admin::BaseController
   end
 
   def to_be_closed
-    @tables_to_be_closed = Table.not_closed
+    @tables_to_be_closed = Table.not_closed.closest_first
   end
 
   def close

@@ -30,6 +30,7 @@ class Table < ActiveRecord::Base
   scope :publics, -> { where(group_id: nil) }
   scope :privates_for, -> user { joins(group: :groups_users).where(groups_users: { user_id: user.id }).uniq }
   scope :recent_first, -> { order(start_time: :desc) }
+  scope :closest_first, -> { order(start_time: :asc) }
 
   def self.can_be_closed
     validator = TableCloserValidator.new
