@@ -13,7 +13,6 @@ class Admin::TablesController < Admin::BaseController
 
   def index
     @tables = Table.all
-    can_be_closed_tables
   end
 
   def new
@@ -70,10 +69,6 @@ class Admin::TablesController < Admin::BaseController
     permitted_params[:start_time] = permitted_params[:matches].map(&:datetime).min
     permitted_params[:end_time] =  permitted_params[:matches].map(&:datetime).min + 2.hours
     permitted_params
-  end
-
-  def can_be_closed_tables
-    @can_be_closed_tables ||= Table.can_be_closed
   end
 
   def table
