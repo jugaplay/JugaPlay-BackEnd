@@ -29,7 +29,7 @@ FactoryGirl.define do
     end
 
     trait :opened do
-      ignore do
+      transient do
         status nil
       end
 
@@ -39,7 +39,7 @@ FactoryGirl.define do
     end
 
     trait :closed do
-      ignore do
+      transient do
         status nil
       end
 
@@ -49,7 +49,7 @@ FactoryGirl.define do
     end
 
     trait :being_closed do
-      ignore do
+      transient do
         status nil
       end
 

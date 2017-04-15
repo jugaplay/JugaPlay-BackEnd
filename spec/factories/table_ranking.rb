@@ -7,7 +7,7 @@ FactoryGirl.define do
     created_at { DateTime.now }
 
     trait :for_user_and_table do
-      ignore do
+      transient do
         user nil
         table nil
       end
@@ -18,7 +18,7 @@ FactoryGirl.define do
     end
 
     trait :for_user do
-      ignore do
+      transient do
         user nil
       end
 
