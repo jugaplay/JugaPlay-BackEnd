@@ -22,12 +22,14 @@ describe Api::V1::TablesController do
             title: table.title,
             has_password: false,
             entry_coins_cost: table.entry_coins_cost,
+            multiplier_chips_cost: table.multiplier_chips_cost,
             number_of_players: table.number_of_players,
             pot_prize: table.expending_coins,
             start_time: table.start_time.strftime('%d/%m/%Y - %H:%M'),
             end_time: table.end_time.strftime('%d/%m/%Y - %H:%M'),
             description: table.description,
-            has_been_played_by_user: !table.did_not_play?(user),
+            has_been_played_by_user: table.has_played?(user),
+            bet_multiplier: table.multiplier_for(user),
             tournament_id: table.tournament_id,
             private: table.private?,
             amount_of_users_playing: table.amount_of_users_playing
@@ -69,6 +71,7 @@ describe Api::V1::TablesController do
             expect(response_body[:has_password]).to be_falsey
             expect(response_body[:number_of_players]).to eq private_table_for_user.number_of_players
             expect(response_body[:entry_coins_cost]).to eq private_table_for_user.entry_coins_cost
+            expect(response_body[:multiplier_chips_cost]).to eq private_table_for_user.multiplier_chips_cost
             expect(response_body[:tournament_id]).to eq private_table_for_user.tournament_id
             expect(response_body[:start_time]).to eq private_table_for_user.start_time.strftime('%d/%m/%Y - %H:%M')
             expect(response_body[:end_time]).to eq private_table_for_user.end_time.strftime('%d/%m/%Y - %H:%M')
@@ -93,6 +96,7 @@ describe Api::V1::TablesController do
             expect(response_body[:has_password]).to be_falsey
             expect(response_body[:number_of_players]).to eq public_table.number_of_players
             expect(response_body[:entry_coins_cost]).to eq public_table.entry_coins_cost
+            expect(response_body[:multiplier_chips_cost]).to eq public_table.multiplier_chips_cost
             expect(response_body[:tournament_id]).to eq public_table.tournament_id
             expect(response_body[:start_time]).to eq public_table.start_time.strftime('%d/%m/%Y - %H:%M')
             expect(response_body[:end_time]).to eq public_table.end_time.strftime('%d/%m/%Y - %H:%M')
@@ -161,6 +165,7 @@ describe Api::V1::TablesController do
           expect(table.description).to eq table_params[:table][:description]
           expect(table.number_of_players).to eq 3
           expect(table.entry_coins_cost).to eq table_params[:table][:entry_coins_cost]
+          expect(table.multiplier_chips_cost).to eq 0
           expect(table.points_for_winners).to be_empty
           expect(table.coins_for_winners).to be_empty
           expect(table.matches).to match_array [match]
@@ -260,6 +265,84 @@ describe Api::V1::TablesController do
     context 'when the user is not logged in' do
       it 'responds an error json' do
         expect { post :create, table_params }.not_to change { Table.count }
+
+        expect(response.status).to eq 401
+        expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
+      end
+    end
+  end
+
+  describe 'POST #multiply' do
+    context 'when the user is logged in' do
+      before { sign_in user }
+
+      context 'when the given table exists' do
+        let(:table) { FactoryGirl.create(:table, multiplier_chips_cost: 1) }
+        let!(:play) { FactoryGirl.create(:play, table: table, user: user) }
+
+        before { user.win_chips! 100 }
+
+        context 'when a multiplier is given' do
+          let(:params) do
+            { id: table.id, multiplier: multiplier }
+          end
+
+          context 'when the given multiplier was 3' do
+            let(:multiplier) { 3 }
+
+            it 'sets the play multiplier and returns a json with the play data' do
+              post :multiply_play, params
+
+              expect(response).to redirect_to api_v1_play_path(play.id)
+
+              expect(play.reload.bet_multiplier).to eq 3
+              expect(play.reload.coins_bet_multiplier).to eq 3
+            end
+          end
+
+          context 'when the given multiplier was invalid' do
+            let(:multiplier) { -1 }
+
+            it 'returns a json error' do
+              post :multiply_play, params
+
+              expect(response.status).to eq 400
+              expect(response_body[:errors].first).to include 'Bet multiplier must be greater than or equal to 2'
+            end
+          end
+        end
+
+        context 'when no multiplier was given' do
+          let(:params) do
+            { id: table.id, multiplier: '' }
+          end
+
+          it 'returns a json error' do
+            post :multiply_play, params
+
+            expect(response.status).to eq 400
+            expect(response_body[:errors].first).to include 'Bet multiplier must be greater than or equal to 2'
+          end
+        end
+      end
+
+      context 'when the given table does not exist' do
+        let(:params) do
+          { id: 1, multiplier: 2 }
+        end
+
+        it 'returns a json error' do
+          post :multiply_play, params
+
+          expect(response.status).to eq 422
+          expect(response_body[:errors]).to include 'No se encontró la mesa solicitada'
+        end
+      end
+    end
+
+    context 'when the user is not logged in' do
+      it 'responds an error json' do
+        post :multiply_play, id: 1, multiplier: 1
 
         expect(response.status).to eq 401
         expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'

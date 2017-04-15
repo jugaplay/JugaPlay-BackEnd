@@ -184,7 +184,7 @@ describe TableCloser do
               end
 
               context 'when the first user has bet a multiplier by 3' do
-                before { PlaysHistory.new.made_by(first_user).in_table(table).last.bet_multiplier_by(3) }
+                before { PlaysHistory.new.made_by(first_user).in_table(table).last.multiply_by!(3) }
 
                 it 'closes the table and updates the total points for each user' do
                   table_closer.call

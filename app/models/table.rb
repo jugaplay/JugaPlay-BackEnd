@@ -93,8 +93,8 @@ class Table < ActiveRecord::Base
     public? || (private? && group.has_user?(user))
   end
 
-  def did_not_play?(user)
-    plays.where(user: user).empty?
+  def has_played?(user)
+    !plays_made_by(user).empty?
   end
 
   def coins_with_positions
@@ -132,7 +132,15 @@ class Table < ActiveRecord::Base
     table_rankings.detect { |ranking| ranking.has_position? position }
   end
 
+  def multiplier_for(user)
+    plays_made_by(user).last.try(:bet_multiplier)
+  end
+
   private
+
+  def plays_made_by(user)
+    plays.where(user: user)
+  end
 
   def validate_all_matches_belong_to_tournament
     errors.add(:matches, 'do not belong to given tournament') unless matches.all? { |match| tournament == match.tournament }

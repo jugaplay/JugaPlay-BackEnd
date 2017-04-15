@@ -6,6 +6,6 @@ class PublicTablePlayCreator < PlaysCreator
   end
 
   def validate_user_can_play(user)
-    validate_user_did_not_play_yet user
+    validate_user_has_not_played user
   end
 end

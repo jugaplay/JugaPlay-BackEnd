@@ -30,7 +30,7 @@ describe CoinsDispenser do
           end
 
           context 'when the first user has bet a multiplier by 2' do
-            before { first_user_table_ranking.play.bet_multiplier_by(2) }
+            before { first_user_table_ranking.play.multiply_by!(2) }
 
             it 'does not dispense coins for any user' do
               coins_dispenser.call
@@ -57,7 +57,7 @@ describe CoinsDispenser do
           end
 
           context 'when the first user has bet a multiplier by 2' do
-            before { first_user_table_ranking.play.bet_multiplier_by(2) }
+            before { first_user_table_ranking.play.multiply_by!(2) }
 
             it 'gives the coins to the first user multiplied by 2' do
               coins_dispenser.call
@@ -87,7 +87,7 @@ describe CoinsDispenser do
           end
 
           context 'when the first user has bet a multiplier by 2' do
-            before { first_user_table_ranking.play.bet_multiplier_by(2) }
+            before { first_user_table_ranking.play.multiply_by!(2) }
 
             it 'gives the coins to the first user multiplied by 2' do
               coins_dispenser.call
@@ -119,7 +119,7 @@ describe CoinsDispenser do
           end
 
           context 'when the first user has bet a multiplier by 2' do
-            before { first_user_table_ranking.play.bet_multiplier_by(2) }
+            before { first_user_table_ranking.play.multiply_by!(2) }
 
             it 'does not dispense coins for any user' do
               coins_dispenser.call
@@ -146,7 +146,7 @@ describe CoinsDispenser do
           end
 
           context 'when the first user has bet a multiplier by 2' do
-            before { first_user_table_ranking.play.bet_multiplier_by(2) }
+            before { first_user_table_ranking.play.multiply_by!(2) }
 
             it 'divides the first position coins between the two users, but the first users multiply it by 2' do
               coins_dispenser.call
@@ -176,7 +176,7 @@ describe CoinsDispenser do
           end
 
           context 'when the first user has bet a multiplier by 2' do
-            before { first_user_table_ranking.play.bet_multiplier_by(2) }
+            before { first_user_table_ranking.play.multiply_by!(2) }
 
             it 'divides the first and second position coins between the two users, but the first users multiply it by 2' do
               coins_dispenser.call
@@ -240,7 +240,7 @@ describe CoinsDispenser do
           end
 
           context 'when the first user has bet a multiplier by 2' do
-            before { first_user_play.bet_multiplier_by(2) }
+            before { first_user_play.multiply_by!(2) }
 
             it 'dispenses coins for the first user multiplied by 2' do
               coins_dispenser.call
@@ -271,7 +271,7 @@ describe CoinsDispenser do
           end
 
           context 'when the first user has bet a multiplier by 2' do
-            before { first_user_play.bet_multiplier_by(2) }
+            before { first_user_play.multiply_by!(2) }
 
             it 'divides the first position coins between the two users, but the first users multiply it by 2' do
               coins_dispenser.call

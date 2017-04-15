@@ -29,6 +29,17 @@ class Api::V1::TablesController < Api::BaseController
     render_not_found_error MATCH_NOT_FOUND
   end
 
+  def multiply_play
+    multiplier = params[:multiplier].to_i
+    play = play_in_table { |redirect| return redirect }
+    bet_multiplier_calculator.call(play, multiplier)
+    redirect_to api_v1_play_path(play.id)
+  rescue UserDoesNotHaveEnoughChips, TableDoesNotHaveAMultiplierChipsCostDefined, ActiveRecord::RecordInvalid => error
+    render_json_error error.message
+  rescue ActiveRecord::RecordNotFound
+    render_not_found_error TABLE_NOT_FOUND
+  end
+
   private
 
   def create_notifications_for_table_group
@@ -58,5 +69,15 @@ class Api::V1::TablesController < Api::BaseController
 
   def table
     @table ||= Table.includes(matches: [{ local_team: :players }, { visitor_team: :players }]).find(params[:id])
+  end
+
+  def play_in_table(&if_non_block)
+    play = PlaysHistory.new.in_table(table).made_by(current_user).last
+    if_non_block.call(render_not_found_error Api::V1::PlaysController::PLAY_NOT_FOUND) if play.nil?
+    play
+  end
+
+  def bet_multiplier_calculator
+    @bet_multiplier_calculator ||= BetMultiplierCalculator.new
   end
 end

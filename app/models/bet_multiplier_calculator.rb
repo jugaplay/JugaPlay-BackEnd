@@ -5,7 +5,7 @@ class BetMultiplierCalculator
     validate_table_has_multiplier_chips_cost table
     required_chips = calculate_required_chips table, multiplier
     validate_enough_chips_for user, required_chips
-    play.bet_multiplier_by(multiplier)
+    play.multiply_by!(multiplier)
     user.pay_chips! required_chips
   end
 

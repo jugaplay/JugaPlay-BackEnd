@@ -85,6 +85,9 @@
 
       resources :tables, only: [:index, :show, :create] do
         resources :matches, only: [:index]
+        member do
+          post 'multiply_play/:multiplier' => 'tables#multiply_play', as: :multiply_play
+        end
       end
 
       resources :matches do
@@ -96,11 +99,8 @@
       end
 
       resources :teams, only: [:show]
-      resources :plays, only: [:index, :show] do
-        member do
-          post 'multiply/:multiplier' => 'plays#multiply', as: :multiply
-        end
-      end
+      resources :plays, only: [:index, :show]
+
       post '/play' => 'croupier#play'
 
       resources :table_rankings, only: [:index]

@@ -16,7 +16,7 @@ class Play < ActiveRecord::Base
     bet_multiplier || 1
   end
 
-  def bet_multiplier_by(multiplier)
+  def multiply_by!(multiplier)
     update_attributes!(bet_multiplier: multiplier)
   end
 

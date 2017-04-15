@@ -35,8 +35,8 @@ class PlaysCreator
     play
   end
 
-  def validate_user_did_not_play_yet(user)
-    fail UserHasAlreadyPlayedInThisTable unless table.did_not_play?(user)
+  def validate_user_has_not_played(user)
+    fail UserHasAlreadyPlayedInThisTable if table.has_played?(user)
   end
 
   def validate_bet_base_coins(user, bet_base_coins)

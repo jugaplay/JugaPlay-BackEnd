@@ -156,13 +156,13 @@ describe Table do
     end
   end
 
-  describe '#did_not_play?' do
+  describe '#has_played?' do
     let!(:table) { FactoryGirl.create(:table) }
     let!(:user) { FactoryGirl.create(:user) }
     
     context 'when a user has not played in that table' do
       it 'returns true' do
-        expect(table.did_not_play? user).to eq true
+        expect(table.has_played? user).to eq false
       end
     end
     
@@ -171,7 +171,7 @@ describe Table do
         players = Player.all.sample(table.number_of_players)
         PlaysCreator.for(table).create_play(players: players, user: user)
 
-        expect(table.did_not_play? user).to eq false
+        expect(table.has_played? user).to eq true
       end
     end
   end
