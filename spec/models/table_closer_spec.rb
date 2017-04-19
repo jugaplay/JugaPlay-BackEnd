@@ -149,11 +149,11 @@ describe TableCloser do
                 second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
 
                 expect(table).to be_closed
-                expect(first_user.reload.coins).to eq 60
+                expect(first_user.reload.coins).to eq 80
                 expect(first_user_play.points).to eq 4
                 expect(first_user_play.position).to eq 1
                 expect(first_user_play.earned_coins).to eq 50
-                expect(second_user.reload.coins).to eq 30
+                expect(second_user.reload.coins).to eq 50
                 expect(second_user_play.points).to eq 3.5
                 expect(second_user_play.position).to eq 2
                 expect(second_user_play.earned_coins).to eq 20
@@ -172,11 +172,11 @@ describe TableCloser do
                 second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
 
                 expect(table).to be_closed
-                expect(first_user.reload.coins).to eq 30
+                expect(first_user.reload.coins).to eq 50
                 expect(first_user_play.points).to eq 1.3
                 expect(first_user_play.position).to eq 2
                 expect(first_user_play.earned_coins).to eq 20
-                expect(second_user.reload.coins).to eq 60
+                expect(second_user.reload.coins).to eq 80
                 expect(second_user_play.points).to eq 2.6
                 expect(second_user_play.position).to eq 1
                 expect(second_user_play.earned_coins).to eq 50
@@ -193,11 +193,11 @@ describe TableCloser do
                   second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
 
                   expect(table).to be_closed
-                  expect(first_user.reload.coins).to eq 70
+                  expect(first_user.reload.coins).to eq 90
                   expect(first_user_play.points).to eq 1.3
                   expect(first_user_play.position).to eq 2
                   expect(first_user_play.earned_coins).to eq 60
-                  expect(second_user.reload.coins).to eq 60
+                  expect(second_user.reload.coins).to eq 80
                   expect(second_user_play.points).to eq 2.6
                   expect(second_user_play.position).to eq 1
                   expect(second_user_play.earned_coins).to eq 50
@@ -247,11 +247,11 @@ describe TableCloser do
           second_user_first_table_play = PlaysHistory.new.made_by(second_user).in_table(first_table).last
 
           expect(first_table).to be_closed
-          expect(first_user.reload.coins).to eq 60
+          expect(first_user.reload.coins).to eq 80
           expect(first_user_first_table_play.points).to eq 3
           expect(first_user_first_table_play.position).to eq 1
           expect(first_user_first_table_play.earned_coins).to eq 50
-          expect(second_user.reload.coins).to eq 30
+          expect(second_user.reload.coins).to eq 50
           expect(second_user_first_table_play.points).to eq 2
           expect(second_user_first_table_play.position).to eq 2
           expect(second_user_first_table_play.earned_coins).to eq 20
@@ -262,9 +262,9 @@ describe TableCloser do
           second_user_second_table_play = PlaysHistory.new.made_by(second_user).in_table(second_table).last
 
           expect(second_table).to be_closed
-          expect(first_user.reload.coins).to eq 60
+          expect(first_user.reload.coins).to eq 80
           expect(first_user_second_table_play).to be_nil
-          expect(second_user.reload.coins).to eq 80
+          expect(second_user.reload.coins).to eq 100
           expect(second_user_second_table_play.points).to eq 2
           expect(second_user_second_table_play.position).to eq 1
           expect(second_user_second_table_play.earned_coins).to eq 50

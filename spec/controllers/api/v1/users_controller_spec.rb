@@ -29,7 +29,7 @@ describe Api::V1::UsersController do
           expect(new_user.image).to be_nil
           expect(new_user.provider).to be_nil
           expect(new_user.wallet).not_to be_nil
-          expect(new_user.coins).to eq 10
+          expect(new_user.coins).to eq 30
           expect(new_user.chips).to eq 0
           expect(new_user.address_book).not_to be_nil
           expect(new_user.address_book.contacts).to be_empty
@@ -139,7 +139,7 @@ describe Api::V1::UsersController do
           expect(new_user.nickname).to eq user_params[:user][:nickname]
           expect(new_user.email).to eq user_params[:user][:email]
           expect(new_user.encrypted_password).to be_present
-          expect(new_user.coins).to eq 10
+          expect(new_user.coins).to eq 30
           expect(new_user.chips).to eq 0
           expect(new_user.facebook_id).to be_nil
           expect(new_user.image).to be_nil
@@ -191,7 +191,7 @@ describe Api::V1::UsersController do
           expect(response_body[:nickname]).to eq user.nickname
           expect(response_body[:first_name]).to eq user.first_name
           expect(response_body[:last_name]).to eq user.last_name
-          expect(response_body[:coins]).to eq 10
+          expect(response_body[:coins]).to eq 30
           expect(response_body[:chips]).to eq 0
           expect(response_body[:telephone]).to eq user.telephone
           expect(response_body[:member_since]).to eq user.created_at.strftime('%d/%m/%Y')

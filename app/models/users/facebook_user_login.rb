@@ -34,7 +34,7 @@ class FacebookUserLogin
       user.nickname = build_nickname
       user.password = Devise.friendly_token[0, 20]
       user.image = omniauth_params.info.image
-      user.wallet = Wallet.new
+      user.wallet = Wallet.new(coins: Wallet::COINS_PER_REGISTRATION)
       user.address_book = AddressBook.new
     end
   end
