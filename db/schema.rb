@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170419130538) do
+ActiveRecord::Schema.define(version: 20170419190427) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -296,13 +296,13 @@ ActiveRecord::Schema.define(version: 20170419130538) do
   add_index "players", ["last_name"], name: "index_players_on_last_name", using: :btree
 
   create_table "plays", force: :cascade do |t|
-    t.integer  "user_id",                    null: false
-    t.integer  "table_id",                   null: false
+    t.integer  "user_id",                      null: false
+    t.integer  "table_id",                     null: false
     t.float    "points"
     t.float    "coins"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "bet_base_coins", default: 0, null: false
+    t.float    "bet_base_coins", default: 0.0, null: false
     t.integer  "bet_multiplier"
   end
 
@@ -334,7 +334,7 @@ ActiveRecord::Schema.define(version: 20170419130538) do
   end
 
   create_table "t_deposits", force: :cascade do |t|
-    t.integer  "coins"
+    t.float    "coins"
     t.integer  "user_id"
     t.string   "detail"
     t.string   "transaction_id"
@@ -351,7 +351,7 @@ ActiveRecord::Schema.define(version: 20170419130538) do
   add_index "t_deposits", ["user_id"], name: "index_t_deposits_on_user_id", using: :btree
 
   create_table "t_entry_fees", force: :cascade do |t|
-    t.integer  "coins"
+    t.float    "coins"
     t.integer  "user_id"
     t.string   "detail"
     t.integer  "tournament_id"
@@ -365,7 +365,7 @@ ActiveRecord::Schema.define(version: 20170419130538) do
   add_index "t_entry_fees", ["user_id"], name: "index_t_entry_fees_on_user_id", using: :btree
 
   create_table "t_promotions", force: :cascade do |t|
-    t.integer  "coins"
+    t.float    "coins"
     t.string   "detail"
     t.string   "promotion_type"
     t.integer  "user_id"
@@ -427,7 +427,7 @@ ActiveRecord::Schema.define(version: 20170419130538) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "tournament_id",                              null: false
-    t.integer  "entry_coins_cost",      default: 0,          null: false
+    t.float    "entry_coins_cost",      default: 0.0,        null: false
     t.text     "coins_for_winners",     default: "--- []\n"
     t.integer  "group_id"
     t.integer  "status_cd",                                  null: false
@@ -468,7 +468,7 @@ ActiveRecord::Schema.define(version: 20170419130538) do
   add_index "tournaments", ["name"], name: "index_tournaments_on_name", unique: true, using: :btree
 
   create_table "transactions", force: :cascade do |t|
-    t.integer  "coins"
+    t.float    "coins"
     t.string   "detail"
     t.integer  "user_id"
     t.datetime "created_at", null: false
@@ -514,7 +514,7 @@ ActiveRecord::Schema.define(version: 20170419130538) do
 
   create_table "wallets", force: :cascade do |t|
     t.integer  "user_id"
-    t.integer  "coins",      default: 0,   null: false
+    t.float    "coins",      default: 0.0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "chips",      default: 0.0, null: false

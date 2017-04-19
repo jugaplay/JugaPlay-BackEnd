@@ -40,10 +40,10 @@ describe Play do
     it 'can have bet base coins equal or greater than zero' do
       expect { FactoryGirl.create(:play, bet_base_coins: 0) }.not_to raise_error
       expect { FactoryGirl.create(:play, bet_base_coins: 5) }.not_to raise_error
+      expect { FactoryGirl.create(:play, bet_base_coins: 5.5) }.not_to raise_error
 
       expect { FactoryGirl.create(:play, bet_base_coins: nil) }.to raise_error ActiveRecord::RecordInvalid, /Bet base coins is not a number/
       expect { FactoryGirl.create(:play, bet_base_coins: -1) }.to raise_error ActiveRecord::RecordInvalid, /Bet base coins must be greater than or equal to 0/
-      expect { FactoryGirl.create(:play, bet_base_coins: 5.5) }.to raise_error ActiveRecord::RecordInvalid, /Bet base coins must be an integer/
     end
 
     it 'can have no bet multiply coins or equal or greater than 2' do
