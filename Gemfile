@@ -37,6 +37,7 @@ group :development, :test do
   gem 'therubyracer'
   gem 'pry-rails'
   gem 'dotenv-rails'
+  gem 'parallel_tests'
 end
 
 group :test do

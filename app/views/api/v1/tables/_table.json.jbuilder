@@ -3,6 +3,7 @@ json.title table.title
 json.has_password false # TODO: sacar esto
 json.number_of_players table.number_of_players
 json.entry_coins_cost table.entry_coins_cost
+json.multiplier_chips_cost table.multiplier_chips_cost
 json.tournament_id  table.tournament_id
 json.start_time table.start_time.strftime('%d/%m/%Y - %H:%M')
 json.end_time table.end_time.strftime('%d/%m/%Y - %H:%M')
@@ -20,6 +21,7 @@ unless table.closed?
     json.user_id play.user.id
     json.user_mail play.user.email
     json.nickname play.user.nickname
+    json.bet_multiplier play.bet_multiplier
     if play.user.rankings.first.present?
       json.ranking_tournament_points play.user.rankings.first.points
       json.ranking_tournament_position play.user.rankings.first.position
@@ -40,7 +42,7 @@ json.winners(table.table_rankings) do |table_ranking|
   json.user_id table_ranking.user.id
   json.user_email table_ranking.user.email
   json.nickname table_ranking.user.nickname
-  json.bet_coins table_ranking.bet_coins
+  json.bet_base_coins table_ranking.bet_base_coins
   json.position table_ranking.position
   json.points table_ranking.points
 end

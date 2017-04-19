@@ -10,16 +10,16 @@ class PlaysCreator
 
   def create_play(user:, players:, bet: false)
     validate_table_is_opened
-    validate_bet_coins(user, bet_coins(bet))
+    validate_bet_base_coins(user, bet_base_coins(bet))
     validate_user_can_play(user)
     validate_all_players(players)
-    create_play_with(players, user, bet_coins(bet))
+    create_play_with(players, user, bet_base_coins(bet))
   end
 
   protected
   attr_reader :table
 
-  def bet_coins(bet)
+  def bet_base_coins(bet)
     fail 'subclass responsibility'
   end
 
@@ -27,18 +27,20 @@ class PlaysCreator
     fail 'subclass responsibility'
   end
 
-  def create_play_with(players, user, bet_coins)
-    user.pay_coins! bet_coins
-    TEntryFee.create!(user: user, coins: bet_coins, table: table, detail: "Entrada a : #{table.title}") if bet_coins > 0
-    Play.create!(user: user, table: table, players: players, bet_coins: bet_coins)
+  def create_play_with(players, user, bet_base_coins)
+    user.pay_coins! bet_base_coins
+    TEntryFee.create!(user: user, coins: bet_base_coins, table: table, detail: "Entrada a : #{table.title}") if bet_base_coins > 0
+    play = Play.create!(user: user, table: table, bet_base_coins: bet_base_coins)
+    players.each_with_index { |player, index| PlayerSelection.create!(play: play, player: player, points: 0, position: index + 1) }
+    play
   end
 
-  def validate_user_did_not_play_yet(user)
-    fail UserHasAlreadyPlayedInThisTable unless table.did_not_play?(user)
+  def validate_user_has_not_played(user)
+    fail UserHasAlreadyPlayedInThisTable if table.has_played?(user)
   end
 
-  def validate_bet_coins(user, bet_coins)
-    fail UserDoesNotHaveEnoughCoins unless user.has_coins?(bet_coins)
+  def validate_bet_base_coins(user, bet_base_coins)
+    fail UserDoesNotHaveEnoughCoins unless user.has_coins?(bet_base_coins)
   end
 
   def validate_table_is_opened

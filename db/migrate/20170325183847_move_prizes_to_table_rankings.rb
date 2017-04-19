@@ -2,6 +2,7 @@ class MovePrizesToTableRankings < ActiveRecord::Migration
   def up
     add_column :table_rankings, :earned_coins, :integer, null: true
 
+    # OLD MIGRATION
     # prizes_data = ActiveRecord::Base.connection.execute('
     #   SELECT plays.id AS play_id, coins AS earned_coins, prizes.updated_at AS updated_at,
     #          prizes.created_at AS created_at, table_rankings.id AS table_ranking_id

@@ -33,16 +33,32 @@ class User < ActiveRecord::Base
     wallet.coins
   end
 
+  def chips
+    wallet.chips
+  end
+
   def has_coins?(amount_of_coins)
     coins >= amount_of_coins
+  end
+
+  def has_chips?(amount_of_chips)
+    chips >= amount_of_chips
   end
 
   def pay_coins!(amount_of_coins)
     wallet.subtract_coins!(amount_of_coins)
   end
 
+  def pay_chips!(amount_of_chips)
+    wallet.subtract_chips!(amount_of_chips)
+  end
+
   def win_coins!(amount_of_coins)
     wallet.add_coins!(amount_of_coins)
+  end
+
+  def win_chips!(amount_of_chips)
+    wallet.add_chips!(amount_of_chips)
   end
 
   def ranking_on_tournament(tournament)

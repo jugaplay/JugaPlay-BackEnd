@@ -1,6 +1,7 @@
 json.id play.id
 json.start_time play.table.start_time
-json.bet_coins play.bet_coins
+json.bet_base_coins play.bet_base_coins
+json.bet_multiplier play.bet_multiplier
 json.points play.points { 'N/A' }
 json.earn_coins play.earned_coins
 
@@ -10,7 +11,7 @@ json.players(play.players) do |player|
   json.last_name player.last_name
   json.team player.team_name_if_none { 'N/A' }
   json.team_id player.team_id { 'N/A' }
-  json.points PlayerPointsCalculator.new.call_for_player(play.table, player) unless play.table.opened?
+  json.points PlayerPointsCalculator.new.call(play.table, player) unless play.table.opened?
 end
 
 json.table do

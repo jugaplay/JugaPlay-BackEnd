@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Api::V1::PlaysController do
   let(:user) { FactoryGirl.create(:user) }
-  
+
   describe 'GET #index' do
     context 'when the user is logged in' do
       before { sign_in user }
@@ -10,12 +10,12 @@ describe Api::V1::PlaysController do
       context 'when the user has not made any plays' do
         it 'returns an empty json' do
           get :index
-    
+
           expect(response.status).to eq 200
           expect(response_body).to eq []
         end
       end
-      
+
       context 'when the user has made some plays' do
         let(:table) { FactoryGirl.create(:table, :with_table_rules) }
         let!(:play) { FactoryGirl.create(:play, user: user, table: table) }
@@ -37,6 +37,9 @@ describe Api::V1::PlaysController do
           before do
             table.close!
             another_table.close!
+
+            create_empty_stats_for_all table.matches
+            create_empty_stats_for_all another_table.matches
           end
 
           it 'returns json of them' do
@@ -49,7 +52,7 @@ describe Api::V1::PlaysController do
               play_data = {
                 id: play.id,
                 start_time: play.table.start_time,
-                bet_coins: 0,
+                bet_base_coins: 0,
                 points: 'N/A',
                 earn_coins: 'N/A',
                 players: play.players.map { |player| {
@@ -58,7 +61,7 @@ describe Api::V1::PlaysController do
                   last_name: player.last_name,
                   team: player.team.name,
                   team_id: player.team.id,
-                  points: PlayerPointsCalculator.new.call_for_player(table, player)
+                  points: PlayerPointsCalculator.new.call(table, player)
                 }},
                 table: {
                   id: play.table.id,
@@ -78,6 +81,59 @@ describe Api::V1::PlaysController do
     context 'when the user is not logged in' do
       it 'responds an error json' do
         get :index
+
+        expect(response.status).to eq 401
+        expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'
+      end
+    end
+  end
+
+  describe 'GET #show' do
+    context 'when the user is logged in' do
+      before { sign_in user }
+
+      context 'when the play exists' do
+        let(:play) { FactoryGirl.create(:play) }
+
+        context 'when the play belongs to the logged user' do
+          before { play.update_attributes!(user: user) }
+
+          it 'returns a json with the play data' do
+            get :show, id: play.id
+
+            expect(response.status).to eq 200
+            expect(response_body[:id]).to eq play.id
+            expect(response_body[:bet_base_coins]).to eq play.bet_base_coins
+            expect(response_body[:bet_multiplier]).to be_nil
+            expect(response_body[:points]).to eq 'N/A'
+            expect(response_body[:earn_coins]).to eq 'N/A'
+          end
+        end
+
+        context 'when the play does not belong to the logged user' do
+
+          it 'returns a json error' do
+            get :show, id: play.id
+
+            expect(response.status).to eq 422
+            expect(response_body[:errors]).to include 'No se encontró la jugada solicitada'
+          end
+        end
+      end
+
+      context 'when the play does not exist' do
+        it 'returns a json error' do
+          get :show, id: 1
+
+          expect(response.status).to eq 422
+          expect(response_body[:errors]).to include 'No se encontró la jugada solicitada'
+        end
+      end
+    end
+
+    context 'when the user is not logged in' do
+      it 'responds an error json' do
+        get :show, id: 1
 
         expect(response.status).to eq 401
         expect(response_body[:errors]).to include 'You need to sign in or sign up before continuing.'

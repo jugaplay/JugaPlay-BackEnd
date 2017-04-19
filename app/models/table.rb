@@ -4,6 +4,7 @@ class Table < ActiveRecord::Base
   belongs_to :group
   belongs_to :tournament
   has_many :users, through: :plays
+  has_many :player_selections, through: :plays
   has_many :table_rankings, -> { order(position: :asc) }, through: :plays
   has_and_belongs_to_many :matches
 
@@ -18,6 +19,7 @@ class Table < ActiveRecord::Base
   validates :end_time, presence: true, date: { after: :start_time }
   validates :number_of_players, presence: true, numericality: { greater_than: 0, only_integer: true }
   validates :entry_coins_cost, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true, allow_nil: false }
+  validates :multiplier_chips_cost, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: false, allow_nil: false }
   validates_each_in_array(:coins_for_winners) { validates_numericality_of :value, greater_than: 0, only_integer: true, allow_nil: false }
   validates_each_in_array(:points_for_winners) { validates_numericality_of :value, greater_than: 0, only_integer: true, allow_nil: false }
   validate :validate_all_matches_belong_to_tournament
@@ -91,8 +93,8 @@ class Table < ActiveRecord::Base
     public? || (private? && group.has_user?(user))
   end
 
-  def did_not_play?(user)
-    plays.where(user: user).empty?
+  def has_played?(user)
+    !plays_made_by(user).empty?
   end
 
   def coins_with_positions
@@ -117,6 +119,10 @@ class Table < ActiveRecord::Base
     points_for_winners[position - 1] || 0
   end
 
+  def coins_for_position(position)
+    coins_for_winners[position - 1] || 0
+  end
+
   def cant_place_ranking_in_position?(position, ranking)
     ranking_in_position = ranking_in_position(position)
     ranking_in_position.present? && !ranking_in_position.eql?(ranking)
@@ -126,7 +132,15 @@ class Table < ActiveRecord::Base
     table_rankings.detect { |ranking| ranking.has_position? position }
   end
 
+  def multiplier_for(user)
+    plays_made_by(user).last.try(:bet_multiplier)
+  end
+
   private
+
+  def plays_made_by(user)
+    plays.where(user: user)
+  end
 
   def validate_all_matches_belong_to_tournament
     errors.add(:matches, 'do not belong to given tournament') unless matches.all? { |match| tournament == match.tournament }

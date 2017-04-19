@@ -22,13 +22,22 @@ describe Table do
       expect { FactoryGirl.create(:table, number_of_players: nil) }.to raise_error ActiveRecord::RecordInvalid, /Number of players can't be blank/
     end
 
-    it 'must have an integer number of players greater than or equal 0' do
+    it 'must have an integer entry coins cost greater than or equal 0' do
       expect { FactoryGirl.create(:table, entry_coins_cost: 0) }.not_to raise_error
       expect { FactoryGirl.create(:table, entry_coins_cost: 5) }.not_to raise_error
 
       expect { FactoryGirl.create(:table, entry_coins_cost: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost can't be blank/
       expect { FactoryGirl.create(:table, entry_coins_cost: -1) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be greater than or equal to 0/
       expect { FactoryGirl.create(:table, entry_coins_cost: 1.5) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be an integer/
+    end
+
+    it 'must have a multiplier chips cost greater than or equal 0' do
+      expect { FactoryGirl.create(:table, multiplier_chips_cost: 0) }.not_to raise_error
+      expect { FactoryGirl.create(:table, multiplier_chips_cost: 5) }.not_to raise_error
+      expect { FactoryGirl.create(:table, multiplier_chips_cost: 1.5) }.not_to raise_error
+
+      expect { FactoryGirl.create(:table, multiplier_chips_cost: nil) }.to raise_error ActiveRecord::RecordInvalid, /Multiplier chips cost can't be blank/
+      expect { FactoryGirl.create(:table, multiplier_chips_cost: -1) }.to raise_error ActiveRecord::RecordInvalid, /Multiplier chips cost must be greater than or equal to 0/
     end
 
     it 'must have an start time' do
@@ -147,13 +156,13 @@ describe Table do
     end
   end
 
-  describe '#did_not_play?' do
+  describe '#has_played?' do
     let!(:table) { FactoryGirl.create(:table) }
     let!(:user) { FactoryGirl.create(:user) }
     
     context 'when a user has not played in that table' do
       it 'returns true' do
-        expect(table.did_not_play? user).to eq true
+        expect(table.has_played? user).to eq false
       end
     end
     
@@ -162,7 +171,7 @@ describe Table do
         players = Player.all.sample(table.number_of_players)
         PlaysCreator.for(table).create_play(players: players, user: user)
 
-        expect(table.did_not_play? user).to eq false
+        expect(table.has_played? user).to eq true
       end
     end
   end
@@ -330,15 +339,15 @@ describe Table do
   end
 
   describe 'can and can not be closed' do
-    let!(:opened_table_without_stats) { FactoryGirl.create(:table, :opened, end_time: Time.now - 2.days) }
-    let!(:opened_table_with_local_team_stats) { FactoryGirl.create(:table, :opened, end_time: Time.now - 2.days) }
-    let!(:opened_table_with_visitor_team_stats) { FactoryGirl.create(:table, :opened, end_time: Time.now - 2.days) }
-    let!(:opened_table_with_first_match_stats) { FactoryGirl.create(:table, :opened, end_time: Time.now - 2.days) }
-    let!(:opened_table_with_complete_stats) { FactoryGirl.create(:table, :opened, end_time: Time.now - 2.days) }
-    let!(:closed_table_without_stats) { FactoryGirl.create(:table, :closed, end_time: Time.now - 2.days) }
-    let!(:closed_table_with_complete_stats) { FactoryGirl.create(:table, :closed, end_time: Time.now - 2.days) }
-    let!(:being_closed_table_without_stats) { FactoryGirl.create(:table, :being_closed, end_time: Time.now - 2.days) }
-    let!(:being_closed_table_with_complete_stats) { FactoryGirl.create(:table, :being_closed, end_time: Time.now - 2.days) }
+    let!(:opened_table_without_stats) { FactoryGirl.create(:table, :opened, title: 'opened without stats', end_time: Time.now - 2.days) }
+    let!(:opened_table_with_local_team_stats) { FactoryGirl.create(:table, :opened, title: 'opened with local team stats', end_time: Time.now - 2.days) }
+    let!(:opened_table_with_visitor_team_stats) { FactoryGirl.create(:table, :opened, title: 'opened with visitor team stats', end_time: Time.now - 2.days) }
+    let!(:opened_table_with_first_match_stats) { FactoryGirl.create(:table, :opened, title: 'opened with first match stats', end_time: Time.now - 2.days) }
+    let!(:opened_table_with_complete_stats) { FactoryGirl.create(:table, :opened, title: 'opened with complete stats', end_time: Time.now - 2.days) }
+    let!(:closed_table_without_stats) { FactoryGirl.create(:table, :closed, title: 'closed without stats', end_time: Time.now - 2.days) }
+    let!(:closed_table_with_complete_stats) { FactoryGirl.create(:table, :closed, title: 'closed with complete stats', end_time: Time.now - 2.days) }
+    let!(:being_closed_table_without_stats) { FactoryGirl.create(:table, :being_closed, title: 'being closed without stats', end_time: Time.now - 2.days) }
+    let!(:being_closed_table_with_complete_stats) { FactoryGirl.create(:table, :being_closed, title: 'being closed with complete stats', end_time: Time.now - 2.days) }
 
     before do
       create_empty_stats_for_all opened_table_with_complete_stats.matches
