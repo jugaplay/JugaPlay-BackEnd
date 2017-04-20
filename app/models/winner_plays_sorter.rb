@@ -45,8 +45,8 @@ class WinnerPlaysSorter
         unless indexes_with_max_value.size.eql?(points_matrix.size)
           if indexes_with_max_value.many?
             sub_points_matrix = points_matrix.values_at(*indexes_with_max_value)
-            sort_plays(sub_points_matrix, result)
             sub_points_matrix.each { |item| points_matrix.delete(item) }
+            sort_plays(sub_points_matrix, result)
           else
             index = indexes_with_max_value.first
             result << [points_matrix[index][:play]]

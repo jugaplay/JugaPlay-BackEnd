@@ -395,4 +395,50 @@ describe WinnerPlaysSorter do
       expect(plays[5]).to include user_8_play
     end
   end
+
+  context 'custom scenario 2' do
+    let(:table) { FactoryGirl.create(:table, number_of_players: 3) }
+    let(:player_1_1) { table.players[0] }
+    let(:player_1_2) { table.players[1] }
+    let(:player_1_3) { table.players[2] }
+    let(:player_2_1) { table.players[3] }
+    let(:player_2_2) { table.players[4] }
+    let(:player_2_3) { table.players[5] }
+    let(:player_3_1) { table.players[6] }
+    let(:player_3_2) { table.players[7] }
+    let(:player_3_3) { table.players[8] }
+
+    let(:user_1) { FactoryGirl.create(:user, first_name: '61555') }
+    let(:user_1_play) { FactoryGirl.create(:play, user: user_1, table: table, points: 37.0) }
+    let(:user_2) { FactoryGirl.create(:user, first_name: '61166') }
+    let(:user_2_play) { FactoryGirl.create(:play, user: user_2, table: table, points: 37.0) }
+    let(:user_3) { FactoryGirl.create(:user, first_name: '61429') }
+    let(:user_3_play) { FactoryGirl.create(:play, user: user_3, table: table, points: 37.0) }
+
+    before do
+      FactoryGirl.create(:player_selection, play: user_1_play, player: player_1_1, position: 1, points: 12.5)
+      FactoryGirl.create(:player_selection, play: user_1_play, player: player_1_2, position: 2, points: 19.5)
+      FactoryGirl.create(:player_selection, play: user_1_play, player: player_1_3, position: 3, points: 5.0)
+
+      FactoryGirl.create(:player_selection, play: user_2_play, player: player_2_1, position: 1, points: 12.5)
+      FactoryGirl.create(:player_selection, play: user_2_play, player: player_2_2, position: 2, points: 5.0)
+      FactoryGirl.create(:player_selection, play: user_2_play, player: player_2_3, position: 3, points: 19.5)
+
+      FactoryGirl.create(:player_selection, play: user_3_play, player: player_3_1, position: 1, points: 10.5)
+      FactoryGirl.create(:player_selection, play: user_3_play, player: player_3_2, position: 2, points: 19.5)
+      FactoryGirl.create(:player_selection, play: user_3_play, player: player_3_3, position: 3, points: 7.0)
+    end
+
+    it 'returns the plays well sorted' do
+      plays = finder.call
+
+      expect(plays).to have(3).items
+      expect(plays[0]).to have(1).item
+      expect(plays[0]).to include user_1_play
+      expect(plays[1]).to have(1).item
+      expect(plays[1]).to include user_2_play
+      expect(plays[2]).to have(1).item
+      expect(plays[2]).to include user_3_play
+    end
+  end
 end
