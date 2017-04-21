@@ -23,7 +23,9 @@ class Api::V1::CroupierController < Api::BaseController
 
   def players
     @players ||= begin
-      requested_ids = params[:player_ids].map(&:to_i)
+      player_ids = params[:player_ids]
+      player_ids = player_ids.first if player_ids.first.is_a?(Array) # Esto es un hack para las versiones viejas de Android
+      requested_ids = player_ids.map(&:to_i)
       players = Player.find(requested_ids)
       players.index_by(&:id).values_at(*requested_ids)
     end
