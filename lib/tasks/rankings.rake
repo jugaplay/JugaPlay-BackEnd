@@ -1,23 +1,34 @@
 namespace :rankings do
   task update_with_plays_points: :environment do
     Tournament.find_each do |tournament|
-      puts "Updating ranking for tournament #{tournament.id}"
 
+      puts "Analyzing table rankings with plays points for tournament #{tournament.id}"
+      table_rankings = ActiveRecord::Base.connection.execute("
+        SELECT table_rankings.id AS table_ranking_id, plays.points AS play_points
+        FROM plays
+          INNER JOIN table_rankings ON table_rankings.play_id = plays.id
+          INNER JOIN tables ON plays.table_id = tables.id
+        WHERE tables.tournament_id='#{tournament.id}' AND group_id IS NULL
+      ")
+      puts "Preparing #{table_rankings.count} table rankings to update"
+      queries = table_rankings.map { |data| "UPDATE table_rankings SET points = #{data['play_points']} WHERE id = #{data['table_ranking_id']}" }
+      puts "Updating #{queries.count} table rankings"
+      ActiveRecord::Base.connection.execute(queries.join(';'))
+
+
+      puts "Analyzing tournament rankings for tournament #{tournament.id}"
       users_play_points = ActiveRecord::Base.connection.execute("
         SELECT user_id, users.created_at AS anniversary, SUM(GREATEST(plays.points, 0)) AS points
-          FROM plays INNER JOIN tables ON plays.table_id = tables.id INNER JOIN users ON plays.user_id = users.id
-          WHERE tables.tournament_id='#{tournament.id}' AND group_id IS NULL
-          GROUP BY user_id, anniversary
-          ORDER BY points DESC, anniversary ASC
+        FROM plays INNER JOIN tables ON plays.table_id = tables.id INNER JOIN users ON plays.user_id = users.id
+        WHERE tables.tournament_id='#{tournament.id}' AND group_id IS NULL
+        GROUP BY user_id, anniversary
+        ORDER BY points DESC, anniversary ASC
       ")
-
-      puts "Preparing #{users_play_points.count} rankings to update"
-
+      puts "Preparing #{users_play_points.count} tournament rankings to update"
       queries = users_play_points.map.with_index do |data, index|
         "INSERT INTO rankings (tournament_id, user_id, points, position) VALUES(#{tournament.id}, #{data['user_id']}, #{data['points']}, #{index + 1})"
       end
-
-      puts "Updating #{queries.count} rankings"
+      puts "Updating #{queries.count} tournament rankings"
       ActiveRecord::Base.connection.execute("DELETE FROM rankings WHERE tournament_id='#{tournament.id}'")
       ActiveRecord::Base.connection.execute(queries.join(';'))
 
