@@ -98,7 +98,7 @@ describe BulkClosingTableJob do
     let(:table_rules) { FactoryGirl.create(:table_rules, scored_goals: 1) }
 
     describe 'for public tables' do
-      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [200, 100], coins_for_winners: [50, 20]) }
+      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [], coins_for_winners: [50, 20]) }
 
       context 'when one user plays for a player that scores 2 goals and other user plays for a player that scores 5' do
         let(:first_user) { FactoryGirl.create(:user, :without_coins) }
@@ -142,11 +142,13 @@ describe BulkClosingTableJob do
 
           expect(first_user_play.points).to eq 2
           expect(first_user.reload.coins).to eq 20
-          expect(first_user.ranking_on_tournament(tournament).points).to eq 100
+          expect(first_user.ranking_on_tournament(tournament).points).to eq 2.0
+          expect(first_user.ranking_on_tournament(tournament).position).to eq 2
 
           expect(second_user_play.points).to eq 5
           expect(second_user.reload.coins).to eq 50
-          expect(second_user.ranking_on_tournament(tournament).points).to eq 200
+          expect(second_user.ranking_on_tournament(tournament).points).to eq 5.0
+          expect(second_user.ranking_on_tournament(tournament).position).to eq 1
         end
 
         it 'sends one email to each user with the results of their plays' do

@@ -18,8 +18,8 @@ class TableRankingCalculator
     next_position = 1
     winner_plays_sorter.call.each do |plays|
       position = next_position
-      points = points_for_ranking(plays.first, position)
       plays.each do |play|
+        points = points_for_ranking(play, position)
         rankings << TableRanking.new(play_id: play.id, position: position, points: points, earned_coins: 0)
       end
       next_position += plays.count
@@ -27,7 +27,9 @@ class TableRankingCalculator
   end
 
   def points_for_ranking(play, position)
-    return [play.points, 0].max unless table.has_points_for_winners?
-    table.points_for_position(position)
+    return [play.points, 0].max
+    # TODO: Vamos a usar siempre los puntos de las jugadas
+    # return [play.points, 0].max unless table.has_points_for_winners?
+    # table.points_for_position(position)
   end
 end

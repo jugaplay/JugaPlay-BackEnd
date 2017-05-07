@@ -7,7 +7,7 @@ describe TableCloser do
   describe 'for public tables' do
     context 'when only one table is being calculated' do
       let(:tournament) { table.tournament }
-      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [200, 100], coins_for_winners: [50, 20]) }
+      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [], coins_for_winners: [50, 20]) }
       let(:table_rules) { FactoryGirl.create(:table_rules, scored_goals: points_for_goal, right_passes: points_for_passes) }
 
       context 'when there is just one user playing' do
@@ -41,23 +41,24 @@ describe TableCloser do
                 expect(play.earned_coins).to eq 50
                 expect(user.reload.coins).to eq 50
                 expect(table.table_rankings).to have(1).item
+                expect(table.table_rankings.first.points).to eq 0
               end
 
               context 'when the user has no current ranking' do
-                it 'creates a tournament ranking for the user and assigns 200 points' do
+                it 'creates a tournament ranking for the user and assigns 0 points' do
                   table_closer.call
 
-                  expect(user.ranking_on_tournament(tournament).points).to eq 200
+                  expect(user.ranking_on_tournament(tournament).points).to eq 0
                 end
               end
 
               context 'when the user has a ranking' do
                 let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
 
-                it 'updates the current ranking adding 200 points' do
+                it 'updates the current ranking adding 0 points' do
                   table_closer.call
 
-                  expect(ranking.reload.points).to eq 300
+                  expect(ranking.reload.points).to eq 100
                 end
               end
             end
@@ -75,23 +76,24 @@ describe TableCloser do
                 expect(play.earned_coins).to eq 50
                 expect(user.reload.coins).to eq 50
                 expect(table.table_rankings).to have(1).item
+                expect(table.table_rankings.first.points).to eq 6
               end
 
               context 'when the user has no current ranking' do
                 it 'creates a ranking on the tournament and assigns points for the winners' do
                   table_closer.call
 
-                  expect(user.ranking_on_tournament(tournament).points).to eq 200
+                  expect(user.ranking_on_tournament(tournament).points).to eq 6
                 end
               end
 
               context 'when the user has a ranking' do
                 let!(:ranking) { FactoryGirl.create(:ranking, tournament: tournament, user: user, points: 100) }
 
-                it 'updates the current ranking adding 200 points' do
+                it 'updates the current ranking adding 6 points' do
                   table_closer.call
 
-                  expect(ranking.reload.points).to eq 300
+                  expect(ranking.reload.points).to eq 106
                 end
               end
             end
