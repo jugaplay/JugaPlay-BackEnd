@@ -82,17 +82,28 @@ namespace :rankings do
     tournament = Tournament.find(args[:tournament_id])
     plays = Play.joins(:table).where(user: user).where('tournament_id = ?', tournament.id)
 
-    puts "Summary for user #{user.nickname} (#{user.id}) in tournament #{tournament.name} (#{tournament.id})"
-    puts "Plays: #{plays.count}"
-    plays.each_with_index do |play, i|
+    puts "Summary for user #{user.nickname} (#{user.id}) in tournament #{tournament.name} (#{tournament.id})\n\n"
+
+    keys = [:index, :play_id, :created_at, :table, :table_id, :end_at, :status, :play_points, :table_ranking_points, :table_ranking_position]
+    values = plays.map.with_index do |play, i|
       table = play.table
       table_ranking = play.table_ranking
-      play_description = "Play ##{play.id} [#{play.created_at.strftime('%d/%m/%Y - %H:%M')}]"
-      table_description = "Table #{table.title} ##{table.id} [#{table.status} - end at #{table.end_time.strftime('%d/%m/%Y - %H:%M')}]"
-      table_ranking_points = table_ranking.present? ? "#{table_ranking.points} table ranking points" : 'missing table ranking points'
-      table_ranking_position = table_ranking.present? ? "#{table_ranking.position} table ranking position" : 'missing table ranking position'
-      puts "#{i+1}. #{play_description} in #{table_description}: #{play.points} points - #{table_ranking_points} - #{table_ranking_position}"
+      table_ranking_points = table_ranking.present? ? table_ranking.points : 'missing'
+      table_ranking_position = table_ranking.present? ? table_ranking.position : 'missing'
+      {
+        index: i+1,
+        play_id: play.id,
+        created_at: play.created_at.strftime('%d/%m/%Y - %H:%M'),
+        table: table.title,
+        table_id: table.id,
+        end_at: table.end_time.strftime('%d/%m/%Y - %H:%M'),
+        status: table.status,
+        play_points: play.points,
+        table_ranking_points: table_ranking_points,
+        table_ranking_position: table_ranking_position,
+      }
     end
-    puts '-----------------------------------------------------------'
+
+    TablePrinter.new(keys, values).call
   end
 end
