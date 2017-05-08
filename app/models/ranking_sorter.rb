@@ -2,23 +2,21 @@ class RankingSorter
   def initialize(tournament)
     validate_tournament(tournament)
     @tournament = tournament
-    @new_rankings = []
+    @update_queries = []
   end
 
   def call
-    build_new_rankings
-    sorted_tournament_rankings.destroy_all
-    Ranking.import(new_rankings)
+    prepare_rankings_to_update
+    ActiveRecord::Base.connection.execute(update_queries.join(';'))
   end
 
   private
-  attr_reader :tournament, :new_rankings
+  attr_reader :tournament, :update_queries
 
-  def build_new_rankings
+  def prepare_rankings_to_update
     sorted_tournament_rankings.each_with_index do |ranking, i|
-      new_ranking = ranking.clone
-      new_ranking.position = i + 1
-      new_rankings << new_ranking
+      update_queries.unshift "UPDATE rankings SET position = -#{i + 1} WHERE id = #{ranking.id}"
+      update_queries.push "UPDATE rankings SET position = #{i + 1} WHERE id = #{ranking.id}"
     end
   end
 
