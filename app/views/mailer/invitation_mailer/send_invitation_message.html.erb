@@ -35,10 +35,10 @@
                 </td>
               </tr>
             </table>
-            <p><%= @user.nickname %> (<%= @user.email %>) te ha invitado a participar de JugaPlay, el juego que esta revolucionando el futbol.</p>
-            <p>Entra apretando el botón para que <%= @user.nickname %> (<%= @user.email %>) sume monedas para el juego. </p>
+            <p><%= @user.nickname %> (<%= @user.email %>) te ha desafiado a jugar en Jugaplay,  el juego online que transforma cada partido de futbol en una experiencia única.</p>
+            <p> Clickea “IR A JUGAPLAY” . Te regalamos 30 monedas para que comiences a jugar, y 10 monedas a <%= @user.nickname %> (<%= @user.email %>) por invitarte. </p>
 
-            <a href="<%= @sender_link %>" style="color:#ffffff;font-size:13px;font-weight:bold;text-align:center;text-decoration:none;font-family:Arial,sans-serif;padding: 5px;background-color: #2bb838; border-top: 1px solid #77d5ea;width:200px;" target="_blank" >
+            <a href="<%= @sender_link %>&reff=ico_ml" style="color:#ffffff;font-size:13px;font-weight:bold;text-align:center;text-decoration:none;font-family:Arial,sans-serif;padding: 5px;background-color: #2bb838; border-top: 1px solid #77d5ea;width:200px;" target="_blank" >
               IR A JUGAPLAY
             </a>
 
@@ -71,11 +71,11 @@
                   <table style="border-bottom: 1px solid #333">
                     <tr>
 
-                      <td valign="middle" style="padding:0 10px 10px 0"><a href="#" style="text-decoration: none; font-size: 16px; color: #363636; font-weight: bold; font-family:Arial, sans-serif ">Carga Monedas</a>
+                      <td valign="middle" style="padding:0 10px 10px 0"><a href="#" style="text-decoration: none; font-size: 16px; color: #363636; font-weight: bold; font-family:Arial, sans-serif ">Turbo X2</a>
                       </td>
                     </tr>
                   </table>
-                  <p>Podes cargar tu monedero con  <b style="color: #5b5b5b;">tarjeta de crédito &oacute; en efectivo  </b> vía mercado pago, paypal o paygol. Sección Monedero.</p>
+                  <p>Quieres sumar más monedas? Canjear un premio más rápido? Compra un pack de fichas! Si finalizas entre los ganadores, el <b style="color: #5b5b5b;">TURBO X2 TE PERMITE DUPLICAR TU PREMIO EN MONEDAS. </b></p>
                 </td>
               </tr>
             </table>
@@ -214,7 +214,7 @@
                   <table width="90" align="left">
                     <tr>
                       <td bgcolor="#c8c8ca" style="padding:2px 0 5px 0;background-color:#c8c8ca; border-top:1px solid #eee; background-repeat:repeat-x" align="center">
-                        <a href="http://www.jugaplay.com/"
+                        <a href="<%= @sender_link %>&reff=ico_ml"
                            style="
                            color:#333;
                                font-size:12px;
