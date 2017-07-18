@@ -160,16 +160,10 @@ describe BulkClosingTableJob do
           expect(results_emails.first.to).to include first_user.email
           expect(results_emails.first.from).to include ResultsMailer::INFO_MAIL
           expect(results_emails.first.body).to include "Los Resultados de #{table.title}"
-          expect(results_emails.first.body).to include "Saliste 2"
-          expect(results_emails.first.body).to include "#{player_of_the_first_user.name}, sumo: 2.0 PTS"
-          expect(results_emails.first.body).to include "TOTAL: 2.0 PTS"
 
           expect(results_emails.second.to).to include second_user.email
           expect(results_emails.second.from).to include ResultsMailer::INFO_MAIL
           expect(results_emails.second.body).to include "Los Resultados de #{table.title}"
-          expect(results_emails.second.body).to include "Saliste 1"
-          expect(results_emails.second.body).to include "#{player_of_the_second_user.name}, sumo: 5.0 PTS"
-          expect(results_emails.second.body).to include "TOTAL: 5.0 PTS"
         end
       end
     end
@@ -241,16 +235,10 @@ describe BulkClosingTableJob do
           expect(results_emails.first.to).to include first_user.email
           expect(results_emails.first.from).to include ResultsMailer::INFO_MAIL
           expect(results_emails.first.body).to include "Los Resultados de #{table.title}"
-          expect(results_emails.first.body).to include "Saliste 2"
-          expect(results_emails.first.body).to include "#{player_of_the_first_user.name}, sumo: 2.0 PTS"
-          expect(results_emails.first.body).to include "TOTAL: 2.0 PTS"
 
           expect(results_emails.second.to).to include second_user.email
           expect(results_emails.second.from).to include ResultsMailer::INFO_MAIL
           expect(results_emails.second.body).to include "Los Resultados de #{table.title}"
-          expect(results_emails.second.body).to include "Saliste 1"
-          expect(results_emails.second.body).to include "#{player_of_the_second_user.name}, sumo: 5.0 PTS"
-          expect(results_emails.second.body).to include "TOTAL: 5.0 PTS"
         end
       end
     end

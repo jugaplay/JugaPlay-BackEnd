@@ -14,11 +14,17 @@ class Api::BaseController < ApplicationController
 
   def authenticate_user!
     return render_unauthorized_user unless user_signed_in?
-    return render_unauthorized_user if current_user.needs_to_login_with_facebook?
-    facebook_token_refresher.call do |user|
-      sign_out user
-      return redirect_to_home_page
+    if user_signed_in_with_facebook?
+      return render_unauthorized_user if current_user.needs_to_login_with_facebook?
+      facebook_token_refresher.call do |user|
+        sign_out user
+        return redirect_to_home_page
+      end
     end
+  end
+
+  def user_signed_in_with_facebook?
+    session['devise.facebook_data'].present?
   end
 
   # TODO: Tendríamos que usar tokens en vez de cookies
