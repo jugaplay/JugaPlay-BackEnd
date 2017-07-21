@@ -7,17 +7,25 @@ class Play < ActiveRecord::Base
 
   validates :table, presence: true
   validates :user, presence: true, uniqueness: { scope: :table }
-  validates :bet_base_coins, presence: true, numericality: { allow_nil: false, greater_than_or_equal_to: 0 }
-  validates :bet_multiplier, numericality: { allow_blank: true, only_integer: true, greater_than_or_equal_to: 2 }
+  validates :cost_type, presence: true, inclusion: { in: Money::CURRENCIES }
+  validates :cost_value, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :multiplier, numericality: { allow_blank: true, only_integer: true, greater_than_or_equal_to: 2 }
 
   scope :recent_finished_by, -> user { where(user: user).joins(:table).merge(Table.closed.recent_first) }
 
-  def coins_bet_multiplier
-    bet_multiplier || 1
+  def cost(&if_none_block)
+    return_block = if_none_block || -> { nil }
+    return_block.call if cost_value.nil?
+    Money.new(cost_type, cost_value)
+  end
+
+  def cost=(money)
+    self.cost_type = money.currency
+    self.cost_value = money.value
   end
 
   def multiply_by!(multiplier)
-    update_attributes!(bet_multiplier: multiplier)
+    update_attributes!(multiplier: multiplier)
   end
 
   def private?

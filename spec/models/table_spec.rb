@@ -22,13 +22,21 @@ describe Table do
       expect { FactoryGirl.create(:table, number_of_players: nil) }.to raise_error ActiveRecord::RecordInvalid, /Number of players can't be blank/
     end
 
-    it 'must have an entry coins cost greater than or equal 0' do
-      expect { FactoryGirl.create(:table, entry_coins_cost: 0) }.not_to raise_error
-      expect { FactoryGirl.create(:table, entry_coins_cost: 5) }.not_to raise_error
-      expect { FactoryGirl.create(:table, entry_coins_cost: 1.5) }.not_to raise_error
+    it 'must have an entry cost value grater than or equal to 0' do
+      expect { FactoryGirl.create(:table, entry_cost_value: 0) }.not_to raise_error
+      expect { FactoryGirl.create(:table, entry_cost_value: 20) }.not_to raise_error
+      expect { FactoryGirl.create(:table, entry_cost_value: 1.5) }.not_to raise_error
 
-      expect { FactoryGirl.create(:table, entry_coins_cost: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost can't be blank/
-      expect { FactoryGirl.create(:table, entry_coins_cost: -1) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be greater than or equal to 0/
+      expect { FactoryGirl.create(:table, entry_cost_value: -1) }.to raise_error ActiveRecord::RecordInvalid, /Entry cost value must be greater than or equal to 0/
+      expect { FactoryGirl.create(:table, entry_cost_value: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry cost value can't be blank/
+    end
+
+    it 'must have a valid entry cost type' do
+      expect { FactoryGirl.create(:table, entry_cost_type: Money::COINS) }.not_to raise_error
+      expect { FactoryGirl.create(:table, entry_cost_type: Money::CHIPS) }.not_to raise_error
+
+      expect { FactoryGirl.create(:table, entry_cost_type: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry cost type is not included in the list/
+      expect { FactoryGirl.create(:table, entry_cost_type: 'unknown') }.to raise_error ActiveRecord::RecordInvalid, /Entry cost type is not included in the list/
     end
 
     it 'must have a multiplier chips cost greater than or equal 0' do
@@ -81,15 +89,6 @@ describe Table do
         expect { FactoryGirl.create(:table, coins_for_winners: [-1]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
         expect { FactoryGirl.create(:table, coins_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
       end
-
-      it 'must have an entry coins cost grater than or equal to 0' do
-        expect { FactoryGirl.create(:table, entry_coins_cost: 0) }.not_to raise_error
-        expect { FactoryGirl.create(:table, entry_coins_cost: 20) }.not_to raise_error
-        expect { FactoryGirl.create(:table, entry_coins_cost: 1.5) }.not_to raise_error
-
-        expect { FactoryGirl.create(:table, entry_coins_cost: -1) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be greater than or equal to 0/
-        expect { FactoryGirl.create(:table, entry_coins_cost: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost can't be blank/
-      end
     end
 
     context 'for private tables' do
@@ -109,15 +108,6 @@ describe Table do
 
         expect { FactoryGirl.create(:table, :private, coins_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
         expect { FactoryGirl.create(:table, :private, coins_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
-      end
-
-      it 'must have an entry coins cost greater than or equal to 0' do
-        expect { FactoryGirl.create(:table, :private, entry_coins_cost: 0) }.not_to raise_error
-        expect { FactoryGirl.create(:table, :private, entry_coins_cost: 20) }.not_to raise_error
-        expect { FactoryGirl.create(:table, :private, entry_coins_cost: 1.5) }.not_to raise_error
-
-        expect { FactoryGirl.create(:table, :private, entry_coins_cost: -1) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be greater than or equal to 0/
-        expect { FactoryGirl.create(:table, :private, entry_coins_cost: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost can't be blank/
       end
     end
   end

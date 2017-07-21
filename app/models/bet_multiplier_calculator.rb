@@ -6,18 +6,18 @@ class BetMultiplierCalculator
     required_chips = calculate_required_chips table, multiplier
     validate_enough_chips_for user, required_chips
     play.multiply_by!(multiplier)
-    user.pay_chips! required_chips
+    user.pay! required_chips
   end
 
   private
 
   def calculate_required_chips(table, multiplier)
     chips = (table.multiplier_chips_cost * multiplier) / 2.0
-    chips.round(2)
+    chips.round(2).chips
   end
 
   def validate_enough_chips_for(user, required_chips)
-    fail UserDoesNotHaveEnoughChips unless user.has_chips?(required_chips)
+    fail UserDoesNotHaveEnoughChips unless user.has_money?(required_chips)
   end
 
   def validate_table_has_multiplier_chips_cost(table)

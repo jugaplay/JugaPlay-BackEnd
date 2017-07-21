@@ -8,8 +8,12 @@
     <%= f.label :number_of_players, 'Numero de jugadores' %>
   </div>
   <div class="input-field col s12">
-    <%= f.number_field :entry_coins_cost, class: 'validate', required: true %>
-    <%= f.label :entry_coins_cost, 'Costo de entrada' %>
+    <%= f.number_field :entry_cost_value, class: 'validate', required: true %>
+    <%= f.label :entry_cost_value, 'Costo de entrada' %>
+  </div>
+  <div class="input-field col s12">
+    <%= f.label :entry_cost_type, 'Tipo de costo de entrada' %>
+    <%= f.collection_select :entry_cost_type, Money::CURRENCIES, :itself, :itself, { prompt: 'Seleccionar...' }, { class: 'validate', required: true } %>
   </div>
   <div class="input-field col s12">
     <%= f.label :tournament_id, 'Torneo' %>

@@ -18,7 +18,8 @@ class Table < ActiveRecord::Base
   validates :start_time, presence: true
   validates :end_time, presence: true, date: { after: :start_time }
   validates :number_of_players, presence: true, numericality: { greater_than: 0, only_integer: true }
-  validates :entry_coins_cost, presence: true, numericality: { greater_than_or_equal_to: 0, allow_nil: false }
+  validates :entry_cost_type, presence: true, inclusion: { in: Money::CURRENCIES }
+  validates :entry_cost_value, presence: true, numericality: { greater_than_or_equal_to: 0, allow_nil: false }
   validates :multiplier_chips_cost, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: false, allow_nil: false }
   validates_each_in_array(:coins_for_winners) { validates_numericality_of :value, greater_than: 0, allow_nil: false }
   validates_each_in_array(:points_for_winners) { validates_numericality_of :value, greater_than: 0, only_integer: true, allow_nil: false }
@@ -44,6 +45,15 @@ class Table < ActiveRecord::Base
         false
       end
     end
+  end
+
+  def entry_cost
+    Money.new(entry_cost_type, entry_cost_value)
+  end
+
+  def entry_cost=(money)
+    self.entry_cost_type = money.currency
+    self.entry_cost_value = money.value
   end
 
   def expending_coins
@@ -133,7 +143,7 @@ class Table < ActiveRecord::Base
   end
 
   def multiplier_for(user)
-    plays_made_by(user).last.try(:bet_multiplier)
+    plays_made_by(user).last.try(:multiplier)
   end
 
   private

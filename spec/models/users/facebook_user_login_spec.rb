@@ -53,7 +53,7 @@ describe FacebookUserLogin do
         expect(new_user.last_name).to eq 'Bloggs'
         expect(new_user.image).to eq 'www.photo.com'
         expect(new_user.facebook_token).to eq 'TOKEN'
-        expect(inviting_user.reload.coins).to eq old_amount_of_coins + 10
+        expect(inviting_user.reload.coins).to eq old_amount_of_coins + 10.coins
         expect(invitation_request.invitation_acceptances).to have(1).item
         expect(invitation_request.invitation_acceptances.first.user).to eq new_user
       end

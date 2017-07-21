@@ -1,7 +1,8 @@
 json.id play.id
 json.start_time play.table.start_time
-json.bet_base_coins play.bet_base_coins
-json.bet_multiplier play.bet_multiplier
+json.cost_value play.cost.value
+json.cost_type play.cost.currency
+json.multiplier play.multiplier
 json.points play.points { 'N/A' }
 json.earn_coins play.earned_coins
 

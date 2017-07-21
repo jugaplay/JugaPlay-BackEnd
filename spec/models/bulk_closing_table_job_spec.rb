@@ -141,12 +141,12 @@ describe BulkClosingTableJob do
           expect(table.table_rankings.second.position).to eq 2
 
           expect(first_user_play.points).to eq 2
-          expect(first_user.reload.coins).to eq 20
+          expect(first_user.reload.coins).to eq 20.coins
           expect(first_user.ranking_on_tournament(tournament).points).to eq 2.0
           expect(first_user.ranking_on_tournament(tournament).position).to eq 2
 
           expect(second_user_play.points).to eq 5
-          expect(second_user.reload.coins).to eq 50
+          expect(second_user.reload.coins).to eq 50.coins
           expect(second_user.ranking_on_tournament(tournament).points).to eq 5.0
           expect(second_user.ranking_on_tournament(tournament).position).to eq 1
         end
@@ -170,16 +170,16 @@ describe BulkClosingTableJob do
 
     describe 'for private tables' do
       let(:group) { FactoryGirl.create(:group) }
-      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, group: group, entry_coins_cost: 99, points_for_winners: []) }
+      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, group: group, entry_cost: 99.coins, points_for_winners: []) }
 
       context 'when one user plays for a player that scores 2 goals and other user plays for a player that scores 5' do
-        let(:first_user) { FactoryGirl.create(:user, :with_coins, coins: 99) }
+        let(:first_user) { FactoryGirl.create(:user, :with_coins, coins: 99.coins) }
         let(:first_match) { table.matches.first }
         let(:player_of_the_first_user) { first_match.local_team.players.last }
         let!(:first_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_first_user, match: first_match, scored_goals: 2) }
         let(:first_user_play) { PlaysHistory.new.made_by(first_user).in_table(table).last }
 
-        let(:second_user) { FactoryGirl.create(:user, :with_coins, coins: 99) }
+        let(:second_user) { FactoryGirl.create(:user, :with_coins, coins: 99.coins) }
         let(:last_match) { table.matches.last }
         let(:player_of_the_second_user) { last_match.visitor_team.players.first }
         let!(:second_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_second_user, match: last_match, scored_goals: 5) }
@@ -203,14 +203,14 @@ describe BulkClosingTableJob do
         end
 
         it 'closes the table and updates the total points for each user' do
-          pot_prize = table.entry_coins_cost * 2
+          pot_prize = table.entry_cost * 2
 
           job.call
           table.reload
 
           expect(table).to be_closed
           expect(table.points_for_winners).to be_empty
-          expect(table.coins_for_winners).to eq [pot_prize]
+          expect(table.coins_for_winners).to eq [pot_prize.value]
           expect(table.table_rankings).to have(2).item
           expect(table.table_rankings.first.user).to eq second_user
           expect(table.table_rankings.first.position).to eq 1
@@ -218,11 +218,11 @@ describe BulkClosingTableJob do
           expect(table.table_rankings.second.position).to eq 2
 
           expect(first_user_play.points).to eq 2
-          expect(first_user.reload.coins).to eq 0
+          expect(first_user.reload.coins).to eq 0.coins
           expect(first_user.ranking_on_tournament(tournament)).to be_nil
 
           expect(second_user_play.points).to eq 5
-          expect(second_user.reload.coins).to eq(pot_prize)
+          expect(second_user.reload.coins).to eq pot_prize
           expect(second_user.ranking_on_tournament(tournament)).to be_nil
         end
 

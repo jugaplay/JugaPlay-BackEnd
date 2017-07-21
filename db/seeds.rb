@@ -251,7 +251,7 @@ ActiveRecord::Base.transaction do
     coins_for_winners: [100, 50, 10],
     description: '-',
     table_rules: TableRules.create,
-    entry_coins_cost: 0
+    entry_cost: 0.coins
   )
 
 
