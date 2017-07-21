@@ -1,8 +1,8 @@
 class PublicTablePlayCreator < PlaysCreator
   protected
 
-  def bet_base_coins(bet)
-    bet ? table.entry_coins_cost : 0
+  def entry_cost(bet)
+    bet ? table.entry_cost : Money.zero(table.entry_cost_type)
   end
 
   def validate_user_can_play(user)

@@ -21,7 +21,7 @@
       <tr>
         <td><%= link_to table.title, edit_admin_table_path(table.id) %></td>
         <td><%= table.number_of_players %></td>
-        <td><%= table.entry_coins_cost %></td>
+        <td><%= table.entry_cost %></td>
         <td><%= table.matches.count %></td>
         <td><%= table.start_time.strftime('%d/%m/%Y - %H:%M') %></td>
         <td><%= table.end_time.strftime('%d/%m/%Y - %H:%M') %></td>

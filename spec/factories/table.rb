@@ -6,7 +6,7 @@ FactoryGirl.define do
     number_of_players { Faker::Number.between(1, 5) }
     description { Faker::Lorem.sentence }
     points_for_winners { [Faker::Number.number(5), Faker::Number.number(3), Faker::Number.number(2)] }
-    entry_coins_cost { 0 }
+    entry_cost { 0.coins }
     multiplier_chips_cost { 0 }
     coins_for_winners { [] }
 

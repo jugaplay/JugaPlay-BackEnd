@@ -37,22 +37,30 @@ describe Play do
       expect { FactoryGirl.create(:play, points: 5.5) }.not_to raise_error
     end
 
-    it 'can have bet base coins equal or greater than zero' do
-      expect { FactoryGirl.create(:play, bet_base_coins: 0) }.not_to raise_error
-      expect { FactoryGirl.create(:play, bet_base_coins: 5) }.not_to raise_error
-      expect { FactoryGirl.create(:play, bet_base_coins: 5.5) }.not_to raise_error
+    it 'can have cost value equal or greater than zero' do
+      expect { FactoryGirl.create(:play, cost_value: 0) }.not_to raise_error
+      expect { FactoryGirl.create(:play, cost_value: 5) }.not_to raise_error
+      expect { FactoryGirl.create(:play, cost_value: 5.5) }.not_to raise_error
 
-      expect { FactoryGirl.create(:play, bet_base_coins: nil) }.to raise_error ActiveRecord::RecordInvalid, /Bet base coins is not a number/
-      expect { FactoryGirl.create(:play, bet_base_coins: -1) }.to raise_error ActiveRecord::RecordInvalid, /Bet base coins must be greater than or equal to 0/
+      expect { FactoryGirl.create(:play, cost_value: nil) }.to raise_error ActiveRecord::RecordInvalid, /Cost value is not a number/
+      expect { FactoryGirl.create(:play, cost_value: -1) }.to raise_error ActiveRecord::RecordInvalid, /Cost value must be greater than or equal to 0/
+    end
+
+    it 'must have a valid cost type' do
+      expect { FactoryGirl.create(:play, cost_type: Money::CHIPS) }.not_to raise_error
+      expect { FactoryGirl.create(:play, cost_type: Money::COINS) }.not_to raise_error
+
+      expect { FactoryGirl.create(:play, cost_type: nil) }.to raise_error ActiveRecord::RecordInvalid, /Cost type can't be blank/
+      expect { FactoryGirl.create(:play, cost_type: 'unkown') }.to raise_error ActiveRecord::RecordInvalid, /Cost type is not included in the list/
     end
 
     it 'can have no bet multiply coins or equal or greater than 2' do
-      expect { FactoryGirl.create(:play, bet_multiplier: 5) }.not_to raise_error
-      expect { FactoryGirl.create(:play, bet_multiplier: nil) }.not_to raise_error
+      expect { FactoryGirl.create(:play, multiplier: 5) }.not_to raise_error
+      expect { FactoryGirl.create(:play, multiplier: nil) }.not_to raise_error
 
-      expect { FactoryGirl.create(:play, bet_multiplier: 1) }.to raise_error ActiveRecord::RecordInvalid, /Bet multiplier must be greater than or equal to 2/
-      expect { FactoryGirl.create(:play, bet_multiplier: -1) }.to raise_error ActiveRecord::RecordInvalid, /Bet multiplier must be greater than or equal to 2/
-      expect { FactoryGirl.create(:play, bet_multiplier: 5.5) }.to raise_error ActiveRecord::RecordInvalid, /Bet multiplier must be an integer/
+      expect { FactoryGirl.create(:play, multiplier: 1) }.to raise_error ActiveRecord::RecordInvalid, /Multiplier must be greater than or equal to 2/
+      expect { FactoryGirl.create(:play, multiplier: -1) }.to raise_error ActiveRecord::RecordInvalid, /Multiplier must be greater than or equal to 2/
+      expect { FactoryGirl.create(:play, multiplier: 5.5) }.to raise_error ActiveRecord::RecordInvalid, /Multiplier must be an integer/
     end
   end
 

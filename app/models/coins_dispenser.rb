@@ -12,7 +12,7 @@ class CoinsDispenser
   attr_reader :table
 
   def update_private_table_coins_for_winners
-    coins = table.entry_coins_cost * table.amount_of_users_playing
+    coins = table.entry_cost.value * table.amount_of_users_playing
     table.update!(coins_for_winners: [coins]) if coins > 0
   end
 
@@ -35,14 +35,15 @@ class CoinsDispenser
 
   def dispense_coins_for_each_ranking(table_rankings, coins_per_ranking)
     table_rankings.each do |table_ranking|
-      final_coins = coins_per_ranking * table_ranking.play.coins_bet_multiplier
+      multiplier = table_ranking.play.multiplier || 1
+      final_coins = coins_per_ranking * multiplier
       dispense_coins(final_coins, table_ranking)
     end
   end
 
-  def dispense_coins(coins, table_ranking)
-    table_ranking.user.win_coins! coins
-    table_ranking.update_attributes!(earned_coins: coins)
+  def dispense_coins(amount_of_coins, table_ranking)
+    table_ranking.user.win_money! amount_of_coins.coins
+    table_ranking.update_attributes!(earned_coins: amount_of_coins)
   end
 
   def table_winner_rankings

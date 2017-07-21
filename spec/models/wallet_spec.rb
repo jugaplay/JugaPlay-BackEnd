@@ -11,21 +11,21 @@ describe Wallet do
     it 'must have a positive number of coins' do
       wallet = user.wallet
 
-      expect { wallet.update_attributes!(coins: 10) }.not_to raise_error
-      expect { wallet.update_attributes!(coins: 1.5) }.not_to raise_error
+      expect { wallet.update_attributes!(coins: 10.coins) }.not_to raise_error
+      expect { wallet.update_attributes!(coins: 1.5.coins) }.not_to raise_error
 
-      expect { wallet.update_attributes!(coins: nil) }.to raise_error ActiveRecord::RecordInvalid, /Coins is not a number/
-      expect { wallet.update_attributes!(coins: -1) }.to raise_error ActiveRecord::RecordInvalid, /Coins must be greater than or equal to 0/
+      expect { wallet.update_attributes!(coins: nil) }.to raise_error ActiveRecord::RecordInvalid, /Given money must be coins/
+      expect { wallet.update_attributes!(coins: -1) }.to raise_error ActiveRecord::RecordInvalid, /Given money must be coins/
     end
 
     it 'must have a positive number of chips' do
       wallet = user.wallet
 
-      expect { wallet.update_attributes!(chips: 10) }.not_to raise_error
-      expect { wallet.update_attributes!(chips: 1.5) }.not_to raise_error
+      expect { wallet.update_attributes!(chips: 10.chips) }.not_to raise_error
+      expect { wallet.update_attributes!(chips: 1.5.chips) }.not_to raise_error
 
-      expect { wallet.update_attributes!(chips: nil) }.to raise_error ActiveRecord::RecordInvalid, /Chips is not a number/
-      expect { wallet.update_attributes!(chips: -1) }.to raise_error ActiveRecord::RecordInvalid, /Chips must be greater than or equal to 0/
+      expect { wallet.update_attributes!(chips: nil) }.to raise_error ActiveRecord::RecordInvalid, /Given money must be chips/
+      expect { wallet.update_attributes!(chips: -1) }.to raise_error ActiveRecord::RecordInvalid, /Given money must be chips/
     end
 
     it 'must belongs to a uniq user' do
@@ -33,7 +33,7 @@ describe Wallet do
     end
 
     it 'has 30 coins by default' do
-      expect(user.wallet.coins).to eq 30
+      expect(user.wallet.coins).to eq 30.coins
     end
   end
 end

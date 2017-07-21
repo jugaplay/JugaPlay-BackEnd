@@ -2,7 +2,7 @@ FactoryGirl.define do
   factory :play do
     user
     table
-    bet_base_coins { 0 }
+    cost { 0.coins }
 
     after :build do |play|
       if play.table.present? && play.player_selections.nil?

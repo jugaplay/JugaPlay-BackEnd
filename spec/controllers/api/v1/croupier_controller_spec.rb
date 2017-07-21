@@ -31,12 +31,13 @@ describe Api::V1::CroupierController do
             expect(play.player_selections.first.player).to eq first_player
             expect(play.player_selections.second.player).to eq second_player
             expect(play.table).to eq table
-            expect(play.bet_base_coins).to eq 0
+            expect(play.cost).to eq 0.coins
 
             expect(response).to render_template(partial: 'api/v1/plays/_play')
             expect(response.status).to eq 200
             expect(response_body[:id]).to eq play.id
-            expect(response_body[:bet_base_coins]).to eq play.bet_base_coins
+            expect(response_body[:cost_value]).to eq play.cost.value
+            expect(response_body[:cost_type]).to eq play.cost.currency
             expect(response_body[:table][:title]).to eq table.title
             expect(response_body[:players]).to have(player_ids.count).items
           end
@@ -45,10 +46,10 @@ describe Api::V1::CroupierController do
         context 'when the user bets for the table' do
           let(:bet_play_params) { play_params.merge(bet: true) }
 
-          before { table.update_attributes!(entry_coins_cost: entry_coins_cost.to_i) }
+          before { table.update_attributes!(entry_cost: entry_cost) }
 
           context 'when the user can pay the table entry coins cost' do
-            let(:entry_coins_cost) { user.coins }
+            let(:entry_cost) { user.coins }
 
             it 'creates a play for the given user, table and players and renders a json of it' do
               expect { post :play, bet_play_params }.to change { Play.count }.by(1)
@@ -59,19 +60,20 @@ describe Api::V1::CroupierController do
               expect(play.player_selections.first.player).to eq first_player
               expect(play.player_selections.second.player).to eq second_player
               expect(play.table).to eq table
-              expect(play.bet_base_coins).to eq table.entry_coins_cost
+              expect(play.cost).to eq table.entry_cost
 
               expect(response).to render_template(partial: 'api/v1/plays/_play')
               expect(response.status).to eq 200
               expect(response_body[:id]).to eq play.id
-              expect(response_body[:bet_base_coins]).to eq play.bet_base_coins
+              expect(response_body[:cost_value]).to eq play.cost.value
+              expect(response_body[:cost_type]).to eq play.cost.currency
               expect(response_body[:table][:title]).to eq table.title
               expect(response_body[:players]).to have(player_ids.count).items
             end
           end
 
           context 'when the user can not pay the table entry coins cost' do
-            let(:entry_coins_cost) { user.coins + 10 }
+            let(:entry_cost) { user.coins + 10.coins }
 
             it 'does not create a play and renders an error' do
               expect { post :play, bet_play_params }.not_to change { Play.count }

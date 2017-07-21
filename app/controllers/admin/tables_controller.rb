@@ -61,7 +61,7 @@ class Admin::TablesController < Admin::BaseController
   private
 
   def table_params
-    permitted_params = params.require(:table).permit(:title, :entry_coins_cost, :number_of_players, :description, :tournament_id, match_ids: [])
+    permitted_params = params.require(:table).permit(:title, :entry_cost_value, :entry_cost_type, :number_of_players, :description, :tournament_id, match_ids: [])
     permitted_params[:matches] = Match.where(id: permitted_params.delete(:match_ids))
     permitted_params[:status] = :opened
     permitted_params[:coins_for_winners] = []

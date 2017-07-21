@@ -52,7 +52,8 @@ describe Api::V1::PlaysController do
               play_data = {
                 id: play.id,
                 start_time: play.table.start_time,
-                bet_base_coins: 0,
+                cost_value: 0.0,
+                cost_type: 'coins',
                 points: 'N/A',
                 earn_coins: 'N/A',
                 players: play.players.map { |player| {
@@ -103,8 +104,9 @@ describe Api::V1::PlaysController do
 
             expect(response.status).to eq 200
             expect(response_body[:id]).to eq play.id
-            expect(response_body[:bet_base_coins]).to eq play.bet_base_coins
-            expect(response_body[:bet_multiplier]).to be_nil
+            expect(response_body[:cost_value]).to eq play.cost.value
+            expect(response_body[:cost_type]).to eq play.cost.currency
+            expect(response_body[:multiplier]).to be_nil
             expect(response_body[:points]).to eq 'N/A'
             expect(response_body[:earn_coins]).to eq 'N/A'
           end

@@ -7,7 +7,7 @@ class Api::V1::CroupierController < Api::BaseController
   rescue ActiveRecord::RecordNotFound
     render_not_found_error TABLE_NOT_FOUND
   rescue PlayWithDuplicatedPlayer, PlayerDoesNotBelongToTable, CanNotPlayWithNumberOfPlayers, TableIsClosed,
-      UserHasAlreadyPlayedInThisTable, UserDoesNotHaveEnoughCoins, UserDoesNotBelongToTableGroup => error
+      UserHasAlreadyPlayedInThisTable, UserDoesNotHaveEnoughMoney, UserDoesNotBelongToTableGroup => error
     render_json_errors error.message
   end
 

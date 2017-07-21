@@ -59,7 +59,7 @@ describe PlaysCreator do
                       expect(play.user).to eq user
                       expect(play.players).to have(2).items
                       expect(play.players).to match_array(players)
-                      expect(play.bet_base_coins).to eq 0
+                      expect(play.cost).to eq 0.coins
                       expect(user.coins).to eq initial_amount_of_coins
                     end
                   end
@@ -68,7 +68,7 @@ describe PlaysCreator do
                     let(:bet) { true }
 
                     context 'when the given amount of coins is valid' do
-                      before { table.update_attributes(entry_coins_cost: user.coins) }
+                      before { table.update_attributes(entry_cost: user.coins) }
 
                       context 'when the user has enough coins to play' do
                         it 'creates a new play for the given user with the given players and subtracts coins from his wallet' do
@@ -78,18 +78,18 @@ describe PlaysCreator do
                           expect(play.user).to eq user
                           expect(play.players).to have(2).items
                           expect(play.players).to match_array(players)
-                          expect(play.bet_base_coins).to eq 30
-                          expect(user.coins).to eq 0
+                          expect(play.cost).to eq 30.coins
+                          expect(user.coins).to eq 0.coins
                         end
                       end
 
                       context 'when the user has not enough coins to play' do
-                        before { table.update_attributes(entry_coins_cost: 10000) }
+                        before { table.update_attributes(entry_cost: 10000.coins) }
 
                         it 'raises an error and does not subtract coins from his wallet' do
                           initial_amount_of_coins = user.coins
 
-                          expect { plays_creator.create_play(user: user, players: players, bet: bet) }.to raise_error UserDoesNotHaveEnoughCoins
+                          expect { plays_creator.create_play(user: user, players: players, bet: bet) }.to raise_error UserDoesNotHaveEnoughMoney
 
                           expect(user.reload.coins).to eq initial_amount_of_coins
                         end

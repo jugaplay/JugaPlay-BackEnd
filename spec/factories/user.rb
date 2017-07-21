@@ -13,7 +13,7 @@ FactoryGirl.define do
 
     trait :without_coins do
       after :create do |user|
-        user.wallet.update_attributes!(coins: 0)
+        user.wallet.update_attributes!(coins: 0.coins)
       end
     end
 
