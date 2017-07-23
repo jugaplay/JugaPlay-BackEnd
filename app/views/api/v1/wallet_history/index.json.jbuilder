@@ -33,7 +33,7 @@ json.total_prizes @total_earned_coins
 json.last_month_prizes @last_month_earned_coins
 
 json.detail_prizes(@table_rankings) do |table_ranking|
-	json.coins table_ranking.earned_coins
+	json.coins table_ranking.prize.value
 	json.detail table_ranking.detail
 	json.date table_ranking.created_at
 end

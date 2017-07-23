@@ -6,7 +6,8 @@ json.array! @tables do |table|
   json.entry_cost_type table.entry_cost.currency
   json.multiplier_chips_cost table.multiplier_chips_cost
   json.number_of_players table.number_of_players
-  json.pot_prize table.expending_coins # TODO: renombrar esto
+  json.pot_prize_type table.pot_prize.currency
+  json.pot_prize_value table.pot_prize.value
   json.start_time table.start_time.strftime('%d/%m/%Y - %H:%M')
   json.end_time table.end_time.strftime('%d/%m/%Y - %H:%M')
   json.description table.description

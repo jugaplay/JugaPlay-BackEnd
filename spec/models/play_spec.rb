@@ -68,22 +68,22 @@ describe Play do
     let(:play) { FactoryGirl.create(:play) }
 
     context 'when the play has a prize' do
-      let!(:table_ranking) { FactoryGirl.create(:table_ranking, play: play, position: 10, earned_coins: 10) }
+      let!(:table_ranking) { FactoryGirl.create(:table_ranking, play: play, position: 10, prize: 10.chips) }
 
       it 'returns the coins that the user earned in that table' do
-        expect(play.earned_coins).to eq 10
+        expect(play.prize).to eq 10.chips
       end
     end
 
     context 'when the play did not have a table ranking' do
       it 'returns N/A when no block is given' do
-        expect(play.earned_coins).to eq 'N/A'
+        expect(play.prize).to eq 'N/A'
       end
 
       it 'returns calls the given block if given' do
-        earned_coins = play.earned_coins { 'unknown' }
+        prize = play.prize { 'unknown' }
 
-        expect(earned_coins).to eq 'unknown'
+        expect(prize).to eq 'unknown'
       end
     end
   end

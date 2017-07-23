@@ -12,9 +12,10 @@ json.description table.description
 json.private table.private?
 json.amount_of_users_playing table.amount_of_users_playing
 
-json.coins_for_winners(table.coins_with_positions) do |coins_with_position|
-  json.position coins_with_position.first
-  json.coins coins_with_position.second
+json.prizes(table.prizes_with_positions) do |prize_with_position|
+  json.position prize_with_position.first
+  json.prize_value prize_with_position.second.value
+  json.prize_type prize_with_position.second.currency
 end
 
 unless table.closed?

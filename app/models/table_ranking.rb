@@ -4,12 +4,27 @@ class TableRanking < ActiveRecord::Base
   has_one :table, through: :play
 
   validates :play, presence: true, uniqueness: true
+  validates :prize_type, presence: true, inclusion: { in: Money::CURRENCIES }
+  validates :prize_value, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :points, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :position, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
-  validates :earned_coins, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
   scope :by_user, -> user { joins(play: :user).where(plays: { user_id: user.id }) }
   scope :recent_first, -> { order(created_at: :desc) }
+
+  def prize
+    Money.new prize_type, prize_value
+  end
+
+  def prize=(prize)
+    if prize.is_a?(Money)
+      self.prize_type = prize.currency
+      self.prize_value = prize.value
+    else
+      errors.add(:prize, 'Given prize must be money')
+      fail ActiveRecord::RecordInvalid.new self
+    end
+  end
 
   def play_points
     play.points

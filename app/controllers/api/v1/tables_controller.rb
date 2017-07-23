@@ -67,7 +67,8 @@ class Api::V1::TablesController < Api::BaseController
     private_table_params[:tournament_id] = match.tournament_id
     private_table_params[:number_of_players] = PRIVATE_TABLE_NUMBER_OF_PLAYERS
     private_table_params[:table_rules] = TableRules.new
-    private_table_params[:coins_for_winners] = []
+    private_table_params[:prizes_values] = []
+    private_table_params[:prizes_type] = table_params[:entry_cost_type]
     private_table_params[:points_for_winners] = []
     private_table_params[:start_time] = match.datetime
     private_table_params[:end_time] = match.datetime + 2.hours

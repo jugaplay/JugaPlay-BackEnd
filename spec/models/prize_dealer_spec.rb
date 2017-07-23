@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe CoinsDispenser do
-  let(:coins_dispenser) { CoinsDispenser.new(table) }
+describe PrizeDealer do
+  let(:prize_dealer) { PrizeDealer.new(table) }
 
   context 'for public tables' do
-    let(:table) { FactoryGirl.create(:table, coins_for_winners: coins_for_winners) }
+    let(:table) { FactoryGirl.create(:table, prizes: prizes) }
 
     context 'when there are two users playing' do
       let(:first_user) { FactoryGirl.create(:user, :without_coins) }
@@ -18,14 +18,14 @@ describe CoinsDispenser do
         let(:second_user_position) { 2 }
 
         context 'when there are no coins' do
-          let(:coins_for_winners) { [] }
+          let(:prizes) { [] }
 
           context 'when there was no multiplier bet' do
             it 'does not dispense coins for any user' do
-              coins_dispenser.call
+              prize_dealer.call
 
-              expect(first_user_table_ranking.reload.earned_coins).to eq 0
-              expect(first_user_table_ranking.reload.earned_coins).to eq 0
+              expect(first_user_table_ranking.reload.prize).to eq 0.coins
+              expect(first_user_table_ranking.reload.prize).to eq 0.coins
             end
           end
 
@@ -33,26 +33,26 @@ describe CoinsDispenser do
             before { first_user_table_ranking.play.multiply_by!(2) }
 
             it 'does not dispense coins for any user' do
-              coins_dispenser.call
+              prize_dealer.call
 
-              expect(first_user_table_ranking.reload.earned_coins).to eq 0
-              expect(first_user_table_ranking.reload.earned_coins).to eq 0
+              expect(first_user_table_ranking.reload.prize).to eq 0.coins
+              expect(first_user_table_ranking.reload.prize).to eq 0.coins
             end
           end
         end
 
         context 'when there are coins for one user' do
-          let(:coins_for_winners) { [100] }
+          let(:prizes) { [100.coins] }
 
           context 'when there was no multiplier bet' do
             it 'gives the coins to the first user' do
-              coins_dispenser.call
+              prize_dealer.call
 
               expect(first_user.reload.coins).to eq 100.coins
-              expect(first_user_table_ranking.reload.earned_coins).to eq 100
+              expect(first_user_table_ranking.reload.prize).to eq 100.coins
 
               expect(second_user.reload.coins).to eq 0.coins
-              expect(second_user_table_ranking.reload.earned_coins).to eq 0
+              expect(second_user_table_ranking.reload.prize).to eq 0.coins
             end
           end
 
@@ -60,29 +60,29 @@ describe CoinsDispenser do
             before { first_user_table_ranking.play.multiply_by!(2) }
 
             it 'gives the coins to the first user multiplied by 2' do
-              coins_dispenser.call
+              prize_dealer.call
 
               expect(first_user.reload.coins).to eq 200.coins
-              expect(first_user_table_ranking.reload.earned_coins).to eq 200
+              expect(first_user_table_ranking.reload.prize).to eq 200.coins
 
               expect(second_user.reload.coins).to eq 0.coins
-              expect(second_user_table_ranking.reload.earned_coins).to eq 0
+              expect(second_user_table_ranking.reload.prize).to eq 0.coins
             end
           end
         end
 
         context 'when there are coins for two users' do
-          let(:coins_for_winners) { [100, 20] }
+          let(:prizes) { [100.coins, 20.coins] }
 
           context 'when there was no multiplier bet' do
             it 'gives the first position coins to the first user and the second position coins to the second user' do
-              coins_dispenser.call
+              prize_dealer.call
 
               expect(first_user.reload.coins).to eq 100.coins
-              expect(first_user_table_ranking.reload.earned_coins).to eq 100
+              expect(first_user_table_ranking.reload.prize).to eq 100.coins
 
               expect(second_user.reload.coins).to eq 20.coins
-              expect(second_user_table_ranking.reload.earned_coins).to eq 20
+              expect(second_user_table_ranking.reload.prize).to eq 20.coins
             end
           end
 
@@ -90,13 +90,13 @@ describe CoinsDispenser do
             before { first_user_table_ranking.play.multiply_by!(2) }
 
             it 'gives the coins to the first user multiplied by 2' do
-              coins_dispenser.call
+              prize_dealer.call
 
               expect(first_user.reload.coins).to eq 200.coins
-              expect(first_user_table_ranking.reload.earned_coins).to eq 200
+              expect(first_user_table_ranking.reload.prize).to eq 200.coins
 
               expect(second_user.reload.coins).to eq 20.coins
-              expect(second_user_table_ranking.reload.earned_coins).to eq 20
+              expect(second_user_table_ranking.reload.prize).to eq 20.coins
             end
           end
         end
@@ -107,14 +107,14 @@ describe CoinsDispenser do
         let(:second_user_position) { 1 }
 
         context 'when there are no coins' do
-          let(:coins_for_winners) { [] }
+          let(:prizes) { [] }
 
           context 'when there was no multiplier bet' do
             it 'does not give coins to any user' do
-              coins_dispenser.call
+              prize_dealer.call
 
-              expect(first_user_table_ranking.reload.earned_coins).to eq 0
-              expect(first_user_table_ranking.reload.earned_coins).to eq 0
+              expect(first_user_table_ranking.reload.prize).to eq 0.coins
+              expect(first_user_table_ranking.reload.prize).to eq 0.coins
             end
           end
 
@@ -122,26 +122,26 @@ describe CoinsDispenser do
             before { first_user_table_ranking.play.multiply_by!(2) }
 
             it 'does not dispense coins for any user' do
-              coins_dispenser.call
+              prize_dealer.call
 
-              expect(first_user_table_ranking.reload.earned_coins).to eq 0
-              expect(first_user_table_ranking.reload.earned_coins).to eq 0
+              expect(first_user_table_ranking.reload.prize).to eq 0.coins
+              expect(first_user_table_ranking.reload.prize).to eq 0.coins
             end
           end
         end
 
-        context 'when there are coins for one user' do
-          let(:coins_for_winners) { [100] }
+        context 'when there is a prize for one user' do
+          let(:prizes) { [100.coins] }
 
           context 'when there was no multiplier bet' do
             it 'divides the first position coins between the two users' do
-              coins_dispenser.call
+              prize_dealer.call
 
               expect(first_user.reload.coins).to eq 50.coins
-              expect(first_user_table_ranking.reload.earned_coins).to eq 50
+              expect(first_user_table_ranking.reload.prize).to eq 50.coins
 
               expect(second_user.reload.coins).to eq 50.coins
-              expect(second_user_table_ranking.reload.earned_coins).to eq 50
+              expect(second_user_table_ranking.reload.prize).to eq 50.coins
             end
           end
 
@@ -149,29 +149,29 @@ describe CoinsDispenser do
             before { first_user_table_ranking.play.multiply_by!(2) }
 
             it 'divides the first position coins between the two users, but the first users multiply it by 2' do
-              coins_dispenser.call
+              prize_dealer.call
 
               expect(first_user.reload.coins).to eq 100.coins
-              expect(first_user_table_ranking.reload.earned_coins).to eq 100
+              expect(first_user_table_ranking.reload.prize).to eq 100.coins
 
               expect(second_user.reload.coins).to eq 50.coins
-              expect(second_user_table_ranking.reload.earned_coins).to eq 50
+              expect(second_user_table_ranking.reload.prize).to eq 50.coins
             end
           end
         end
 
-        context 'when there are coins for two users' do
-          let(:coins_for_winners) { [100, 20] }
+        context 'when there are prizes for two users' do
+          let(:prizes) { [100.coins, 20.coins] }
 
           context 'when there was no multiplier bet' do
             it 'divides the first and second position coins between the two users' do
-              coins_dispenser.call
+              prize_dealer.call
 
               expect(first_user.reload.coins).to eq 60.coins
-              expect(first_user_table_ranking.reload.earned_coins).to eq 60
+              expect(first_user_table_ranking.reload.prize).to eq 60.coins
 
               expect(second_user.reload.coins).to eq 60.coins
-              expect(second_user_table_ranking.reload.earned_coins).to eq 60
+              expect(second_user_table_ranking.reload.prize).to eq 60.coins
             end
           end
 
@@ -179,28 +179,28 @@ describe CoinsDispenser do
             before { first_user_table_ranking.play.multiply_by!(2) }
 
             it 'divides the first and second position coins between the two users, but the first users multiply it by 2' do
-              coins_dispenser.call
+              prize_dealer.call
 
               expect(first_user.reload.coins).to eq 120.coins
-              expect(first_user_table_ranking.reload.earned_coins).to eq 120
+              expect(first_user_table_ranking.reload.prize).to eq 120.coins
 
               expect(second_user.reload.coins).to eq 60.coins
-              expect(second_user_table_ranking.reload.earned_coins).to eq 60
+              expect(second_user_table_ranking.reload.prize).to eq 60.coins
             end
           end
         end
 
-        context 'when there are coins for three users' do
-          let(:coins_for_winners) { [100, 20, 10] }
+        context 'when there are prizes for three users' do
+          let(:prizes) { [100.coins, 20.coins, 10.coins] }
 
           it 'divides the first and second position coins between the two users' do
-            coins_dispenser.call
+            prize_dealer.call
 
             expect(first_user.reload.coins).to eq 60.coins
-            expect(first_user_table_ranking.reload.earned_coins).to eq 60
+            expect(first_user_table_ranking.reload.prize).to eq 60.coins
 
             expect(second_user.reload.coins).to eq 60.coins
-            expect(second_user_table_ranking.reload.earned_coins).to eq 60
+            expect(second_user_table_ranking.reload.prize).to eq 60.coins
           end
         end
       end
@@ -229,13 +229,13 @@ describe CoinsDispenser do
 
           context 'when there was no multiplier bet' do
             it 'dispenses coins for the first user only' do
-              coins_dispenser.call
+              prize_dealer.call
 
               expect(first_user.reload.coins).to eq 20.coins
-              expect(first_user_table_ranking.reload.earned_coins).to eq 20
+              expect(first_user_table_ranking.reload.prize).to eq 20.coins
 
               expect(second_user.reload.coins).to eq 0.coins
-              expect(second_user_table_ranking.reload.earned_coins).to eq 0
+              expect(second_user_table_ranking.reload.prize).to eq 0.coins
             end
           end
 
@@ -243,13 +243,13 @@ describe CoinsDispenser do
             before { first_user_play.multiply_by!(2) }
 
             it 'dispenses coins for the first user multiplied by 2' do
-              coins_dispenser.call
+              prize_dealer.call
 
               expect(first_user.reload.coins).to eq 40.coins
-              expect(first_user_table_ranking.reload.earned_coins).to eq 40
+              expect(first_user_table_ranking.reload.prize).to eq 40.coins
 
               expect(second_user.reload.coins).to eq 0.coins
-              expect(second_user_table_ranking.reload.earned_coins).to eq 0
+              expect(second_user_table_ranking.reload.prize).to eq 0.coins
             end
           end
         end
@@ -260,13 +260,13 @@ describe CoinsDispenser do
 
           context 'when there was no multiplier bet' do
             it 'divides the first position coins between the two users' do
-              coins_dispenser.call
+              prize_dealer.call
 
               expect(first_user.reload.coins).to eq 10.coins
-              expect(first_user_table_ranking.reload.earned_coins).to eq 10
+              expect(first_user_table_ranking.reload.prize).to eq 10.coins
 
               expect(second_user.reload.coins).to eq 10.coins
-              expect(second_user_table_ranking.reload.earned_coins).to eq 10
+              expect(second_user_table_ranking.reload.prize).to eq 10.coins
             end
           end
 
@@ -274,13 +274,13 @@ describe CoinsDispenser do
             before { first_user_play.multiply_by!(2) }
 
             it 'divides the first position coins between the two users, but the first users multiply it by 2' do
-              coins_dispenser.call
+              prize_dealer.call
 
               expect(first_user.reload.coins).to eq 20.coins
-              expect(first_user_table_ranking.reload.earned_coins).to eq 20
+              expect(first_user_table_ranking.reload.prize).to eq 20.coins
 
               expect(second_user.reload.coins).to eq 10.coins
-              expect(second_user_table_ranking.reload.earned_coins).to eq 10
+              expect(second_user_table_ranking.reload.prize).to eq 10.coins
             end
           end
         end
@@ -289,7 +289,7 @@ describe CoinsDispenser do
 
     context 'when no one have played' do
       it 'does not fail' do
-        expect { coins_dispenser.call }.not_to raise_error
+        expect { prize_dealer.call }.not_to raise_error
 
         expect(first_user.reload.coins).to eq 0.coins
         expect(second_user.reload.coins).to eq 0.coins

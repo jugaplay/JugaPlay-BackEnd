@@ -248,7 +248,7 @@ ActiveRecord::Base.transaction do
     tournament: torneo_verano,
     number_of_players: 3,
     points_for_winners: PointsForWinners.default,
-    coins_for_winners: [100, 50, 10],
+    prizes: [100.coins, 50.coins, 10.coins],
     description: '-',
     table_rules: TableRules.create,
     entry_cost: 0.coins

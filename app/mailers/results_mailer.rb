@@ -13,15 +13,16 @@ class ResultsMailer < ActionMailer::Base
     @table = table
     @play = play
     @user = play.user
-	  @coins = play.earned_coins
+	  @prize = play.prize
     @player_points_calculator = PlayerPointsCalculator.new
 
     mail to: @user.email, from: INFO_MAIL, subject: "Resultados de #{table.title}!" do |format|
       format.html { render 'mailer/results_mailer/send_results_message' }
     end
-    
-    text = "Saliste #{play.position}° en #{@table.title }. Ganaste #{@coins} monedas."
-    text += 'Suerte para la próxima!' if @coins.eql? 0
+
+    currency_text = @prize.chips? ? 'fichas' : 'monedas'
+    text = "Saliste #{play.position}° en #{@table.title }. Ganaste #{@prize} #{currency_text}."
+    text += 'Suerte para la próxima!' if @prize.zero?
    	Notification.result!(user: @user, title: table.title, text: text , action: %q[window.location='history.html';])
   end
 end

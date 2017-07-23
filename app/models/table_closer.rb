@@ -5,7 +5,7 @@ class TableCloser
     @table_closer_validator = TableCloserValidator.new
     @play_points_assigner = PlayPointsAssigner.new(table)
     @table_ranking_calculator = TableRankingCalculator.new(table)
-    @coins_dispenser = CoinsDispenser.new(table)
+    @prize_dealer = PrizeDealer.new(table)
     @ranking_points_updater = RankingPointsUpdater.new(table)
     @ranking_sorter = RankingSorter.new(table.tournament)
   end
@@ -15,7 +15,7 @@ class TableCloser
     play_points_assigner.call
     table_ranking_calculator.call
     if table.has_rankings?
-      coins_dispenser.call
+      prize_dealer.call
       ranking_points_updater.call if table.public?
     end
     table.close!
@@ -23,5 +23,5 @@ class TableCloser
   end
 
   private
-  attr_reader :table, :table_closer_validator, :play_points_assigner, :table_ranking_calculator, :coins_dispenser, :ranking_points_updater, :ranking_sorter
+  attr_reader :table, :table_closer_validator, :play_points_assigner, :table_ranking_calculator, :prize_dealer, :ranking_points_updater, :ranking_sorter
 end

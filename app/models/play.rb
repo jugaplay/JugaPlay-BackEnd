@@ -49,8 +49,16 @@ class Play < ActiveRecord::Base
     ask_table_ranking_for :position, &if_none_block
   end
 
- 	def earned_coins(&if_none_block)
-    ask_table_ranking_for :earned_coins, &if_none_block
+ 	def prize(&if_none_block)
+    ask_table_ranking_for :prize, &if_none_block
+  end
+
+ 	def prize_currency(&if_none_block)
+    ask_table_ranking_for :prize_type, &if_none_block
+  end
+
+ 	def prize_value(&if_none_block)
+    ask_table_ranking_for :prize_value, &if_none_block
   end
 
   private

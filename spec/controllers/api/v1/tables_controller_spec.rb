@@ -25,7 +25,8 @@ describe Api::V1::TablesController do
             entry_cost_type: table.entry_cost.currency,
             multiplier_chips_cost: table.multiplier_chips_cost,
             number_of_players: table.number_of_players,
-            pot_prize: table.expending_coins,
+            pot_prize_type: table.pot_prize.currency,
+            pot_prize_value: table.pot_prize.value,
             start_time: table.start_time.strftime('%d/%m/%Y - %H:%M'),
             end_time: table.end_time.strftime('%d/%m/%Y - %H:%M'),
             description: table.description,
@@ -80,7 +81,7 @@ describe Api::V1::TablesController do
             expect(response_body[:description]).to eq private_table_for_user.description
             expect(response_body[:private]).to eq private_table_for_user.private?
             expect(response_body[:amount_of_users_playing]).to eq private_table_for_user.amount_of_users_playing
-            expect(response_body[:coins_for_winners]).to have(private_table_for_user.coins_for_winners.size).items
+            expect(response_body[:prizes]).to have(private_table_for_user.prizes.size).items
             expect(response_body[:winners]).to be_empty
             expect(response_body[:matches]).to have(private_table_for_user.matches.size).items
             expect(response_body[:group]).not_to be_nil
@@ -106,7 +107,7 @@ describe Api::V1::TablesController do
             expect(response_body[:description]).to eq public_table.description
             expect(response_body[:private]).to eq public_table.private?
             expect(response_body[:amount_of_users_playing]).to eq public_table.amount_of_users_playing
-            expect(response_body[:coins_for_winners]).to have(public_table.coins_for_winners.size).items
+            expect(response_body[:prizes]).to have(public_table.prizes.size).items
             expect(response_body[:winners]).to be_empty
             expect(response_body[:matches]).to have(public_table.matches.size).items
             expect(response_body[:group]).to be_nil
@@ -171,7 +172,7 @@ describe Api::V1::TablesController do
           expect(table.entry_cost).to eq 100.chips
           expect(table.multiplier_chips_cost).to eq 0
           expect(table.points_for_winners).to be_empty
-          expect(table.coins_for_winners).to be_empty
+          expect(table.prizes).to be_empty
           expect(table.matches).to match_array [match]
           expect(table.start_time).to eq match.datetime
           expect(table.end_time).to eq (match.datetime + 2.hours)

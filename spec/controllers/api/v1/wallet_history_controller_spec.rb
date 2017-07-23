@@ -22,8 +22,8 @@ describe Api::V1::WalletHistoryController do
       context 'when the user has made some plays' do
         let(:play) { FactoryGirl.create(:play, user: user) }
         let(:another_play) { FactoryGirl.create(:play, user: user) }
-        let!(:table_raking) { FactoryGirl.create(:table_ranking, play: play, earned_coins: 40, points: 10, created_at: Time.now - 40.days) }
-        let!(:another_table_raking) { FactoryGirl.create(:table_ranking, play: another_play, earned_coins: 50, points: 10, created_at: Time.now ) }
+        let!(:table_raking) { FactoryGirl.create(:table_ranking, play: play, prize: 40.coins, points: 10, created_at: Time.now - 40.days) }
+        let!(:another_table_raking) { FactoryGirl.create(:table_ranking, play: another_play, prize: 50.coins, points: 10, created_at: Time.now ) }
 
         it 'returns json of an empty list' do
           get :index

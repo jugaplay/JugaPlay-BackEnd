@@ -98,7 +98,7 @@ describe BulkClosingTableJob do
     let(:table_rules) { FactoryGirl.create(:table_rules, scored_goals: 1) }
 
     describe 'for public tables' do
-      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [], coins_for_winners: [50, 20]) }
+      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [], prizes: [50.coins, 20.coins]) }
 
       context 'when one user plays for a player that scores 2 goals and other user plays for a player that scores 5' do
         let(:first_user) { FactoryGirl.create(:user, :without_coins) }
@@ -210,7 +210,8 @@ describe BulkClosingTableJob do
 
           expect(table).to be_closed
           expect(table.points_for_winners).to be_empty
-          expect(table.coins_for_winners).to eq [pot_prize.value]
+          expect(table.prizes).to eq [pot_prize]
+          expect(table.prizes_type).to eq table.entry_cost.currency
           expect(table.table_rankings).to have(2).item
           expect(table.table_rankings.first.user).to eq second_user
           expect(table.table_rankings.first.position).to eq 1
