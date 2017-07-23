@@ -8,7 +8,7 @@ class Table < ActiveRecord::Base
   has_many :table_rankings, -> { order(position: :asc) }, through: :plays
   has_and_belongs_to_many :matches
 
-  serialize :coins_for_winners, Array
+  serialize :prizes_values, Array
   serialize :points_for_winners, Array
   as_enum :status, opened: 1, being_closed: 2, closed: 3
 
@@ -21,7 +21,8 @@ class Table < ActiveRecord::Base
   validates :entry_cost_type, presence: true, inclusion: { in: Money::CURRENCIES }
   validates :entry_cost_value, presence: true, numericality: { greater_than_or_equal_to: 0, allow_nil: false }
   validates :multiplier_chips_cost, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: false, allow_nil: false }
-  validates_each_in_array(:coins_for_winners) { validates_numericality_of :value, greater_than: 0, allow_nil: false }
+  validates :prizes_type, presence: true, inclusion: { in: Money::CURRENCIES }
+  validates_each_in_array(:prizes_values) { validates_numericality_of :value, greater_than: 0, allow_nil: false }
   validates_each_in_array(:points_for_winners) { validates_numericality_of :value, greater_than: 0, only_integer: true, allow_nil: false }
   validate :validate_all_matches_belong_to_tournament
 
@@ -48,16 +49,38 @@ class Table < ActiveRecord::Base
   end
 
   def entry_cost
-    Money.new(entry_cost_type, entry_cost_value)
+    Money.new entry_cost_type, entry_cost_value
   end
 
   def entry_cost=(money)
-    self.entry_cost_type = money.currency
-    self.entry_cost_value = money.value
+    if money.is_a?(Money)
+      self.entry_cost_type = money.currency
+      self.entry_cost_value = money.value
+    else
+      errors.add(:entry_cost, 'Given entry cost must be money')
+      fail ActiveRecord::RecordInvalid.new self
+    end
   end
 
-  def expending_coins
-    coins_for_winners.sum
+  def prizes
+    prizes_values.map { |prize| Money.new prizes_type, prize }
+  end
+
+  def prizes=(prizes)
+    if prizes.empty?
+      self.prizes_type = Money::COINS
+      self.prizes_values = []
+    elsif prizes.all? { |prize| prize.is_a?(Money) } && prizes.map { |prize| prize.try(:currency) }.uniq.length.eql?(1)
+      self.prizes_type = prizes.first.currency
+      self.prizes_values = prizes.map(&:value)
+    else
+      errors.add(:prizes, 'All prizes must be money with same currency')
+      fail ActiveRecord::RecordInvalid.new self
+    end
+  end
+
+  def pot_prize
+    Money.new prizes_type, prizes_values.sum
   end
 
   def open!
@@ -107,8 +130,8 @@ class Table < ActiveRecord::Base
     !plays_made_by(user).empty?
   end
 
-  def coins_with_positions
-    coins_for_winners.map.with_index { |coins, index| [index + 1, coins] }
+  def prizes_with_positions
+    prizes.map.with_index { |prize, index| [index + 1, prize] }
   end
 
   def can_play_with_amount_of_players?(players)
@@ -129,8 +152,8 @@ class Table < ActiveRecord::Base
     points_for_winners[position - 1] || 0
   end
 
-  def coins_for_position(position)
-    coins_for_winners[position - 1] || 0
+  def prize_for_position(position)
+    prizes[position - 1] || Money.zero(prizes_type)
   end
 
   def cant_place_ranking_in_position?(position, ranking)

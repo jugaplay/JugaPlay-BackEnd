@@ -19,12 +19,14 @@ describe Api::V1::TableRankingsController do
 
           expect(response_body[:table_rankings]).to have(2).items
           expect(response_body[:table_rankings].first[:id]).to eq table_ranking.id
-          expect(response_body[:table_rankings].first[:coins]).to eq table_ranking.earned_coins
+          expect(response_body[:table_rankings].first[:prize_type]).to eq table_ranking.prize.currency
+          expect(response_body[:table_rankings].first[:prize_value]).to eq table_ranking.prize.value
           expect(response_body[:table_rankings].first[:table_id]).to eq table_ranking.table.id
           expect(response_body[:table_rankings].first[:detail]).to eq table_ranking.detail
           expect(response_body[:table_rankings].first[:date]).to eq now.iso8601
           expect(response_body[:table_rankings].second[:id]).to eq another_table_ranking.id
-          expect(response_body[:table_rankings].second[:coins]).to eq another_table_ranking.earned_coins
+          expect(response_body[:table_rankings].second[:prize_type]).to eq another_table_ranking.prize.currency
+          expect(response_body[:table_rankings].second[:prize_value]).to eq another_table_ranking.prize.value
           expect(response_body[:table_rankings].second[:table_id]).to eq another_table_ranking.table.id
           expect(response_body[:table_rankings].second[:detail]).to eq another_table_ranking.detail
           expect(response_body[:table_rankings].second[:date]).to eq yesterday.iso8601

@@ -20,7 +20,8 @@ class TableRankingCalculator
       position = next_position
       plays.each do |play|
         points = points_for_ranking(play, position)
-        rankings << TableRanking.new(play_id: play.id, position: position, points: points, earned_coins: 0)
+        prize = Money.new(table.prizes_type, 0)
+        rankings << TableRanking.new(play_id: play.id, position: position, points: points, prize: prize)
       end
       next_position += plays.count
     end

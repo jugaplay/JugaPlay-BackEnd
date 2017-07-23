@@ -18,12 +18,12 @@ describe TableRanking do
       expect { FactoryGirl.create(:table_ranking, points: -1) }.to raise_error ActiveRecord::RecordInvalid, /Points must be greater than or equal to 0/
     end
 
-    it 'must have some earned coins' do
-      expect { FactoryGirl.create(:table_ranking, earned_coins: 0) }.not_to raise_error
-      expect { FactoryGirl.create(:table_ranking, earned_coins: 1.5) }.not_to raise_error
+    it 'must have some prize' do
+      expect { FactoryGirl.create(:table_ranking, prize: 0.chips) }.not_to raise_error
+      expect { FactoryGirl.create(:table_ranking, prize: 1.5.coins) }.not_to raise_error
 
-      expect { FactoryGirl.create(:table_ranking, earned_coins: nil) }.to raise_error ActiveRecord::RecordInvalid, /Earned coins can't be blank/
-      expect { FactoryGirl.create(:table_ranking, earned_coins: -1) }.to raise_error ActiveRecord::RecordInvalid, /Earned coins must be greater than or equal to 0/
+      expect { FactoryGirl.create(:table_ranking, prize: nil) }.to raise_error ActiveRecord::RecordInvalid, /Given prize must be money/
+      expect { FactoryGirl.create(:table_ranking, prize: -1) }.to raise_error ActiveRecord::RecordInvalid, /Given prize must be money/
     end
 
     it 'must have a unique position greater than 0 per play per table' do

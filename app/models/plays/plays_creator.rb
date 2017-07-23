@@ -29,7 +29,7 @@ class PlaysCreator
 
   def create_play_with(players, user, entry_cost)
     user.pay! entry_cost
-    # TODO: TEntryFee.create!(user: user, coins: entry_cost.value, table: table, detail: "Entrada a : #{table.title}") if bet_base_coins > 0
+    TEntryFee.create!(user: user, coins: entry_cost.value, table: table, detail: "Entrada a : #{table.title}") if entry_cost.coins? && entry_cost > 0.coins
     play = Play.create!(user: user, table: table, cost: entry_cost)
     players.each_with_index { |player, index| PlayerSelection.create!(play: play, player: player, points: 0, position: index + 1) }
     play

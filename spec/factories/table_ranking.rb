@@ -2,7 +2,7 @@ FactoryGirl.define do
   factory :table_ranking do
     play
     points { 0 }
-    earned_coins { 0 }
+    prize { 0.coins }
     position { TableRanking.last.nil? ? 1 : (TableRanking.last.position + 1) }
     created_at { DateTime.now }
 

@@ -79,7 +79,7 @@ describe Api::V1::CroupierController do
               expect { post :play, bet_play_params }.not_to change { Play.count }
 
               expect(response.status).to eq 200
-              expect(response_body[:errors]).to eq 'User does not have enough coins to bet'
+              expect(response_body[:errors]).to eq 'User does not have enough coins'
             end
           end
         end

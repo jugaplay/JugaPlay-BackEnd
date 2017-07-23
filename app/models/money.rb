@@ -22,23 +22,36 @@ class Money
     @currency, @value = currency, value
   end
 
+  def >(another_money)
+    validate_same_currency another_money
+    value > another_money.value
+  end
+
   def >=(another_money)
-    validate_same_currency self, another_money
+    validate_same_currency another_money
     value >= another_money.value
   end
 
   def +(another_money)
-    validate_same_currency self, another_money
+    validate_same_currency another_money
     Money.new(currency, value + another_money.value)
   end
 
   def -(another_money)
-    validate_same_currency self, another_money
+    validate_same_currency another_money
     Money.new(currency, value - another_money.value)
   end
 
   def *(a_number)
     Money.new(currency, value * a_number)
+  end
+
+  def /(a_number)
+    Money.new(currency, value / a_number)
+  end
+
+  def rounded(by = 2)
+    Money.new(currency, value.round(by))
   end
 
   def coins?
@@ -53,6 +66,10 @@ class Money
       yield if block_given?
       true
     end
+  end
+
+  def zero?
+    value.zero?
   end
 
   def based_on_currency_do(coins_block, chips_block)
@@ -85,8 +102,13 @@ class Money
   attr_reader :currency, :value
   private
 
-  def validate_same_currency(a_money, another_money)
-    fail ArgumentError, 'Can not operate between moneys from different currencies' unless a_money.has_currency?(another_money.currency)
+  def validate_money(object)
+    fail ArgumentError, 'Given another_money must be money' unless object.is_a? Money
+  end
+
+  def validate_same_currency(another_money)
+    validate_money another_money
+    fail ArgumentError, 'Can not operate between moneys from different currencies' unless has_currency?(another_money.currency)
   end
 
   def validate_currency(currency)

@@ -81,13 +81,14 @@ describe Table do
         expect { FactoryGirl.create(:table, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
       end
 
-      it 'can have no coins for winners or have coins for winners greater than 0' do
-        expect { FactoryGirl.create(:table, coins_for_winners: []) }.not_to raise_error
-        expect { FactoryGirl.create(:table, coins_for_winners: [100, 50, 20]) }.not_to raise_error
-        expect { FactoryGirl.create(:table, coins_for_winners: [1.5]) }.not_to raise_error
+      it 'can have no prizes or have prizes greater than 0' do
+        expect { FactoryGirl.create(:table, prizes: []) }.not_to raise_error
+        expect { FactoryGirl.create(:table, prizes: [1.5.chips]) }.not_to raise_error
+        expect { FactoryGirl.create(:table, prizes: [100.coins, 50.coins, 20.coins]) }.not_to raise_error
 
-        expect { FactoryGirl.create(:table, coins_for_winners: [-1]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
-        expect { FactoryGirl.create(:table, coins_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
+        expect { FactoryGirl.create(:table, prizes: [0.coins]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
+        expect { FactoryGirl.create(:table, prizes: [-1]) }.to raise_error ActiveRecord::RecordInvalid, /All prizes must be money with same currency/
+        expect { FactoryGirl.create(:table, prizes: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /All prizes must be money with same currency/
       end
     end
 
@@ -101,13 +102,14 @@ describe Table do
         expect { FactoryGirl.create(:table, :private, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
       end
 
-      it 'can have no coins for winners or have integer coins for winners greater than 0' do
-        expect { FactoryGirl.create(:table, :private, coins_for_winners: []) }.not_to raise_error
-        expect { FactoryGirl.create(:table, :private, coins_for_winners: [1.5]) }.not_to raise_error
-        expect { FactoryGirl.create(:table, :private, coins_for_winners: [100, 50, 20]) }.not_to raise_error
+      it 'can have no prizes or have prizes greater than 0' do
+        expect { FactoryGirl.create(:table, :private, prizes: []) }.not_to raise_error
+        expect { FactoryGirl.create(:table, :private, prizes: [1.5.chips]) }.not_to raise_error
+        expect { FactoryGirl.create(:table, :private, prizes: [100.coins, 50.coins, 20.coins]) }.not_to raise_error
 
-        expect { FactoryGirl.create(:table, :private, coins_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
-        expect { FactoryGirl.create(:table, :private, coins_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
+        expect { FactoryGirl.create(:table, :private, prizes: [-1]) }.to raise_error ActiveRecord::RecordInvalid, /All prizes must be money with same currency/
+        expect { FactoryGirl.create(:table, :private, prizes: [0.coins]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
+        expect { FactoryGirl.create(:table, :private, prizes: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /All prizes must be money with same currency/
       end
     end
   end

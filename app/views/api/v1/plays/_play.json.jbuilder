@@ -4,7 +4,8 @@ json.cost_value play.cost.value
 json.cost_type play.cost.currency
 json.multiplier play.multiplier
 json.points play.points { 'N/A' }
-json.earn_coins play.earned_coins
+json.prize_type play.prize_currency
+json.prize_value play.prize_value
 
 json.players(play.players) do |player|
   json.id player.id

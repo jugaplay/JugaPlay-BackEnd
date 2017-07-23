@@ -8,7 +8,7 @@ FactoryGirl.define do
     points_for_winners { [Faker::Number.number(5), Faker::Number.number(3), Faker::Number.number(2)] }
     entry_cost { 0.coins }
     multiplier_chips_cost { 0 }
-    coins_for_winners { [] }
+    prizes { [] }
 
     after :build do |table|
       datetime = table.end_time.nil? ? Time.now : (table.end_time - 3.hours)

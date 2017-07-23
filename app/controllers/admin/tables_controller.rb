@@ -64,7 +64,7 @@ class Admin::TablesController < Admin::BaseController
     permitted_params = params.require(:table).permit(:title, :entry_cost_value, :entry_cost_type, :number_of_players, :description, :tournament_id, match_ids: [])
     permitted_params[:matches] = Match.where(id: permitted_params.delete(:match_ids))
     permitted_params[:status] = :opened
-    permitted_params[:coins_for_winners] = []
+    permitted_params[:prizes] = []
     permitted_params[:points_for_winners] = PointsForWinners.default
     permitted_params[:start_time] = permitted_params[:matches].map(&:datetime).min
     permitted_params[:end_time] =  permitted_params[:matches].map(&:datetime).min + 2.hours

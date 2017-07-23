@@ -55,7 +55,8 @@ describe Api::V1::PlaysController do
                 cost_value: 0.0,
                 cost_type: 'coins',
                 points: 'N/A',
-                earn_coins: 'N/A',
+                prize_type: 'N/A',
+                prize_value: 'N/A',
                 players: play.players.map { |player| {
                   id: player.id,
                   first_name: player.first_name,
@@ -108,7 +109,8 @@ describe Api::V1::PlaysController do
             expect(response_body[:cost_type]).to eq play.cost.currency
             expect(response_body[:multiplier]).to be_nil
             expect(response_body[:points]).to eq 'N/A'
-            expect(response_body[:earn_coins]).to eq 'N/A'
+            expect(response_body[:prize_type]).to eq 'N/A'
+            expect(response_body[:prize_value]).to eq 'N/A'
           end
         end
 
