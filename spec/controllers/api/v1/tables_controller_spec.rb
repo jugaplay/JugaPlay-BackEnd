@@ -59,6 +59,12 @@ describe Api::V1::TablesController do
     let!(:private_table_for_user) { FactoryGirl.create(:table, group: FactoryGirl.create(:group, users: [user]), table_rules: TableRules.new) }
     let!(:private_table_excluding_user) { FactoryGirl.create(:table, group: FactoryGirl.create(:group)) }
 
+    before do
+      FactoryGirl.create(:table_ranking, table: public_table)
+      FactoryGirl.create(:table_ranking, table: private_table_for_user)
+      FactoryGirl.create(:table_ranking, table: private_table_excluding_user)
+    end
+
     context 'when the user is logged in' do
       before { sign_in user }
 
@@ -82,7 +88,7 @@ describe Api::V1::TablesController do
             expect(response_body[:private]).to eq private_table_for_user.private?
             expect(response_body[:amount_of_users_playing]).to eq private_table_for_user.amount_of_users_playing
             expect(response_body[:prizes]).to have(private_table_for_user.prizes.size).items
-            expect(response_body[:winners]).to be_empty
+            expect(response_body[:winners]).to have(1).item
             expect(response_body[:matches]).to have(private_table_for_user.matches.size).items
             expect(response_body[:group]).not_to be_nil
             expect(response_body[:table_rules]).not_to be_nil
@@ -108,7 +114,7 @@ describe Api::V1::TablesController do
             expect(response_body[:private]).to eq public_table.private?
             expect(response_body[:amount_of_users_playing]).to eq public_table.amount_of_users_playing
             expect(response_body[:prizes]).to have(public_table.prizes.size).items
-            expect(response_body[:winners]).to be_empty
+            expect(response_body[:winners]).to have(1).item
             expect(response_body[:matches]).to have(public_table.matches.size).items
             expect(response_body[:group]).to be_nil
             expect(response_body[:table_rules]).not_to be_nil

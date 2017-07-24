@@ -45,7 +45,7 @@ json.winners(table.table_rankings) do |table_ranking|
   json.user_email table_ranking.user.email
   json.nickname table_ranking.user.nickname
   json.cost_value table_ranking.play_cost.value
-  json.cost_type table_ranking.play_cost.type
+  json.cost_type table_ranking.play_cost.currency
   json.position table_ranking.position
   json.points table_ranking.points
 end
