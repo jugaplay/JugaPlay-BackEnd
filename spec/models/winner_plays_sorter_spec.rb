@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe WinnerPlaysSorter do
   let(:tournament) { FactoryGirl.create(:tournament) }
-  let(:finder) { WinnerPlaysSorter.new(table) }
+  let(:winner_plays_sorter) { WinnerPlaysSorter.new(table.plays) }
 
   context 'for a public table' do
     let!(:table) { FactoryGirl.create(:table, tournament: tournament) }
@@ -24,7 +24,7 @@ describe WinnerPlaysSorter do
           let(:third_user_points) { 6 }
 
           it 'returns the plays order by points' do
-            plays = finder.call
+            plays = winner_plays_sorter.call
 
             expect(plays).to have(3).items
             expect(plays.first).to have(1).item
@@ -42,7 +42,7 @@ describe WinnerPlaysSorter do
           let(:third_user_points) { -1 }
 
           it 'returns the plays order by points' do
-            plays = finder.call
+            plays = winner_plays_sorter.call
 
             expect(plays).to have(3).items
             expect(plays.first).to have(1).item
@@ -86,7 +86,7 @@ describe WinnerPlaysSorter do
               let(:second_user_player_points) { 6 }
 
               it 'returns the plays order by the first player that scored more points' do
-                plays = finder.call
+                plays = winner_plays_sorter.call
 
                 expect(plays).to have(3).items
                 expect(plays.first).to have(1).item
@@ -106,7 +106,7 @@ describe WinnerPlaysSorter do
               let(:second_user_player_points) { 6 }
 
               it 'returns the plays order by the first player that scored more points, joining the players that scored the same points' do
-                plays = finder.call
+                plays = winner_plays_sorter.call
 
                 expect(plays).to have(2).items
                 expect(plays.first).to have(1).item
@@ -124,7 +124,7 @@ describe WinnerPlaysSorter do
               let(:second_user_player_points) { 6 }
 
               it 'returns the plays order by the first player that scored more points, joining the players that scored the same points' do
-                plays = finder.call
+                plays = winner_plays_sorter.call
 
                 expect(plays).to have(3).items
                 expect(plays.first).to have(1).item
@@ -160,7 +160,7 @@ describe WinnerPlaysSorter do
 
 
         it 'returns the third, the second and the first user plays' do
-          plays = finder.call
+          plays = winner_plays_sorter.call
 
           expect(plays).to have(3).items
           expect(plays.first).to have(1).item
@@ -178,7 +178,7 @@ describe WinnerPlaysSorter do
         let(:third_user_points) { -1 }
 
         it 'returns the first, the third and the second user plays' do
-          plays = finder.call
+          plays = winner_plays_sorter.call
 
           expect(plays).to have(3).items
           expect(plays.first).to have(1).item
@@ -225,7 +225,7 @@ describe WinnerPlaysSorter do
             let(:third_user_second_player_points) { 4 }
 
             it 'returns the plays order by the first player that scored more points' do
-              plays = finder.call
+              plays = winner_plays_sorter.call
 
               expect(plays).to have(3).items
               expect(plays.first).to have(1).item
@@ -246,7 +246,7 @@ describe WinnerPlaysSorter do
             let(:third_user_second_player_points) { 2 }
 
             it 'returns the plays order by the first player that scored more points, joining the players that scored the same points' do
-              plays = finder.call
+              plays = winner_plays_sorter.call
 
               expect(plays).to have(2).items
               expect(plays.first).to have(1).item
@@ -265,7 +265,7 @@ describe WinnerPlaysSorter do
             let(:third_user_second_player_points) { 3 }
 
             it 'returns the plays order by the first player that scored more points, joining the players that scored the same points' do
-              plays = finder.call
+              plays = winner_plays_sorter.call
 
               expect(plays).to have(3).items
               expect(plays.first).to have(1).item
@@ -286,7 +286,7 @@ describe WinnerPlaysSorter do
             let(:second_user_second_player_points) { 3 }
 
             it 'returns the plays order by the first player that scored more points, joining the players that scored the same points' do
-              plays = finder.call
+              plays = winner_plays_sorter.call
 
               expect(plays).to have(1).item
               expect(plays.first).to have(3).item
@@ -378,7 +378,7 @@ describe WinnerPlaysSorter do
     end
 
     it 'returns the plays well sorted' do
-      plays = finder.call
+      plays = winner_plays_sorter.call
 
       expect(plays).to have(6).items
       expect(plays[0]).to have(1).item
@@ -430,7 +430,7 @@ describe WinnerPlaysSorter do
     end
 
     it 'returns the plays well sorted' do
-      plays = finder.call
+      plays = winner_plays_sorter.call
 
       expect(plays).to have(3).items
       expect(plays[0]).to have(1).item

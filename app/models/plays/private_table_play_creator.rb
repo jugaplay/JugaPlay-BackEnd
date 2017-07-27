@@ -10,6 +10,10 @@ class PrivateTablePlayCreator < PlaysCreator
     validate_user_belongs_to_group user
   end
 
+  def play_type(bet)
+    :challenge
+  end
+
   def validate_user_belongs_to_group(user)
     fail UserDoesNotBelongToTableGroup unless table.can_play?(user)
   end

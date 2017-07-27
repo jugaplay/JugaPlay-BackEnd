@@ -9,8 +9,12 @@ class TableRanking < ActiveRecord::Base
   validates :points, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :position, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
 
-  scope :by_user, -> user { joins(play: :user).where(plays: { user_id: user.id }) }
   scope :recent_first, -> { order(created_at: :desc) }
+  scope :trainings, -> { joins(:play).merge(Play.trainings) }
+  scope :not_trainings, -> { joins(:play).merge(Play.not_trainings) }
+  scope :of_play_type, -> type { joins(:play).merge(Play.of_type(type)) }
+  scope :by_user, -> user { joins(play: :user).where(plays: { user_id: user.id }) }
+  scope :by_user_and_table, -> user, table { joins(play: :user).joins(play: :table).where(plays: { table_id: table.id }).where(plays: { user_id: user.id }) }
 
   def prize
     Money.new prize_type, prize_value

@@ -169,6 +169,34 @@ class Table < ActiveRecord::Base
     plays_made_by(user).last.try(:multiplier)
   end
 
+  def training_plays
+    plays.trainings
+  end
+
+  def paying_plays
+    plays.not_trainings
+  end
+
+  def plays_for_user(user)
+    user_plays = plays_made_by user
+    return plays if user_plays.empty?
+    plays.of_type(user_plays.first.type)
+  end
+
+  def training_table_rankings
+    table_rankings.trainings
+  end
+
+  def paying_table_rankings
+    table_rankings.not_trainings
+  end
+
+  def table_rankings_for_user(user)
+    user_ranking = TableRanking.by_user_and_table(user, self)
+    return table_rankings if user_ranking.empty?
+    table_rankings.of_play_type(user_ranking.first.play.type)
+  end
+
   private
 
   def plays_made_by(user)

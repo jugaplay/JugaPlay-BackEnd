@@ -8,4 +8,8 @@ class PublicTablePlayCreator < PlaysCreator
   def validate_user_can_play(user)
     validate_user_has_not_played user
   end
+
+  def play_type(bet)
+    bet ? :league: :training
+  end
 end

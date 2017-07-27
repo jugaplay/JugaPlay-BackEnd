@@ -5,7 +5,8 @@ class PrizeDealer
     
   def call
     update_private_table_prize if table.private?
-    deal_prizes_for_all_winners
+    deal_prizes_for_paying_winners
+    deal_prizes_for_training_winners
   end
 
   protected
@@ -16,21 +17,36 @@ class PrizeDealer
     table.update!(prizes: [prize]) unless prize.zero?
   end
 
-  def deal_prizes_for_all_winners
+  def deal_prizes_for_paying_winners
     TableRanking.transaction do
-      table_winner_rankings.group_by(&:position).each do |position, table_rankings|
-        prize_per_ranking = calculate_prize_per_raking(table, table_rankings, position)
+      paying_table_rankings.group_by(&:position).each do |position, table_rankings|
+        prize_per_ranking = calculate_paying_prize_per_ranking(table, table_rankings, position)
         dispense_prizes_for_each_ranking(table_rankings, prize_per_ranking) unless prize_per_ranking.zero?
       end
     end
   end
 
-  def calculate_prize_per_raking(table, table_rankings, current_position)
+  def calculate_paying_prize_per_ranking(table, table_rankings, current_position)
     amount_of_plays = table_rankings.count
     prize_for_winners_from = current_position
     prize_for_winners_to = (current_position + amount_of_plays) - 1
     prize_for_all_rankings = (prize_for_winners_from..prize_for_winners_to).sum { |position| table.prize_for_position(position) }
     (prize_for_all_rankings / amount_of_plays).rounded
+  end
+
+  def deal_prizes_for_training_winners
+    TableRanking.transaction do
+      training_table_rankings.group_by(&:position).each do |position, table_rankings|
+        prize_per_ranking = calculate_training_prize_per_ranking(table, table_rankings, position)
+        dispense_prizes_for_each_ranking(table_rankings, prize_per_ranking) unless prize_per_ranking.zero?
+      end
+    end
+  end
+
+  def calculate_training_prize_per_ranking(table, table_rankings, current_position)
+    last_winning_position = (table_rankings.count / 2.0).round
+    return table.entry_cost if current_position <= last_winning_position
+    Money.zero table.entry_cost_type
   end
 
   def dispense_prizes_for_each_ranking(table_rankings, prize_per_ranking)
@@ -46,7 +62,11 @@ class PrizeDealer
     table_ranking.update_attributes!(prize: prize)
   end
 
-  def table_winner_rankings
-    @table_winner_rankings ||= table.table_rankings
+  def paying_table_rankings
+    @paying_table_rankings ||= table.paying_table_rankings
+  end
+
+  def training_table_rankings
+    @training_table_rankings ||= table.training_table_rankings
   end
 end

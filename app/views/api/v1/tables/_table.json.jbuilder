@@ -19,7 +19,8 @@ json.prizes(table.prizes_with_positions) do |prize_with_position|
 end
 
 unless table.closed?
-  json.playing(table.plays) do |play|
+  json.playing(table.plays_for_user(current_user)) do |play|
+    json.type play.type
     json.user_id play.user.id
     json.user_mail play.user.email
     json.nickname play.user.nickname
@@ -40,7 +41,7 @@ if table.private?
   end
 end
 
-json.winners(table.table_rankings) do |table_ranking|
+json.winners(table.table_rankings_for_user(current_user)) do |table_ranking|
   json.user_id table_ranking.user.id
   json.user_email table_ranking.user.email
   json.nickname table_ranking.user.nickname
