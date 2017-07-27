@@ -23,7 +23,7 @@ describe TableCloser do
             let!(:player_stats) { FactoryGirl.create(:player_stats, player: player, match: match, scored_goals: player_goals) }
 
             before do
-              plays_creator.create_play(user: user, players: [player])
+              plays_creator.create_play(user: user, players: [player], bet: true)
               create_empty_stats_for_all table.matches
               table.start_closing!
             end
@@ -127,7 +127,7 @@ describe TableCloser do
           let(:player_of_the_first_user) { last_match.local_team.players.last }
           let!(:first_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_first_user, match: last_match, scored_goals: 3, right_passes: 2) }
 
-          before { plays_creator.create_play(user: first_user, players: [player_of_the_first_user]) }
+          before { plays_creator.create_play(user: first_user, players: [player_of_the_first_user], bet: true) }
 
           context 'when the second user plays for a player that scores 1 goals and 5 passes' do
             let(:first_match) { table.matches.first }
@@ -135,7 +135,7 @@ describe TableCloser do
             let!(:second_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_second_user, match: first_match, scored_goals: 1, right_passes: 5) }
 
             before do
-              plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
+              plays_creator.create_play(user: second_user, players: [player_of_the_second_user], bet: true)
               create_empty_stats_for_all table.matches
               table.start_closing!
             end
@@ -234,9 +234,9 @@ describe TableCloser do
         let!(:second_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_second_user, match: shared_match, scored_goals: 2) }
 
         before do
-          first_table_plays_creator.create_play(user: first_user, players: [player_of_the_first_user])
-          first_table_plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
-          second_table_plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
+          first_table_plays_creator.create_play(user: first_user, players: [player_of_the_first_user], bet: true)
+          first_table_plays_creator.create_play(user: second_user, players: [player_of_the_second_user], bet: true)
+          second_table_plays_creator.create_play(user: second_user, players: [player_of_the_second_user], bet: true)
           create_empty_stats_for_all first_table.matches
           create_empty_stats_for_all second_table.matches
           first_table.start_closing!

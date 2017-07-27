@@ -5,12 +5,17 @@ class Play < ActiveRecord::Base
   has_many :players, through: :player_selections
   has_one :table_ranking, dependent: :destroy
 
+  as_enum :type, league: 1, training: 2, challenge: 3
+
   validates :table, presence: true
+  validates :type, presence: true
   validates :user, presence: true, uniqueness: { scope: :table }
   validates :cost_type, presence: true, inclusion: { in: Money::CURRENCIES }
   validates :cost_value, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :multiplier, numericality: { allow_blank: true, only_integer: true, greater_than_or_equal_to: 2 }
 
+  scope :of_type, -> type { where(type_cd: types[type]) }
+  scope :not_trainings, -> { where.not(type_cd: types[:training]) }
   scope :recent_finished_by, -> user { where(user: user).joins(:table).merge(Table.closed.recent_first) }
 
   def cost(&if_none_block)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170722000844) do
+ActiveRecord::Schema.define(version: 20170726213740) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -305,6 +305,7 @@ ActiveRecord::Schema.define(version: 20170722000844) do
     t.float    "cost_value", default: 0.0, null: false
     t.integer  "multiplier"
     t.string   "cost_type",                null: false
+    t.integer  "type_cd",                  null: false
   end
 
   add_index "plays", ["table_id"], name: "index_plays_on_table_id", using: :btree

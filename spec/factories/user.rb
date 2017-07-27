@@ -17,6 +17,12 @@ FactoryGirl.define do
       end
     end
 
+    trait :without_chips do
+      after :create do |user|
+        user.wallet.update_attributes!(chips: 0.chips)
+      end
+    end
+
     trait :with_coins do
       transient { coins 0 }
 

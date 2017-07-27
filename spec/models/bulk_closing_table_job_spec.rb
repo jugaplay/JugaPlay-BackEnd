@@ -114,8 +114,8 @@ describe BulkClosingTableJob do
         let(:second_user_play) { PlaysHistory.new.made_by(second_user).in_table(table).last }
 
         before do
-          plays_creator.create_play(user: first_user, players: [player_of_the_first_user])
-          plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
+          plays_creator.create_play(user: first_user, players: [player_of_the_first_user], bet: true)
+          plays_creator.create_play(user: second_user, players: [player_of_the_second_user], bet: true)
           create_empty_stats_for_all table.matches
           table.start_closing!
         end
@@ -187,8 +187,8 @@ describe BulkClosingTableJob do
 
         before do
           group.update_attributes!(users: [first_user, second_user])
-          plays_creator.create_play(user: first_user, players: [player_of_the_first_user])
-          plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
+          plays_creator.create_play(user: first_user, players: [player_of_the_first_user], bet: true)
+          plays_creator.create_play(user: second_user, players: [player_of_the_second_user], bet: true)
           create_empty_stats_for_all table.matches
           table.start_closing!
         end

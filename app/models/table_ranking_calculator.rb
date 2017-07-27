@@ -3,34 +3,48 @@ class TableRankingCalculator
   def initialize(table)
     @table = table
     @rankings = []
-    @winner_plays_sorter = WinnerPlaysSorter.new(table)
   end
 
   def call
-    build_table_rankings
+    build_paying_table_rankings
+    build_training_table_rankings
     TableRanking.import(rankings)
   end
 
   private
-  attr_reader :table, :rankings, :winner_plays_sorter
+  attr_reader :table, :rankings
 
-  def build_table_rankings
+  def build_paying_table_rankings
     next_position = 1
-    winner_plays_sorter.call.each do |plays|
+    winner_plays_sorter(table.paying_plays).call.each do |plays|
       position = next_position
       plays.each do |play|
-        points = points_for_ranking(play, position)
-        prize = Money.new(table.prizes_type, 0)
+        points = points_for_ranking(play)
+        prize = Money.zero(table.prizes_type)
         rankings << TableRanking.new(play_id: play.id, position: position, points: points, prize: prize)
       end
       next_position += plays.count
     end
   end
 
-  def points_for_ranking(play, position)
-    return [play.points, 0].max
-    # TODO: Vamos a usar siempre los puntos de las jugadas
-    # return [play.points, 0].max unless table.has_points_for_winners?
-    # table.points_for_position(position)
+  def build_training_table_rankings
+    next_position = 1
+    winner_plays_sorter(table.training_plays).call.each do |plays|
+      position = next_position
+      plays.each do |play|
+        points = points_for_ranking(play)
+        prize = Money.zero(table.entry_cost_type)
+        rankings << TableRanking.new(play_id: play.id, position: position, points: points, prize: prize)
+      end
+      next_position += plays.count
+    end
+  end
+
+  def points_for_ranking(play)
+    [play.points, 0].max # Vamos a usar siempre los puntos de las jugadas
+  end
+
+  def winner_plays_sorter(plays)
+    WinnerPlaysSorter.new(plays)
   end
 end

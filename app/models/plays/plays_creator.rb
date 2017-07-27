@@ -13,7 +13,7 @@ class PlaysCreator
     validate_user_can_pay(user, entry_cost(bet))
     validate_user_can_play(user)
     validate_all_players(players)
-    create_play_with(players, user, entry_cost(bet))
+    create_play_with(players, user, entry_cost(bet), play_type(bet))
   end
 
   protected
@@ -27,10 +27,14 @@ class PlaysCreator
     fail 'subclass responsibility'
   end
 
-  def create_play_with(players, user, entry_cost)
+  def play_type(bet)
+    fail 'subclass responsibility'
+  end
+
+  def create_play_with(players, user, entry_cost, play_type)
     user.pay! entry_cost
     TEntryFee.create!(user: user, coins: entry_cost.value, table: table, detail: "Entrada a : #{table.title}") if entry_cost.coins? && entry_cost > 0.coins
-    play = Play.create!(user: user, table: table, cost: entry_cost)
+    play = Play.create!(user: user, table: table, cost: entry_cost, type: play_type)
     players.each_with_index { |player, index| PlayerSelection.create!(play: play, player: player, points: 0, position: index + 1) }
     play
   end

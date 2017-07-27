@@ -268,6 +268,81 @@ describe Table do
     end
   end
 
+  describe '#plays_for_user' do
+    let!(:table) { FactoryGirl.create(:table) }
+    let!(:user) { FactoryGirl.create(:user) }
+    let!(:league_play) { PlaysCreator.for(table).create_play(players: Player.all.sample(table.number_of_players), user: FactoryGirl.create(:user), bet: true) }
+    let!(:training_play) { PlaysCreator.for(table).create_play(players: Player.all.sample(table.number_of_players), user: FactoryGirl.create(:user)) }
+
+    context 'when a user has not played in that table' do
+      it 'returns all the plays' do
+        expect(table.plays_for_user user).to have(2).items
+        expect(table.plays_for_user user).to include league_play, training_play
+      end
+    end
+
+    context 'when a user has played in that table' do
+      let!(:play) { PlaysCreator.for(table).create_play(players: Player.all.sample(table.number_of_players), user: user, bet: bet) }
+
+      context 'when the user has bet in that table' do
+        let(:bet) { true }
+
+        it 'includes only the league plays' do
+          expect(table.plays_for_user user).to have(2).items
+          expect(table.plays_for_user user).to include league_play, play
+        end
+      end
+
+      context 'when the user has not bet in that table' do
+        let(:bet) { false }
+
+        it 'includes only the training plays' do
+          expect(table.plays_for_user user).to have(2).items
+          expect(table.plays_for_user user).to include training_play, play
+        end
+      end
+    end
+  end
+
+  describe '#table_rankings_for_user' do
+    let!(:table) { FactoryGirl.create(:table) }
+    let!(:user) { FactoryGirl.create(:user) }
+    let!(:league_play) { PlaysCreator.for(table).create_play(players: Player.all.sample(table.number_of_players), user: FactoryGirl.create(:user), bet: true) }
+    let!(:training_play) { PlaysCreator.for(table).create_play(players: Player.all.sample(table.number_of_players), user: FactoryGirl.create(:user)) }
+    let!(:league_play_ranking) { FactoryGirl.create(:table_ranking, play: league_play) }
+    let!(:training_play_ranking) { FactoryGirl.create(:table_ranking, play: training_play) }
+
+    context 'when a user has not played in that table' do
+      it 'returns all the table rankings' do
+        expect(table.table_rankings_for_user user).to have(2).items
+        expect(table.table_rankings_for_user user).to include league_play_ranking, training_play_ranking
+      end
+    end
+
+    context 'when a user has played in that table' do
+      let!(:play) { PlaysCreator.for(table).create_play(players: Player.all.sample(table.number_of_players), user: user, bet: bet) }
+      let!(:table_ranking) { FactoryGirl.create(:table_ranking, play: play) }
+
+      context 'when the user has bet in that table' do
+        let(:bet) { true }
+
+        it 'includes only the league plays rankings' do
+          expect(table.table_rankings_for_user user).to have(2).items
+          expect(table.table_rankings_for_user user).to include league_play_ranking, table_ranking
+        end
+      end
+
+      context 'when the user has not bet in that table' do
+        let(:bet) { false }
+
+        it 'includes only the training plays rankings' do
+          expect(table.table_rankings_for_user user).to have(2).items
+          expect(table.table_rankings_for_user user).to include training_play_ranking, table_ranking
+        end
+      end
+    end
+  end
+
   describe '.privates_for' do
     let(:user) { FactoryGirl.create(:user) }
     let(:another_user) { FactoryGirl.create(:user) }
