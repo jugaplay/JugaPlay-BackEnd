@@ -22,7 +22,7 @@ json.array! @tables do |table|
 
   # POR RETROCOMPATIBILIDAD #
   json.entry_coins_cost (table.entry_cost.coins? ? table.entry_cost.value : 0)
-  json.expending_coins (table.pot_prize.coins? ? table.pot_prize.value : 0)
+  json.pot_prize (table.pot_prize.coins? ? table.pot_prize.value : 0)
   json.bet_multiplier table.multiplier_for(current_user)
   ###########################
 
