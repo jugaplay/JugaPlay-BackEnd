@@ -53,7 +53,11 @@ class Api::V1::TablesController < Api::BaseController
   end
 
   def table_params
-    table_params = params.require(:table).permit(:title, :description, :match_id, :group_id, :entry_cost_value, :entry_cost_type)
+    table_params = params.require(:table).permit(:title, :description, :match_id, :group_id, :entry_coins_cost, :entry_cost_value, :entry_cost_type)
+    # POR RETROCOMPATIBILIDAD #
+    table_params[:entry_cost_type] = Money::COINS if table_params[:entry_coins_cost]
+    table_params[:entry_cost_value] = table_params.delete(:entry_coins_cost) if table_params[:entry_coins_cost]
+    ###########################
     table_params[:entry_cost_value] = 0 unless table_params[:entry_cost_value]
     table_params[:entry_cost_type] = Money::COINS unless table_params[:entry_cost_type]
     table_params

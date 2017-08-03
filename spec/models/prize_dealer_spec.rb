@@ -279,6 +279,84 @@ describe PrizeDealer do
         end
       end
     end
+
+    context 'when there are four users training' do
+      let(:first_user) { FactoryGirl.create(:user, :without_coins, :without_chips) }
+      let(:second_user) { FactoryGirl.create(:user, :without_coins, :without_chips) }
+      let(:third_user) { FactoryGirl.create(:user, :without_coins, :without_chips) }
+      let(:fourth_user) { FactoryGirl.create(:user, :without_coins, :without_chips) }
+
+      let!(:first_user_table_ranking) { FactoryGirl.create(:table_ranking, :training, table: table, user: first_user, position: first_user_position) }
+      let!(:second_user_table_ranking) { FactoryGirl.create(:table_ranking, :training, table: table, user: second_user, position: second_user_position) }
+      let!(:third_user_table_ranking) { FactoryGirl.create(:table_ranking, :training, table: table, user: third_user, position: third_user_position) }
+      let!(:fourth_user_table_ranking) { FactoryGirl.create(:table_ranking, :training, table: table, user: fourth_user, position: fourth_user_position) }
+
+      let(:prizes) { [] }
+
+      context 'when all the users have different positions' do
+        let(:first_user_position) { 1 }
+        let(:second_user_position) { 2 }
+        let(:third_user_position) { 3 }
+        let(:fourth_user_position) { 4 }
+
+        it 'gives prizes to the first and second users' do
+          prize_dealer.call
+
+          expect(first_user_table_ranking.reload.prize).to eq 2.chips
+          expect(second_user_table_ranking.reload.prize).to eq 2.chips
+          expect(third_user_table_ranking.reload.prize).to eq 0.chips
+          expect(fourth_user_table_ranking.reload.prize).to eq 0.chips
+        end
+      end
+
+      context 'when the second and third user got the second position' do
+        let(:first_user_position) { 1 }
+        let(:second_user_position) { 2 }
+        let(:third_user_position) { 2 }
+        let(:fourth_user_position) { 4 }
+
+        it 'gives prizes to the first, second and third users' do
+          prize_dealer.call
+
+          expect(first_user_table_ranking.reload.prize).to eq 2.chips
+          expect(second_user_table_ranking.reload.prize).to eq 2.chips
+          expect(third_user_table_ranking.reload.prize).to eq 2.chips
+          expect(fourth_user_table_ranking.reload.prize).to eq 0.chips
+        end
+      end
+
+      context 'when the second, third and forth user got the second position' do
+        let(:first_user_position) { 1 }
+        let(:second_user_position) { 2 }
+        let(:third_user_position) { 2 }
+        let(:fourth_user_position) { 2 }
+
+        it 'gives prizes to the first user only' do
+          prize_dealer.call
+
+          expect(first_user_table_ranking.reload.prize).to eq 2.chips
+          expect(second_user_table_ranking.reload.prize).to eq 2.chips
+          expect(third_user_table_ranking.reload.prize).to eq 2.chips
+          expect(fourth_user_table_ranking.reload.prize).to eq 2.chips
+        end
+      end
+
+      context 'when all the users are in the same position' do
+        let(:first_user_position) { 1 }
+        let(:second_user_position) { 1 }
+        let(:third_user_position) { 1 }
+        let(:fourth_user_position) { 1 }
+
+        it 'gives prizes to all the users' do
+          prize_dealer.call
+
+          expect(first_user_table_ranking.reload.prize).to eq 2.chips
+          expect(second_user_table_ranking.reload.prize).to eq 2.chips
+          expect(third_user_table_ranking.reload.prize).to eq 2.chips
+          expect(fourth_user_table_ranking.reload.prize).to eq 2.chips
+        end
+      end
+    end
   end
 
   context 'for private tables' do

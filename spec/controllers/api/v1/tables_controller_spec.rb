@@ -34,7 +34,10 @@ describe Api::V1::TablesController do
             multiplier: table.multiplier_for(user),
             tournament_id: table.tournament_id,
             private: table.private?,
-            amount_of_users_playing: table.amount_of_users_playing
+            amount_of_users_playing: table.amount_of_users_playing,
+            amount_of_users_challenge: table.challenge_plays.count,
+            amount_of_users_league: table.league_plays.count,
+            amount_of_users_training: table.training_plays.count
           }
         end
 
@@ -87,6 +90,9 @@ describe Api::V1::TablesController do
             expect(response_body[:description]).to eq private_table_for_user.description
             expect(response_body[:private]).to eq private_table_for_user.private?
             expect(response_body[:amount_of_users_playing]).to eq private_table_for_user.amount_of_users_playing
+            expect(response_body[:amount_of_users_challenge]).to eq private_table_for_user.challenge_plays.count
+            expect(response_body[:amount_of_users_league]).to eq private_table_for_user.league_plays.count
+            expect(response_body[:amount_of_users_training]).to eq private_table_for_user.training_plays.count
             expect(response_body[:prizes]).to have(private_table_for_user.prizes.size).items
             expect(response_body[:winners]).to have(1).item
             expect(response_body[:matches]).to have(private_table_for_user.matches.size).items
@@ -113,6 +119,9 @@ describe Api::V1::TablesController do
             expect(response_body[:description]).to eq public_table.description
             expect(response_body[:private]).to eq public_table.private?
             expect(response_body[:amount_of_users_playing]).to eq public_table.amount_of_users_playing
+            expect(response_body[:amount_of_users_challenge]).to eq public_table.challenge_plays.count
+            expect(response_body[:amount_of_users_league]).to eq public_table.league_plays.count
+            expect(response_body[:amount_of_users_training]).to eq public_table.training_plays.count
             expect(response_body[:prizes]).to have(public_table.prizes.size).items
             expect(response_body[:winners]).to have(1).item
             expect(response_body[:matches]).to have(public_table.matches.size).items

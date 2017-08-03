@@ -7,6 +7,12 @@ json.points play.points { 'N/A' }
 json.prize_type play.prize_currency
 json.prize_value play.prize_value
 
+# POR RETROCOMPATIBILIDAD #
+json.bet_base_coins play.cost_value
+json.bet_multiplier play.multiplier
+json.earn_coins (play.prize.try(:coins?) ? play.prize_value : 0)
+###########################
+
 json.players(play.players) do |player|
   json.id player.id
   json.first_name player.first_name

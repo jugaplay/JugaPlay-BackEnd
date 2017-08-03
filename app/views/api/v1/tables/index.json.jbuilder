@@ -16,6 +16,15 @@ json.array! @tables do |table|
   json.tournament_id  table.tournament_id
   json.private table.private?
   json.amount_of_users_playing table.amount_of_users_playing
+  json.amount_of_users_challenge table.challenge_plays.count
+  json.amount_of_users_league table.league_plays.count
+  json.amount_of_users_training table.training_plays.count
+
+  # POR RETROCOMPATIBILIDAD #
+  json.entry_coins_cost (table.entry_cost.coins? ? table.entry_cost.value : 0)
+  json.expending_coins (table.pot_prize.coins? ? table.pot_prize.value : 0)
+  json.bet_multiplier table.multiplier_for(current_user)
+  ###########################
 
   if table.private?
     json.group do

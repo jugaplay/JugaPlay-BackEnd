@@ -36,15 +36,16 @@ class PrizeDealer
 
   def deal_prizes_for_training_winners
     TableRanking.transaction do
+      total_rankings = training_table_rankings.count
       training_table_rankings.group_by(&:position).each do |position, table_rankings|
-        prize_per_ranking = calculate_training_prize_per_ranking(table, table_rankings, position)
+        prize_per_ranking = calculate_training_prize_per_ranking(table, total_rankings, position)
         dispense_prizes_for_each_ranking(table_rankings, prize_per_ranking) unless prize_per_ranking.zero?
       end
     end
   end
 
-  def calculate_training_prize_per_ranking(table, table_rankings, current_position)
-    last_winning_position = (table_rankings.count / 2.0).round
+  def calculate_training_prize_per_ranking(table, total_rankings, current_position)
+    last_winning_position = (total_rankings / 2.0).round
     return table.entry_cost if current_position <= last_winning_position
     Money.zero table.entry_cost_type
   end

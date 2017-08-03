@@ -11,6 +11,21 @@ json.end_time table.end_time.strftime('%d/%m/%Y - %H:%M')
 json.description table.description
 json.private table.private?
 json.amount_of_users_playing table.amount_of_users_playing
+json.amount_of_users_challenge table.challenge_plays.count
+json.amount_of_users_league table.league_plays.count
+json.amount_of_users_training table.training_plays.count
+
+# POR RETROCOMPATIBILIDAD #
+json.entry_coins_cost (table.entry_cost.coins? ? table.entry_cost.value : 0)
+if table.pot_prize.coins?
+  json.coins_for_winners(table.prizes_with_positions) do |coins_with_position|
+    json.position coins_with_position.first
+    json.coins coins_with_position.second.value
+  end
+else
+  json.coins_for_winners []
+end
+###########################
 
 json.prizes(table.prizes_with_positions) do |prize_with_position|
   json.position prize_with_position.first
@@ -25,6 +40,7 @@ unless table.closed?
     json.user_mail play.user.email
     json.nickname play.user.nickname
     json.multiplier play.multiplier
+    json.bet_multiplier play.multiplier
     if play.user.rankings.first.present?
       json.ranking_tournament_points play.user.rankings.first.points
       json.ranking_tournament_position play.user.rankings.first.position
@@ -47,6 +63,7 @@ json.winners(table.table_rankings_for_user(current_user)) do |table_ranking|
   json.nickname table_ranking.user.nickname
   json.cost_value table_ranking.play_cost.value
   json.cost_type table_ranking.play_cost.currency
+  json.bet_base_coins (table_ranking.play_cost.coins? ? table_ranking.play_cost.value : 0)
   json.position table_ranking.position
   json.points table_ranking.points
 end

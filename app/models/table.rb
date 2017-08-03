@@ -173,6 +173,14 @@ class Table < ActiveRecord::Base
     plays.trainings
   end
 
+  def league_plays
+    plays.leagues
+  end
+
+  def challenge_plays
+    plays.challenges
+  end
+
   def paying_plays
     plays.not_trainings
   end
