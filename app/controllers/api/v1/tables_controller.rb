@@ -4,7 +4,9 @@ class Api::V1::TablesController < Api::BaseController
   MATCH_NOT_FOUND = 'No se encontró el partido solicitado'
   GROUP_MUST_BE_GIVEN = 'No se ha indicado ningún grupo para la mesa'
   PRIVATE_TABLE_NOT_ALLOWED = 'No tienes permiso para acceder a la mesa privada solicitada'
-  ENTRY_COINS_COST_MUST_BE_GREATER_THAN_OR_EQ_TO_ZERO = 'El monto de monedas para apostar debe ser mayor o igual a cero'
+  MULTIPLIER_MUST_BE_GREATER_THAN_ONE = 'El multiplicador debe ser mayor o igual a 2'
+  ENTRY_COST_TYPE_MUST_BE_INCLUDED_IN_THE_LIST = 'El tipo de cost de entrada de la mesa debe ser: coins o chips'
+  ENTRY_COST_VALUE_MUST_BE_GREATER_THAN_OR_EQ_TO_ZERO = 'El costo de entrada de la mesa debe ser mayor o igual a cero'
 
   def index
     public_tables = Table.opened.publics
@@ -20,7 +22,8 @@ class Api::V1::TablesController < Api::BaseController
 
   def create
     return render_json_error GROUP_MUST_BE_GIVEN unless table_params[:group_id].present?
-    return render_json_error ENTRY_COINS_COST_MUST_BE_GREATER_THAN_OR_EQ_TO_ZERO unless table_params[:entry_coins_cost].to_i >= 0
+    return render_json_error ENTRY_COST_TYPE_MUST_BE_INCLUDED_IN_THE_LIST unless Money.valid_currency?(table_params[:entry_cost_type])
+    return render_json_error ENTRY_COST_VALUE_MUST_BE_GREATER_THAN_OR_EQ_TO_ZERO unless table_params[:entry_cost_value].to_i >= 0
     @table = Table.new private_table_params
     return render_json_errors table.errors unless table.save
     create_notifications_for_table_group
@@ -31,6 +34,7 @@ class Api::V1::TablesController < Api::BaseController
 
   def multiply_play
     multiplier = params[:multiplier].to_i
+    return render_json_error MULTIPLIER_MUST_BE_GREATER_THAN_ONE if multiplier < 1
     play = play_in_table { |redirect| return redirect }
     bet_multiplier_calculator.call(play, multiplier)
     redirect_to api_v1_play_path(play.id)
@@ -49,7 +53,14 @@ class Api::V1::TablesController < Api::BaseController
   end
 
   def table_params
-    params.require(:table).permit(:title, :description, :match_id, :group_id, :entry_coins_cost)
+    table_params = params.require(:table).permit(:title, :description, :match_id, :group_id, :entry_coins_cost, :entry_cost_value, :entry_cost_type)
+    # POR RETROCOMPATIBILIDAD #
+    table_params[:entry_cost_type] = Money::COINS if table_params[:entry_coins_cost]
+    table_params[:entry_cost_value] = table_params.delete(:entry_coins_cost) if table_params[:entry_coins_cost]
+    ###########################
+    table_params[:entry_cost_value] = 0 unless table_params[:entry_cost_value]
+    table_params[:entry_cost_type] = Money::COINS unless table_params[:entry_cost_type]
+    table_params
   end
 
   def private_table_params
@@ -60,7 +71,8 @@ class Api::V1::TablesController < Api::BaseController
     private_table_params[:tournament_id] = match.tournament_id
     private_table_params[:number_of_players] = PRIVATE_TABLE_NUMBER_OF_PLAYERS
     private_table_params[:table_rules] = TableRules.new
-    private_table_params[:coins_for_winners] = []
+    private_table_params[:prizes_values] = []
+    private_table_params[:prizes_type] = table_params[:entry_cost_type]
     private_table_params[:points_for_winners] = []
     private_table_params[:start_time] = match.datetime
     private_table_params[:end_time] = match.datetime + 2.hours

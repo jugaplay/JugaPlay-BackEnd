@@ -7,7 +7,7 @@ describe PlayPointsAssigner do
   describe 'for public tables' do
     context 'when only one table is being calculated' do
       let(:tournament) { table.tournament }
-      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [200, 100], coins_for_winners: [50, 20]) }
+      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [200, 100], prizes: [50.coins, 20.coins]) }
       let(:table_rules) { FactoryGirl.create(:table_rules, scored_goals: points_for_goal, right_passes: points_for_passes) }
 
       context 'when there is just one user playing' do
@@ -135,8 +135,8 @@ describe PlayPointsAssigner do
       let(:shared_match) { FactoryGirl.create(:match, tournament: tournament) }
       let(:first_table_match) { FactoryGirl.create(:match, tournament: tournament) }
       let(:second_table_match) { FactoryGirl.create(:match, tournament: tournament) }
-      let(:first_table) { FactoryGirl.create(:table, matches: [first_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), points_for_winners: [200, 100], coins_for_winners: [50, 20], tournament: tournament) }
-      let(:second_table) { FactoryGirl.create(:table, matches: [second_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), points_for_winners: [200, 100], coins_for_winners: [50, 20], tournament: tournament) }
+      let(:first_table) { FactoryGirl.create(:table, matches: [first_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), points_for_winners: [200, 100], prizes: [50.coins, 20.coins], tournament: tournament) }
+      let(:second_table) { FactoryGirl.create(:table, matches: [second_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), points_for_winners: [200, 100], prizes: [50.coins, 20.coins], tournament: tournament) }
 
       context 'when one user bets for a player of the first table match, and other user bets for a player of the shared match in both tables' do
         let(:first_user) { FactoryGirl.create(:user) }
@@ -175,12 +175,12 @@ describe PlayPointsAssigner do
   describe 'for private tables' do
     context 'when only one table is being calculated' do
       let(:tournament) { table.tournament }
-      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, group: group, entry_coins_cost: 99, points_for_winners: []) }
+      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, group: group, entry_cost: 99.coins, points_for_winners: []) }
       let(:table_rules) { FactoryGirl.create(:table_rules, scored_goals: points_for_goal, right_passes: points_for_passes) }
       let(:group) { FactoryGirl.create(:group) }
 
       context 'when there is just one user playing' do
-        let(:user) { FactoryGirl.create(:user, :with_coins, coins: 99) }
+        let(:user) { FactoryGirl.create(:user, :with_coins, coins: 99.coins) }
 
         before { group.update_attributes!(users: [user]) }
 
@@ -240,8 +240,8 @@ describe PlayPointsAssigner do
       end
 
       context 'when there are two users playing' do
-        let(:first_user) { FactoryGirl.create(:user, :with_coins, coins: 99) }
-        let(:second_user) { FactoryGirl.create(:user, :with_coins, coins: 99) }
+        let(:first_user) { FactoryGirl.create(:user, :with_coins, coins: 99.coins) }
+        let(:second_user) { FactoryGirl.create(:user, :with_coins, coins: 99.coins) }
 
         context 'when those users belong to the group' do
           before { group.update_attributes!(users: [first_user, second_user]) }
@@ -328,13 +328,13 @@ describe PlayPointsAssigner do
       let(:shared_match) { FactoryGirl.create(:match, tournament: tournament) }
       let(:first_table_match) { FactoryGirl.create(:match, tournament: tournament) }
       let(:second_table_match) { FactoryGirl.create(:match, tournament: tournament) }
-      let(:first_table) { FactoryGirl.create(:table, group: group, matches: [first_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), entry_coins_cost: 10, points_for_winners: [], tournament: tournament) }
-      let(:second_table) { FactoryGirl.create(:table, group: group, matches: [second_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), entry_coins_cost: 10, points_for_winners: [], tournament: tournament) }
+      let(:first_table) { FactoryGirl.create(:table, group: group, matches: [first_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), entry_cost: 10.coins, points_for_winners: [], tournament: tournament) }
+      let(:second_table) { FactoryGirl.create(:table, group: group, matches: [second_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), entry_cost: 10.coins, points_for_winners: [], tournament: tournament) }
 
       context 'when one user bets for a player of the first table match, and other user bets for a player of the shared match in both tables' do
         let(:group) { FactoryGirl.create(:group, users: [first_user, second_user]) }
-        let(:first_user) { FactoryGirl.create(:user, :with_coins, coins: 1000) }
-        let(:second_user) { FactoryGirl.create(:user, :with_coins, coins: 1000) }
+        let(:first_user) { FactoryGirl.create(:user, :with_coins, coins: 1000.coins) }
+        let(:second_user) { FactoryGirl.create(:user, :with_coins, coins: 1000.coins) }
         let(:player_of_the_first_user) { first_table_match.local_team.players.last }
         let(:player_of_the_second_user) { shared_match.visitor_team.players.first }
         let!(:first_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_first_user, match: first_table_match, scored_goals: 3) }

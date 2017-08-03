@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170419190427) do
+ActiveRecord::Schema.define(version: 20170726213740) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -296,14 +296,16 @@ ActiveRecord::Schema.define(version: 20170419190427) do
   add_index "players", ["last_name"], name: "index_players_on_last_name", using: :btree
 
   create_table "plays", force: :cascade do |t|
-    t.integer  "user_id",                      null: false
-    t.integer  "table_id",                     null: false
+    t.integer  "user_id",                  null: false
+    t.integer  "table_id",                 null: false
     t.float    "points"
     t.float    "coins"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.float    "bet_base_coins", default: 0.0, null: false
-    t.integer  "bet_multiplier"
+    t.float    "cost_value", default: 0.0, null: false
+    t.integer  "multiplier"
+    t.string   "cost_type",                null: false
+    t.integer  "type_cd",                  null: false
   end
 
   add_index "plays", ["table_id"], name: "index_plays_on_table_id", using: :btree
@@ -376,12 +378,13 @@ ActiveRecord::Schema.define(version: 20170419190427) do
   add_index "t_promotions", ["user_id"], name: "index_t_promotions_on_user_id", using: :btree
 
   create_table "table_rankings", force: :cascade do |t|
-    t.integer  "position",                   null: false
+    t.integer  "position",                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "play_id",                    null: false
-    t.float    "points",       default: 0.0, null: false
-    t.float    "earned_coins",               null: false
+    t.integer  "play_id",                   null: false
+    t.float    "points",      default: 0.0, null: false
+    t.float    "prize_value",               null: false
+    t.string   "prize_type",                null: false
   end
 
   add_index "table_rankings", ["play_id"], name: "index_table_rankings_on_play_id", unique: true, using: :btree
@@ -427,11 +430,13 @@ ActiveRecord::Schema.define(version: 20170419190427) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "tournament_id",                              null: false
-    t.float    "entry_coins_cost",      default: 0.0,        null: false
-    t.text     "coins_for_winners",     default: "--- []\n"
+    t.float    "entry_cost_value",      default: 0.0,        null: false
+    t.text     "prizes_values",         default: "--- []\n"
     t.integer  "group_id"
     t.integer  "status_cd",                                  null: false
     t.float    "multiplier_chips_cost", default: 0.0,        null: false
+    t.string   "entry_cost_type",                            null: false
+    t.string   "prizes_type",                                null: false
   end
 
   add_index "tables", ["title", "start_time", "end_time"], name: "index_tables_on_title_and_start_time_and_end_time", unique: true, using: :btree

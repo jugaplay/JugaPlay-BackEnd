@@ -65,7 +65,8 @@ describe Admin::TablesController do
           table: {
             title: 'RIV vs SLO',
             number_of_players: 10,
-            entry_coins_cost: 20,
+            entry_cost_value: 20,
+            entry_cost_type: Money::CHIPS,
             description: 'descripcion',
             tournament_id: tournament.id,
             match_ids: [river_slo.id],
@@ -80,13 +81,13 @@ describe Admin::TablesController do
           new_table = Table.last
           expect(new_table.title).to eq 'RIV vs SLO'
           expect(new_table.number_of_players).to eq 10
-          expect(new_table.entry_coins_cost).to eq 20
+          expect(new_table.entry_cost).to eq 20.chips
           expect(new_table.description).to eq 'descripcion'
           expect(new_table.tournament).to eq Tournament.first
           expect(new_table.table_rules).not_to be_nil
           expect(new_table.matches).to include river_slo
           expect(new_table.points_for_winners).to eq PointsForWinners.default
-          expect(new_table.coins_for_winners).to be_empty
+          expect(new_table.prizes).to be_empty
           expect(response).to redirect_to admin_tables_path
         end
       end
@@ -135,7 +136,8 @@ describe Admin::TablesController do
           table: {
             title: 'RIV vs BOC',
             number_of_players: 5,
-            entry_coins_cost: 10,
+            entry_cost_value: 10,
+            entry_cost_type: Money::COINS,
             description: 'nueva descripcion',
             match_ids: [river_boca.id],
           }
@@ -146,7 +148,7 @@ describe Admin::TablesController do
         updated_table = Table.last
         expect(updated_table.title).to eq 'RIV vs BOC'
         expect(updated_table.number_of_players).to eq 5
-        expect(updated_table.entry_coins_cost).to eq 10
+        expect(updated_table.entry_cost).to eq 10.coins
         expect(updated_table.description).to eq 'nueva descripcion'
         expect(updated_table.tournament).to eq Tournament.first
         expect(updated_table.matches).to include river_boca

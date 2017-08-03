@@ -22,13 +22,21 @@ describe Table do
       expect { FactoryGirl.create(:table, number_of_players: nil) }.to raise_error ActiveRecord::RecordInvalid, /Number of players can't be blank/
     end
 
-    it 'must have an entry coins cost greater than or equal 0' do
-      expect { FactoryGirl.create(:table, entry_coins_cost: 0) }.not_to raise_error
-      expect { FactoryGirl.create(:table, entry_coins_cost: 5) }.not_to raise_error
-      expect { FactoryGirl.create(:table, entry_coins_cost: 1.5) }.not_to raise_error
+    it 'must have an entry cost value grater than or equal to 0' do
+      expect { FactoryGirl.create(:table, entry_cost_value: 0) }.not_to raise_error
+      expect { FactoryGirl.create(:table, entry_cost_value: 20) }.not_to raise_error
+      expect { FactoryGirl.create(:table, entry_cost_value: 1.5) }.not_to raise_error
 
-      expect { FactoryGirl.create(:table, entry_coins_cost: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost can't be blank/
-      expect { FactoryGirl.create(:table, entry_coins_cost: -1) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be greater than or equal to 0/
+      expect { FactoryGirl.create(:table, entry_cost_value: -1) }.to raise_error ActiveRecord::RecordInvalid, /Entry cost value must be greater than or equal to 0/
+      expect { FactoryGirl.create(:table, entry_cost_value: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry cost value can't be blank/
+    end
+
+    it 'must have a valid entry cost type' do
+      expect { FactoryGirl.create(:table, entry_cost_type: Money::COINS) }.not_to raise_error
+      expect { FactoryGirl.create(:table, entry_cost_type: Money::CHIPS) }.not_to raise_error
+
+      expect { FactoryGirl.create(:table, entry_cost_type: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry cost type is not included in the list/
+      expect { FactoryGirl.create(:table, entry_cost_type: 'unknown') }.to raise_error ActiveRecord::RecordInvalid, /Entry cost type is not included in the list/
     end
 
     it 'must have a multiplier chips cost greater than or equal 0' do
@@ -73,22 +81,14 @@ describe Table do
         expect { FactoryGirl.create(:table, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
       end
 
-      it 'can have no coins for winners or have coins for winners greater than 0' do
-        expect { FactoryGirl.create(:table, coins_for_winners: []) }.not_to raise_error
-        expect { FactoryGirl.create(:table, coins_for_winners: [100, 50, 20]) }.not_to raise_error
-        expect { FactoryGirl.create(:table, coins_for_winners: [1.5]) }.not_to raise_error
+      it 'can have no prizes or have prizes greater than 0' do
+        expect { FactoryGirl.create(:table, prizes: []) }.not_to raise_error
+        expect { FactoryGirl.create(:table, prizes: [1.5.chips]) }.not_to raise_error
+        expect { FactoryGirl.create(:table, prizes: [100.coins, 50.coins, 20.coins]) }.not_to raise_error
 
-        expect { FactoryGirl.create(:table, coins_for_winners: [-1]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
-        expect { FactoryGirl.create(:table, coins_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
-      end
-
-      it 'must have an entry coins cost grater than or equal to 0' do
-        expect { FactoryGirl.create(:table, entry_coins_cost: 0) }.not_to raise_error
-        expect { FactoryGirl.create(:table, entry_coins_cost: 20) }.not_to raise_error
-        expect { FactoryGirl.create(:table, entry_coins_cost: 1.5) }.not_to raise_error
-
-        expect { FactoryGirl.create(:table, entry_coins_cost: -1) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be greater than or equal to 0/
-        expect { FactoryGirl.create(:table, entry_coins_cost: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost can't be blank/
+        expect { FactoryGirl.create(:table, prizes: [0.coins]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
+        expect { FactoryGirl.create(:table, prizes: [-1]) }.to raise_error ActiveRecord::RecordInvalid, /All prizes must be money with same currency/
+        expect { FactoryGirl.create(:table, prizes: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /All prizes must be money with same currency/
       end
     end
 
@@ -102,22 +102,14 @@ describe Table do
         expect { FactoryGirl.create(:table, :private, points_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
       end
 
-      it 'can have no coins for winners or have integer coins for winners greater than 0' do
-        expect { FactoryGirl.create(:table, :private, coins_for_winners: []) }.not_to raise_error
-        expect { FactoryGirl.create(:table, :private, coins_for_winners: [1.5]) }.not_to raise_error
-        expect { FactoryGirl.create(:table, :private, coins_for_winners: [100, 50, 20]) }.not_to raise_error
+      it 'can have no prizes or have prizes greater than 0' do
+        expect { FactoryGirl.create(:table, :private, prizes: []) }.not_to raise_error
+        expect { FactoryGirl.create(:table, :private, prizes: [1.5.chips]) }.not_to raise_error
+        expect { FactoryGirl.create(:table, :private, prizes: [100.coins, 50.coins, 20.coins]) }.not_to raise_error
 
-        expect { FactoryGirl.create(:table, :private, coins_for_winners: [0]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
-        expect { FactoryGirl.create(:table, :private, coins_for_winners: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that is not a number/
-      end
-
-      it 'must have an entry coins cost greater than or equal to 0' do
-        expect { FactoryGirl.create(:table, :private, entry_coins_cost: 0) }.not_to raise_error
-        expect { FactoryGirl.create(:table, :private, entry_coins_cost: 20) }.not_to raise_error
-        expect { FactoryGirl.create(:table, :private, entry_coins_cost: 1.5) }.not_to raise_error
-
-        expect { FactoryGirl.create(:table, :private, entry_coins_cost: -1) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost must be greater than or equal to 0/
-        expect { FactoryGirl.create(:table, :private, entry_coins_cost: nil) }.to raise_error ActiveRecord::RecordInvalid, /Entry coins cost can't be blank/
+        expect { FactoryGirl.create(:table, :private, prizes: [-1]) }.to raise_error ActiveRecord::RecordInvalid, /All prizes must be money with same currency/
+        expect { FactoryGirl.create(:table, :private, prizes: [0.coins]) }.to raise_error ActiveRecord::RecordInvalid, /has a value that must be greater than 0/
+        expect { FactoryGirl.create(:table, :private, prizes: [100, nil]) }.to raise_error ActiveRecord::RecordInvalid, /All prizes must be money with same currency/
       end
     end
   end
@@ -272,6 +264,81 @@ describe Table do
 
         expect(players).to have(local_team_players.size + visitor_team_players.size + another_visitor_team_players.size).items
         expect(players).to match_array (local_team_players + visitor_team_players + another_visitor_team_players)
+      end
+    end
+  end
+
+  describe '#plays_for_user' do
+    let!(:table) { FactoryGirl.create(:table) }
+    let!(:user) { FactoryGirl.create(:user) }
+    let!(:league_play) { PlaysCreator.for(table).create_play(players: Player.all.sample(table.number_of_players), user: FactoryGirl.create(:user), bet: true) }
+    let!(:training_play) { PlaysCreator.for(table).create_play(players: Player.all.sample(table.number_of_players), user: FactoryGirl.create(:user)) }
+
+    context 'when a user has not played in that table' do
+      it 'returns all the plays' do
+        expect(table.plays_for_user user).to have(2).items
+        expect(table.plays_for_user user).to include league_play, training_play
+      end
+    end
+
+    context 'when a user has played in that table' do
+      let!(:play) { PlaysCreator.for(table).create_play(players: Player.all.sample(table.number_of_players), user: user, bet: bet) }
+
+      context 'when the user has bet in that table' do
+        let(:bet) { true }
+
+        it 'includes only the league plays' do
+          expect(table.plays_for_user user).to have(2).items
+          expect(table.plays_for_user user).to include league_play, play
+        end
+      end
+
+      context 'when the user has not bet in that table' do
+        let(:bet) { false }
+
+        it 'includes only the training plays' do
+          expect(table.plays_for_user user).to have(2).items
+          expect(table.plays_for_user user).to include training_play, play
+        end
+      end
+    end
+  end
+
+  describe '#table_rankings_for_user' do
+    let!(:table) { FactoryGirl.create(:table) }
+    let!(:user) { FactoryGirl.create(:user) }
+    let!(:league_play) { PlaysCreator.for(table).create_play(players: Player.all.sample(table.number_of_players), user: FactoryGirl.create(:user), bet: true) }
+    let!(:training_play) { PlaysCreator.for(table).create_play(players: Player.all.sample(table.number_of_players), user: FactoryGirl.create(:user)) }
+    let!(:league_play_ranking) { FactoryGirl.create(:table_ranking, play: league_play) }
+    let!(:training_play_ranking) { FactoryGirl.create(:table_ranking, play: training_play) }
+
+    context 'when a user has not played in that table' do
+      it 'returns all the table rankings' do
+        expect(table.table_rankings_for_user user).to have(2).items
+        expect(table.table_rankings_for_user user).to include league_play_ranking, training_play_ranking
+      end
+    end
+
+    context 'when a user has played in that table' do
+      let!(:play) { PlaysCreator.for(table).create_play(players: Player.all.sample(table.number_of_players), user: user, bet: bet) }
+      let!(:table_ranking) { FactoryGirl.create(:table_ranking, play: play) }
+
+      context 'when the user has bet in that table' do
+        let(:bet) { true }
+
+        it 'includes only the league plays rankings' do
+          expect(table.table_rankings_for_user user).to have(2).items
+          expect(table.table_rankings_for_user user).to include league_play_ranking, table_ranking
+        end
+      end
+
+      context 'when the user has not bet in that table' do
+        let(:bet) { false }
+
+        it 'includes only the training plays rankings' do
+          expect(table.table_rankings_for_user user).to have(2).items
+          expect(table.table_rankings_for_user user).to include training_play_ranking, table_ranking
+        end
       end
     end
   end

@@ -1,9 +1,17 @@
 json.id play.id
 json.start_time play.table.start_time
-json.bet_base_coins play.bet_base_coins
-json.bet_multiplier play.bet_multiplier
+json.cost_value play.cost.value
+json.cost_type play.cost.currency
+json.multiplier play.multiplier
 json.points play.points { 'N/A' }
-json.earn_coins play.earned_coins
+json.prize_type play.prize_currency
+json.prize_value play.prize_value
+
+# POR RETROCOMPATIBILIDAD #
+json.bet_base_coins play.cost_value
+json.bet_multiplier play.multiplier
+json.earn_coins (play.prize.try(:coins?) ? play.prize_value : 0)
+###########################
 
 json.players(play.players) do |player|
   json.id player.id

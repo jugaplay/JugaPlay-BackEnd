@@ -8,7 +8,7 @@
     </div>
     <div class="row col s12">
       <h5>Costo de entrada</h5>
-      <%= @table.entry_coins_cost %> coins
+      <%= @table.entry_cost %> <%= @table.entry_cost_type %>
     </div>
     <div class="row col s12">
       <h5>Partidos</h5>
@@ -40,7 +40,7 @@
     </div>
     <div class="row col s12">
       <h5>Premios</h5>
-      <%= @table.coins_for_winners.join(', ') %>
+      <%= "#{@table.prizes_type} [#{@table.prizes_values.join(', ')}]" %>
     </div>
   </div>
 </div>

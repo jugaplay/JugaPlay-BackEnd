@@ -7,7 +7,7 @@ describe TableCloser do
   describe 'for public tables' do
     context 'when only one table is being calculated' do
       let(:tournament) { table.tournament }
-      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [], coins_for_winners: [50, 20]) }
+      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, points_for_winners: [], prizes: [50.coins, 20.coins]) }
       let(:table_rules) { FactoryGirl.create(:table_rules, scored_goals: points_for_goal, right_passes: points_for_passes) }
 
       context 'when there is just one user playing' do
@@ -23,7 +23,7 @@ describe TableCloser do
             let!(:player_stats) { FactoryGirl.create(:player_stats, player: player, match: match, scored_goals: player_goals) }
 
             before do
-              plays_creator.create_play(user: user, players: [player])
+              plays_creator.create_play(user: user, players: [player], bet: true)
               create_empty_stats_for_all table.matches
               table.start_closing!
             end
@@ -38,8 +38,8 @@ describe TableCloser do
                 expect(table).to be_closed
                 expect(play.points).to eq 0
                 expect(play.position).to eq 1
-                expect(play.earned_coins).to eq 50
-                expect(user.reload.coins).to eq 50
+                expect(play.prize).to eq 50.coins
+                expect(user.reload.coins).to eq 50.coins
                 expect(table.table_rankings).to have(1).item
                 expect(table.table_rankings.first.points).to eq 0
               end
@@ -73,8 +73,8 @@ describe TableCloser do
                 expect(table).to be_closed
                 expect(play.points).to eq 6
                 expect(play.position).to eq 1
-                expect(play.earned_coins).to eq 50
-                expect(user.reload.coins).to eq 50
+                expect(play.prize).to eq 50.coins
+                expect(user.reload.coins).to eq 50.coins
                 expect(table.table_rankings).to have(1).item
                 expect(table.table_rankings.first.points).to eq 6
               end
@@ -110,7 +110,7 @@ describe TableCloser do
 
                 expect(play.points).to be_nil
                 expect(play.position).to eq 'N/A'
-                expect(play.earned_coins).to eq 'N/A'
+                expect(play.prize).to eq 'N/A'
                 expect(table.table_rankings).to be_empty
               end
             end
@@ -127,7 +127,7 @@ describe TableCloser do
           let(:player_of_the_first_user) { last_match.local_team.players.last }
           let!(:first_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_first_user, match: last_match, scored_goals: 3, right_passes: 2) }
 
-          before { plays_creator.create_play(user: first_user, players: [player_of_the_first_user]) }
+          before { plays_creator.create_play(user: first_user, players: [player_of_the_first_user], bet: true) }
 
           context 'when the second user plays for a player that scores 1 goals and 5 passes' do
             let(:first_match) { table.matches.first }
@@ -135,7 +135,7 @@ describe TableCloser do
             let!(:second_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_second_user, match: first_match, scored_goals: 1, right_passes: 5) }
 
             before do
-              plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
+              plays_creator.create_play(user: second_user, players: [player_of_the_second_user], bet: true)
               create_empty_stats_for_all table.matches
               table.start_closing!
             end
@@ -151,14 +151,14 @@ describe TableCloser do
                 second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
 
                 expect(table).to be_closed
-                expect(first_user.reload.coins).to eq 80
+                expect(first_user.reload.coins).to eq 80.coins
                 expect(first_user_play.points).to eq 4
                 expect(first_user_play.position).to eq 1
-                expect(first_user_play.earned_coins).to eq 50
-                expect(second_user.reload.coins).to eq 50
+                expect(first_user_play.prize).to eq 50.coins
+                expect(second_user.reload.coins).to eq 50.coins
                 expect(second_user_play.points).to eq 3.5
                 expect(second_user_play.position).to eq 2
-                expect(second_user_play.earned_coins).to eq 20
+                expect(second_user_play.prize).to eq 20.coins
                 expect(table.table_rankings).to have(2).items
               end
             end
@@ -174,14 +174,14 @@ describe TableCloser do
                 second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
 
                 expect(table).to be_closed
-                expect(first_user.reload.coins).to eq 50
+                expect(first_user.reload.coins).to eq 50.coins
                 expect(first_user_play.points).to eq 1.3
                 expect(first_user_play.position).to eq 2
-                expect(first_user_play.earned_coins).to eq 20
-                expect(second_user.reload.coins).to eq 80
+                expect(first_user_play.prize).to eq 20.coins
+                expect(second_user.reload.coins).to eq 80.coins
                 expect(second_user_play.points).to eq 2.6
                 expect(second_user_play.position).to eq 1
-                expect(second_user_play.earned_coins).to eq 50
+                expect(second_user_play.prize).to eq 50.coins
                 expect(table.table_rankings).to have(2).items
               end
 
@@ -195,14 +195,14 @@ describe TableCloser do
                   second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
 
                   expect(table).to be_closed
-                  expect(first_user.reload.coins).to eq 90
+                  expect(first_user.reload.coins).to eq 90.coins
                   expect(first_user_play.points).to eq 1.3
                   expect(first_user_play.position).to eq 2
-                  expect(first_user_play.earned_coins).to eq 60
-                  expect(second_user.reload.coins).to eq 80
+                  expect(first_user_play.prize).to eq 60.coins
+                  expect(second_user.reload.coins).to eq 80.coins
                   expect(second_user_play.points).to eq 2.6
                   expect(second_user_play.position).to eq 1
-                  expect(second_user_play.earned_coins).to eq 50
+                  expect(second_user_play.prize).to eq 50.coins
                   expect(table.table_rankings).to have(2).items
                 end
               end
@@ -222,8 +222,8 @@ describe TableCloser do
       let(:shared_match) { FactoryGirl.create(:match, tournament: tournament) }
       let(:first_table_match) { FactoryGirl.create(:match, tournament: tournament) }
       let(:second_table_match) { FactoryGirl.create(:match, tournament: tournament) }
-      let(:first_table) { FactoryGirl.create(:table, matches: [first_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), points_for_winners: [200, 100], coins_for_winners: [50, 20], tournament: tournament) }
-      let(:second_table) { FactoryGirl.create(:table, matches: [second_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), points_for_winners: [200, 100], coins_for_winners: [50, 20], tournament: tournament) }
+      let(:first_table) { FactoryGirl.create(:table, matches: [first_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), points_for_winners: [200, 100], prizes: [50.coins, 20.coins], tournament: tournament) }
+      let(:second_table) { FactoryGirl.create(:table, matches: [second_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), points_for_winners: [200, 100], prizes: [50.coins, 20.coins], tournament: tournament) }
 
       context 'when one user bets for a player of the first table match, and other user bets for a player of the shared match in both tables' do
         let(:first_user) { FactoryGirl.create(:user) }
@@ -234,9 +234,9 @@ describe TableCloser do
         let!(:second_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_second_user, match: shared_match, scored_goals: 2) }
 
         before do
-          first_table_plays_creator.create_play(user: first_user, players: [player_of_the_first_user])
-          first_table_plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
-          second_table_plays_creator.create_play(user: second_user, players: [player_of_the_second_user])
+          first_table_plays_creator.create_play(user: first_user, players: [player_of_the_first_user], bet: true)
+          first_table_plays_creator.create_play(user: second_user, players: [player_of_the_second_user], bet: true)
+          second_table_plays_creator.create_play(user: second_user, players: [player_of_the_second_user], bet: true)
           create_empty_stats_for_all first_table.matches
           create_empty_stats_for_all second_table.matches
           first_table.start_closing!
@@ -249,14 +249,14 @@ describe TableCloser do
           second_user_first_table_play = PlaysHistory.new.made_by(second_user).in_table(first_table).last
 
           expect(first_table).to be_closed
-          expect(first_user.reload.coins).to eq 80
+          expect(first_user.reload.coins).to eq 80.coins
           expect(first_user_first_table_play.points).to eq 3
           expect(first_user_first_table_play.position).to eq 1
-          expect(first_user_first_table_play.earned_coins).to eq 50
-          expect(second_user.reload.coins).to eq 50
+          expect(first_user_first_table_play.prize).to eq 50.coins
+          expect(second_user.reload.coins).to eq 50.coins
           expect(second_user_first_table_play.points).to eq 2
           expect(second_user_first_table_play.position).to eq 2
-          expect(second_user_first_table_play.earned_coins).to eq 20
+          expect(second_user_first_table_play.prize).to eq 20.coins
           expect(first_table.table_rankings).to have(2).items
 
           second_table_closer.call
@@ -264,12 +264,12 @@ describe TableCloser do
           second_user_second_table_play = PlaysHistory.new.made_by(second_user).in_table(second_table).last
 
           expect(second_table).to be_closed
-          expect(first_user.reload.coins).to eq 80
+          expect(first_user.reload.coins).to eq 80.coins
           expect(first_user_second_table_play).to be_nil
-          expect(second_user.reload.coins).to eq 100
+          expect(second_user.reload.coins).to eq 100.coins
           expect(second_user_second_table_play.points).to eq 2
           expect(second_user_second_table_play.position).to eq 1
-          expect(second_user_second_table_play.earned_coins).to eq 50
+          expect(second_user_second_table_play.prize).to eq 50.coins
           expect(second_table.table_rankings).to have(1).item
         end
       end
@@ -279,12 +279,12 @@ describe TableCloser do
   describe 'for private tables' do
     context 'when only one table is being calculated' do
       let(:tournament) { table.tournament }
-      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, group: group, entry_coins_cost: 99, points_for_winners: []) }
+      let(:table) { FactoryGirl.create(:table, number_of_players: 1, table_rules: table_rules, group: group, entry_cost: 99.coins, points_for_winners: []) }
       let(:table_rules) { FactoryGirl.create(:table_rules, scored_goals: points_for_goal, right_passes: points_for_passes) }
       let(:group) { FactoryGirl.create(:group) }
 
       context 'when there is just one user playing' do
-        let(:user) { FactoryGirl.create(:user, :with_coins, coins: 99) }
+        let(:user) { FactoryGirl.create(:user, :with_coins, coins: 99.coins) }
 
         before { group.update_attributes!(users: [user]) }
 
@@ -313,8 +313,8 @@ describe TableCloser do
                 expect(table).to be_closed
                 expect(play.points).to eq 0
                 expect(play.position).to eq 1
-                expect(play.earned_coins).to eq 99
-                expect(user.reload.coins).to eq 99
+                expect(play.prize).to eq 99.coins
+                expect(user.reload.coins).to eq 99.coins
                 expect(table.table_rankings).to have(1).item
               end
 
@@ -347,8 +347,8 @@ describe TableCloser do
                 expect(table).to be_closed
                 expect(play.points).to eq 6
                 expect(play.position).to eq 1
-                expect(play.earned_coins).to eq 99
-                expect(user.reload.coins).to eq 99
+                expect(play.prize).to eq 99.coins
+                expect(user.reload.coins).to eq 99.coins
                 expect(table.table_rankings).to have(1).item
               end
 
@@ -383,7 +383,7 @@ describe TableCloser do
 
                 expect(play.points).to be_nil
                 expect(play.position).to eq 'N/A'
-                expect(play.earned_coins).to eq 'N/A'
+                expect(play.prize).to eq 'N/A'
                 expect(table.table_rankings).to be_empty
               end
             end
@@ -392,8 +392,8 @@ describe TableCloser do
       end
 
       context 'when there are two users playing' do
-        let(:first_user) { FactoryGirl.create(:user, :with_coins, coins: 99) }
-        let(:second_user) { FactoryGirl.create(:user, :with_coins, coins: 99) }
+        let(:first_user) { FactoryGirl.create(:user, :with_coins, coins: 99.coins) }
+        let(:second_user) { FactoryGirl.create(:user, :with_coins, coins: 99.coins) }
 
         context 'when those users belong to the group' do
           before { group.update_attributes!(users: [first_user, second_user]) }
@@ -427,14 +427,14 @@ describe TableCloser do
                   second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
 
                   expect(table).to be_closed
-                  expect(first_user.reload.coins).to eq (99 * 2)
+                  expect(first_user.reload.coins).to eq (99 * 2).coins
                   expect(first_user_play.points).to eq 4
                   expect(first_user_play.position).to eq 1
-                  expect(first_user_play.earned_coins).to eq (99 * 2)
-                  expect(second_user.reload.coins).to eq 0
+                  expect(first_user_play.prize).to eq (99.coins * 2)
+                  expect(second_user.reload.coins).to eq 0.coins
                   expect(second_user_play.points).to eq 3.5
                   expect(second_user_play.position).to eq 2
-                  expect(second_user_play.earned_coins).to eq 0
+                  expect(second_user_play.prize).to eq 0.coins
                   expect(table.table_rankings).to have(2).items
                 end
               end
@@ -450,14 +450,14 @@ describe TableCloser do
                   second_user_play = PlaysHistory.new.made_by(second_user).in_table(table).last
 
                   expect(table).to be_closed
-                  expect(first_user.reload.coins).to eq 0
+                  expect(first_user.reload.coins).to eq 0.coins
                   expect(first_user_play.points).to eq 1.3
                   expect(first_user_play.position).to eq 2
-                  expect(first_user_play.earned_coins).to eq 0
-                  expect(second_user.reload.coins).to eq (99 * 2)
+                  expect(first_user_play.prize).to eq 0.coins
+                  expect(second_user.reload.coins).to eq (99 * 2).coins
                   expect(second_user_play.points).to eq 2.6
                   expect(second_user_play.position).to eq 1
-                  expect(second_user_play.earned_coins).to eq (99 * 2)
+                  expect(second_user_play.prize).to eq (99.coins * 2)
                   expect(table.table_rankings).to have(2).items
                 end
               end
@@ -500,13 +500,13 @@ describe TableCloser do
       let(:shared_match) { FactoryGirl.create(:match, tournament: tournament) }
       let(:first_table_match) { FactoryGirl.create(:match, tournament: tournament) }
       let(:second_table_match) { FactoryGirl.create(:match, tournament: tournament) }
-      let(:first_table) { FactoryGirl.create(:table, group: group, matches: [first_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), entry_coins_cost: 10, points_for_winners: [], tournament: tournament) }
-      let(:second_table) { FactoryGirl.create(:table, group: group, matches: [second_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), entry_coins_cost: 10, points_for_winners: [], tournament: tournament) }
+      let(:first_table) { FactoryGirl.create(:table, group: group, matches: [first_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), entry_cost: 10.coins, points_for_winners: [], tournament: tournament) }
+      let(:second_table) { FactoryGirl.create(:table, group: group, matches: [second_table_match, shared_match], number_of_players: 1, table_rules: FactoryGirl.create(:table_rules, scored_goals: 1), entry_cost: 10.coins, points_for_winners: [], tournament: tournament) }
 
       context 'when one user bets for a player of the first table match, and other user bets for a player of the shared match in both tables' do
         let(:group) { FactoryGirl.create(:group, users: [first_user, second_user]) }
-        let(:first_user) { FactoryGirl.create(:user, :with_coins, coins: 1000) }
-        let(:second_user) { FactoryGirl.create(:user, :with_coins, coins: 1000) }
+        let(:first_user) { FactoryGirl.create(:user, :with_coins, coins: 1000.coins) }
+        let(:second_user) { FactoryGirl.create(:user, :with_coins, coins: 1000.coins) }
         let(:player_of_the_first_user) { first_table_match.local_team.players.last }
         let(:player_of_the_second_user) { shared_match.visitor_team.players.first }
         let!(:first_player_stats) { FactoryGirl.create(:player_stats, player: player_of_the_first_user, match: first_table_match, scored_goals: 3) }
@@ -528,14 +528,14 @@ describe TableCloser do
           second_user_first_table_play = PlaysHistory.new.made_by(second_user).in_table(first_table).last
 
           expect(first_table).to be_closed
-          expect(first_user.reload.coins).to eq 1010
+          expect(first_user.reload.coins).to eq 1010.coins
           expect(first_user_first_table_play.points).to eq 3
           expect(first_user_first_table_play.position).to eq 1
-          expect(first_user_first_table_play.earned_coins).to eq 20
-          expect(second_user.reload.coins).to eq 980
+          expect(first_user_first_table_play.prize).to eq 20.coins
+          expect(second_user.reload.coins).to eq 980.coins
           expect(second_user_first_table_play.points).to eq 2
           expect(second_user_first_table_play.position).to eq 2
-          expect(second_user_first_table_play.earned_coins).to eq 0
+          expect(second_user_first_table_play.prize).to eq 0.coins
           expect(first_table.table_rankings).to have(2).items
 
           second_table_closer.call
@@ -543,12 +543,12 @@ describe TableCloser do
           second_user_second_table_play = PlaysHistory.new.made_by(second_user).in_table(second_table).last
 
           expect(second_table).to be_closed
-          expect(first_user.reload.coins).to eq 1010
+          expect(first_user.reload.coins).to eq 1010.coins
           expect(first_user_second_table_play).to be_nil
-          expect(second_user.reload.coins).to eq 990
+          expect(second_user.reload.coins).to eq 990.coins
           expect(second_user_second_table_play.points).to eq 2
           expect(second_user_second_table_play.position).to eq 1
-          expect(second_user_second_table_play.earned_coins).to eq 10
+          expect(second_user_second_table_play.prize).to eq 10.coins
           expect(second_table.table_rankings).to have(1).items
         end
       end

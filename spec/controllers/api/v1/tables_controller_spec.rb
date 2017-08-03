@@ -21,18 +21,23 @@ describe Api::V1::TablesController do
             id: table.id,
             title: table.title,
             has_password: false,
-            entry_coins_cost: table.entry_coins_cost,
+            entry_cost_value: table.entry_cost.value,
+            entry_cost_type: table.entry_cost.currency,
             multiplier_chips_cost: table.multiplier_chips_cost,
             number_of_players: table.number_of_players,
-            pot_prize: table.expending_coins,
+            pot_prize_type: table.pot_prize.currency,
+            pot_prize_value: table.pot_prize.value,
             start_time: table.start_time.strftime('%d/%m/%Y - %H:%M'),
             end_time: table.end_time.strftime('%d/%m/%Y - %H:%M'),
             description: table.description,
             has_been_played_by_user: table.has_played?(user),
-            bet_multiplier: table.multiplier_for(user),
+            multiplier: table.multiplier_for(user),
             tournament_id: table.tournament_id,
             private: table.private?,
-            amount_of_users_playing: table.amount_of_users_playing
+            amount_of_users_playing: table.amount_of_users_playing,
+            amount_of_users_challenge: table.challenge_plays.count,
+            amount_of_users_league: table.league_plays.count,
+            amount_of_users_training: table.training_plays.count
           }
         end
 
@@ -57,6 +62,12 @@ describe Api::V1::TablesController do
     let!(:private_table_for_user) { FactoryGirl.create(:table, group: FactoryGirl.create(:group, users: [user]), table_rules: TableRules.new) }
     let!(:private_table_excluding_user) { FactoryGirl.create(:table, group: FactoryGirl.create(:group)) }
 
+    before do
+      FactoryGirl.create(:table_ranking, table: public_table)
+      FactoryGirl.create(:table_ranking, table: private_table_for_user)
+      FactoryGirl.create(:table_ranking, table: private_table_excluding_user)
+    end
+
     context 'when the user is logged in' do
       before { sign_in user }
 
@@ -70,7 +81,8 @@ describe Api::V1::TablesController do
             expect(response_body[:title]).to eq private_table_for_user.title
             expect(response_body[:has_password]).to be_falsey
             expect(response_body[:number_of_players]).to eq private_table_for_user.number_of_players
-            expect(response_body[:entry_coins_cost]).to eq private_table_for_user.entry_coins_cost
+            expect(response_body[:entry_cost_value]).to eq private_table_for_user.entry_cost.value
+            expect(response_body[:entry_cost_type]).to eq private_table_for_user.entry_cost.currency
             expect(response_body[:multiplier_chips_cost]).to eq private_table_for_user.multiplier_chips_cost
             expect(response_body[:tournament_id]).to eq private_table_for_user.tournament_id
             expect(response_body[:start_time]).to eq private_table_for_user.start_time.strftime('%d/%m/%Y - %H:%M')
@@ -78,8 +90,11 @@ describe Api::V1::TablesController do
             expect(response_body[:description]).to eq private_table_for_user.description
             expect(response_body[:private]).to eq private_table_for_user.private?
             expect(response_body[:amount_of_users_playing]).to eq private_table_for_user.amount_of_users_playing
-            expect(response_body[:coins_for_winners]).to have(private_table_for_user.coins_for_winners.size).items
-            expect(response_body[:winners]).to be_empty
+            expect(response_body[:amount_of_users_challenge]).to eq private_table_for_user.challenge_plays.count
+            expect(response_body[:amount_of_users_league]).to eq private_table_for_user.league_plays.count
+            expect(response_body[:amount_of_users_training]).to eq private_table_for_user.training_plays.count
+            expect(response_body[:prizes]).to have(private_table_for_user.prizes.size).items
+            expect(response_body[:winners]).to have(1).item
             expect(response_body[:matches]).to have(private_table_for_user.matches.size).items
             expect(response_body[:group]).not_to be_nil
             expect(response_body[:table_rules]).not_to be_nil
@@ -95,7 +110,8 @@ describe Api::V1::TablesController do
             expect(response_body[:title]).to eq public_table.title
             expect(response_body[:has_password]).to be_falsey
             expect(response_body[:number_of_players]).to eq public_table.number_of_players
-            expect(response_body[:entry_coins_cost]).to eq public_table.entry_coins_cost
+            expect(response_body[:entry_cost_value]).to eq public_table.entry_cost.value
+            expect(response_body[:entry_cost_type]).to eq public_table.entry_cost.currency
             expect(response_body[:multiplier_chips_cost]).to eq public_table.multiplier_chips_cost
             expect(response_body[:tournament_id]).to eq public_table.tournament_id
             expect(response_body[:start_time]).to eq public_table.start_time.strftime('%d/%m/%Y - %H:%M')
@@ -103,8 +119,11 @@ describe Api::V1::TablesController do
             expect(response_body[:description]).to eq public_table.description
             expect(response_body[:private]).to eq public_table.private?
             expect(response_body[:amount_of_users_playing]).to eq public_table.amount_of_users_playing
-            expect(response_body[:coins_for_winners]).to have(public_table.coins_for_winners.size).items
-            expect(response_body[:winners]).to be_empty
+            expect(response_body[:amount_of_users_challenge]).to eq public_table.challenge_plays.count
+            expect(response_body[:amount_of_users_league]).to eq public_table.league_plays.count
+            expect(response_body[:amount_of_users_training]).to eq public_table.training_plays.count
+            expect(response_body[:prizes]).to have(public_table.prizes.size).items
+            expect(response_body[:winners]).to have(1).item
             expect(response_body[:matches]).to have(public_table.matches.size).items
             expect(response_body[:group]).to be_nil
             expect(response_body[:table_rules]).not_to be_nil
@@ -142,7 +161,8 @@ describe Api::V1::TablesController do
           description: 'bla bla bla',
           group_id: group.id,
           match_id: match.id,
-          entry_coins_cost: 100
+          entry_cost_value: 100,
+          entry_cost_type: Money::CHIPS
         }
       }
     end
@@ -164,10 +184,10 @@ describe Api::V1::TablesController do
           expect(table.title).to eq table_params[:table][:title]
           expect(table.description).to eq table_params[:table][:description]
           expect(table.number_of_players).to eq 3
-          expect(table.entry_coins_cost).to eq table_params[:table][:entry_coins_cost]
+          expect(table.entry_cost).to eq 100.chips
           expect(table.multiplier_chips_cost).to eq 0
           expect(table.points_for_winners).to be_empty
-          expect(table.coins_for_winners).to be_empty
+          expect(table.prizes).to be_empty
           expect(table.matches).to match_array [match]
           expect(table.start_time).to eq match.datetime
           expect(table.end_time).to eq (match.datetime + 2.hours)
@@ -184,10 +204,10 @@ describe Api::V1::TablesController do
           end
         end
 
-        context 'when no entry coins cost was given' do
-          it 'creates a table with no entry coins cost for the given group' do
+        context 'when no entry cost value was given' do
+          it 'creates a table with 0 chips entry cost for the given group' do
             params = table_params
-            params[:table].delete(:entry_coins_cost)
+            params[:table].delete(:entry_cost_value)
 
             expect { post :create, params }.to change { Table.count }.by(1)
 
@@ -198,7 +218,26 @@ describe Api::V1::TablesController do
             expect(table).to be_opened
             expect(table).to be_private
             expect(table.group).to eq group
-            expect(table.entry_coins_cost).to eq 0
+            expect(table.entry_cost).to eq 0.chips
+          end
+        end
+
+        context 'when no entry cost was given' do
+          it 'creates a table with 0 coins cost for the given group' do
+            params = table_params
+            params[:table].delete(:entry_cost_value)
+            params[:table].delete(:entry_cost_type)
+
+            expect { post :create, params }.to change { Table.count }.by(1)
+
+            expect(response.status).to eq 200
+            expect(response).to render_template :show
+
+            table = Table.last
+            expect(table).to be_opened
+            expect(table).to be_private
+            expect(table.group).to eq group
+            expect(table.entry_cost).to eq 0.coins
           end
         end
       end
@@ -237,13 +276,13 @@ describe Api::V1::TablesController do
         context 'when the entry coins cost is negative' do
           it 'does not create a table and renders an error' do
             params = table_params
-            params[:table][:entry_coins_cost] = -1
+            params[:table][:entry_cost_value] = -1
 
             expect { post :create, params }.not_to change { Table.count }
 
             expect(Notification.count).to eq 0
             expect(response.status).to eq 400
-            expect(response_body[:errors]).to include Api::V1::TablesController::ENTRY_COINS_COST_MUST_BE_GREATER_THAN_OR_EQ_TO_ZERO
+            expect(response_body[:errors]).to include Api::V1::TablesController::ENTRY_COST_VALUE_MUST_BE_GREATER_THAN_OR_EQ_TO_ZERO
           end
         end
 
@@ -280,7 +319,7 @@ describe Api::V1::TablesController do
         let(:table) { FactoryGirl.create(:table, multiplier_chips_cost: 1) }
         let!(:play) { FactoryGirl.create(:play, table: table, user: user) }
 
-        before { user.win_chips! 100 }
+        before { user.win_money! 100.chips }
 
         context 'when a multiplier is given' do
           let(:params) do
@@ -295,8 +334,7 @@ describe Api::V1::TablesController do
 
               expect(response).to redirect_to api_v1_play_path(play.id)
 
-              expect(play.reload.bet_multiplier).to eq 3
-              expect(play.reload.coins_bet_multiplier).to eq 3
+              expect(play.reload.multiplier).to eq 3
             end
           end
 
@@ -307,7 +345,7 @@ describe Api::V1::TablesController do
               post :multiply_play, params
 
               expect(response.status).to eq 400
-              expect(response_body[:errors].first).to include 'Bet multiplier must be greater than or equal to 2'
+              expect(response_body[:errors].first).to include Api::V1::TablesController::MULTIPLIER_MUST_BE_GREATER_THAN_ONE
             end
           end
         end
@@ -321,7 +359,7 @@ describe Api::V1::TablesController do
             post :multiply_play, params
 
             expect(response.status).to eq 400
-            expect(response_body[:errors].first).to include 'Bet multiplier must be greater than or equal to 2'
+            expect(response_body[:errors].first).to include Api::V1::TablesController::MULTIPLIER_MUST_BE_GREATER_THAN_ONE
           end
         end
       end

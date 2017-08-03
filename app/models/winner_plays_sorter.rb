@@ -1,7 +1,7 @@
 class WinnerPlaysSorter
 
-  def initialize(table)
-    @table = table
+  def initialize(scope_of_plays)
+    @scope_of_plays = scope_of_plays
   end
 
   def call
@@ -12,7 +12,7 @@ class WinnerPlaysSorter
   end
 
   private
-  attr_reader :table
+  attr_reader :scope_of_plays
 
   def sort_by_player(points, plays)
     if plays.many?
@@ -61,6 +61,6 @@ class WinnerPlaysSorter
   end
 
   def table_plays_by_points
-    @table_plays_by_points ||= table.plays.order(points: :desc).group_by(&:points)
+    @table_plays_by_points ||= scope_of_plays.order(points: :desc).group_by(&:points)
   end
 end
