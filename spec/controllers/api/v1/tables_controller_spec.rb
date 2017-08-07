@@ -31,6 +31,7 @@ describe Api::V1::TablesController do
             end_time: table.end_time.strftime('%d/%m/%Y - %H:%M'),
             description: table.description,
             has_been_played_by_user: table.has_played?(user),
+            played_by_user_type: 'N/A',
             multiplier: table.multiplier_for(user),
             tournament_id: table.tournament_id,
             private: table.private?,
