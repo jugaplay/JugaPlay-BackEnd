@@ -12,6 +12,7 @@ json.array! @tables do |table|
   json.end_time table.end_time.strftime('%d/%m/%Y - %H:%M')
   json.description table.description
   json.has_been_played_by_user table.has_played?(current_user)
+  json.played_by_user_type table.play_type_for(current_user)
   json.multiplier table.multiplier_for(current_user)
   json.tournament_id  table.tournament_id
   json.private table.private?

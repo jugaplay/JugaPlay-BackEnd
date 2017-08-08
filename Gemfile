@@ -18,7 +18,6 @@ gem 'kaminari'
 gem 'simple_enum', '~> 2.3.0'
 gem 'delayed_job_active_record'
 gem 'delayed-plugins-airbrake'
-gem 'newrelic_rpm'
 
 gem 'sass-rails', '~> 5.0'
 gem 'compass-rails', '~> 2.0.4'
