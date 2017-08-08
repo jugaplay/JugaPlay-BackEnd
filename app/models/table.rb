@@ -169,9 +169,9 @@ class Table < ActiveRecord::Base
     plays_made_by(user).last.try(:multiplier)
   end
 
-  def play_cost_type_for(user, &if_none_block)
+  def play_type_for(user, &if_none_block)
     last_play = plays_made_by(user).last
-    return last_play.cost_type if last_play
+    return last_play.type if last_play
     (if_none_block || -> { 'N/A' }).call
   end
 
