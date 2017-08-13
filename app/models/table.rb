@@ -67,16 +67,12 @@ class Table < ActiveRecord::Base
   end
 
   def prizes=(prizes)
-    if prizes.empty?
-      self.prizes_type = Money::COINS
-      self.prizes_values = []
-    elsif prizes.all? { |prize| prize.is_a?(Money) } && prizes.map { |prize| prize.try(:currency) }.uniq.length.eql?(1)
-      self.prizes_type = prizes.first.currency
-      self.prizes_values = prizes.map(&:value)
-    else
+    currency, values = MoneyListParser.new.parse!(prizes) do
       errors.add(:prizes, 'All prizes must be money with same currency')
       fail ActiveRecord::RecordInvalid.new self
     end
+    self.prizes_type = currency
+    self.prizes_values = values
   end
 
   def pot_prize
