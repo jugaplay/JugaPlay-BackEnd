@@ -152,15 +152,6 @@ class Table < ActiveRecord::Base
     prizes[position - 1] || Money.zero(prizes_type)
   end
 
-  def cant_place_ranking_in_position?(position, ranking)
-    ranking_in_position = ranking_in_position(position)
-    ranking_in_position.present? && !ranking_in_position.eql?(ranking)
-  end
-
-  def ranking_in_position(position)
-    table_rankings.detect { |ranking| ranking.has_position? position }
-  end
-
   def multiplier_for(user)
     plays_made_by(user).last.try(:multiplier)
   end
