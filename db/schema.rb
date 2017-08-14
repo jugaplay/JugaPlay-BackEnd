@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170813132648) do
+ActiveRecord::Schema.define(version: 20170813220847) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -183,6 +183,34 @@ ActiveRecord::Schema.define(version: 20170813132648) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "league_rankings", force: :cascade do |t|
+    t.integer  "user_id",      null: false
+    t.integer  "league_id",    null: false
+    t.integer  "round",        null: false
+    t.integer  "position",     null: false
+    t.float    "round_points", null: false
+    t.float    "total_points", null: false
+    t.integer  "status_cd",    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "league_rankings", ["league_id"], name: "index_league_rankings_on_league_id", using: :btree
+  add_index "league_rankings", ["status_cd"], name: "index_league_rankings_on_status_cd", using: :btree
+  add_index "league_rankings", ["user_id", "league_id", "round"], name: "index_league_rankings_on_user_id_and_league_id_and_round", unique: true, using: :btree
+  add_index "league_rankings", ["user_id"], name: "index_league_rankings_on_user_id", using: :btree
+
+  create_table "league_rankings_plays", force: :cascade do |t|
+    t.integer  "league_ranking_id", null: false
+    t.integer  "play_id",           null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "league_rankings_plays", ["league_ranking_id"], name: "index_league_rankings_plays_on_league_ranking_id", using: :btree
+  add_index "league_rankings_plays", ["play_id", "league_ranking_id"], name: "index_league_rankings_plays_on_play_id_and_league_ranking_id", unique: true, using: :btree
+  add_index "league_rankings_plays", ["play_id"], name: "index_league_rankings_plays_on_play_id", using: :btree
 
   create_table "leagues", force: :cascade do |t|
     t.string   "title",             null: false
