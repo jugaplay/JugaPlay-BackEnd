@@ -3,6 +3,7 @@ FactoryGirl.define do
     user
     league
     round { 1 }
+    movement { 0 }
     status { :opened }
     round_points { 0 }
     total_points { 0 }

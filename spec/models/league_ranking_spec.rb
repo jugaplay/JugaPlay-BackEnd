@@ -52,33 +52,21 @@ describe LeagueRanking do
   describe '#status' do
     let(:league_ranking) { FactoryGirl.create(:league_ranking, status: status) }
 
-    context 'when a league ranking is closed' do
-      let(:status) { :closed }
-
-      it 'is closed, and not opened neither being playing' do
-        expect(league_ranking).to be_closed
-        expect(league_ranking).not_to be_opened
-        expect(league_ranking).not_to be_playing
-      end
-    end
-
-    context 'when a league ranking is opened' do
-      let(:status) { :opened }
-
-      it 'is opened, and not closed neither being playing' do
-        expect(league_ranking).to be_opened
-        expect(league_ranking).not_to be_closed
-        expect(league_ranking).not_to be_playing
-      end
-    end
-
     context 'when a league ranking is being played' do
       let(:status) { :playing }
 
-      it 'is being played, and not opened neither closed' do
+      it 'is being played and not ended' do
         expect(league_ranking).to be_playing
-        expect(league_ranking).not_to be_opened
-        expect(league_ranking).not_to be_closed
+        expect(league_ranking).not_to be_ended
+      end
+    end
+
+    context 'when a league ranking is ended' do
+      let(:status) { :ended }
+
+      it 'is opened, and not closed neither being playing' do
+        expect(league_ranking).to be_ended
+        expect(league_ranking).not_to be_playing
       end
     end
   end

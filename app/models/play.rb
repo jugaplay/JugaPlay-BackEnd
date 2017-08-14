@@ -4,6 +4,7 @@ class Play < ActiveRecord::Base
   has_many :player_selections, -> { order(position: :asc) }, dependent: :destroy
   has_many :players, through: :player_selections
   has_one :table_ranking, dependent: :destroy
+  has_and_belongs_to_many :league_rankings
 
   as_enum :type, league: 1, training: 2, challenge: 3
 
