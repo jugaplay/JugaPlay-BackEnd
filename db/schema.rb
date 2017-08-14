@@ -221,9 +221,13 @@ ActiveRecord::Schema.define(version: 20170813220847) do
     t.integer  "status_cd",         null: false
     t.integer  "frequency_in_days", null: false
     t.integer  "periods",           null: false
+    t.datetime "starts_at",         null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "leagues", ["starts_at"], name: "index_leagues_on_starts_at", using: :btree
+  add_index "leagues", ["status_cd"], name: "index_leagues_on_status_cd", using: :btree
 
   create_table "matches", force: :cascade do |t|
     t.string   "title",           null: false

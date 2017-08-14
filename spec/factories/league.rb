@@ -2,6 +2,7 @@ FactoryGirl.define do
   factory :league do
     status { :opened }
     frequency_in_days { 7 }
+    starts_at { DateTime.yesterday }
     image { Faker::Internet.url }
     title { Faker::Lorem.sentence }
     description { Faker::Lorem.sentence }

@@ -6,9 +6,10 @@ class CreateLeagues < ActiveRecord::Migration
       t.string :image, null: false
       t.text :prizes_values, null: false
       t.string :prizes_type, null: false
-      t.integer :status_cd, null: false
+      t.integer :status_cd, null: false, index: true
       t.integer :frequency_in_days, null: false
       t.integer :periods, null: false
+      t.timestamp :starts_at, null: false, index: true
 
       t.timestamps
     end

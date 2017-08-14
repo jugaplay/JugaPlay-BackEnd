@@ -14,6 +14,12 @@ describe League do
       expect { FactoryGirl.create(:league, description: nil) }.to raise_error ActiveRecord::RecordInvalid, /Description can't be blank/
     end
 
+    it 'must have a start time' do
+      expect { FactoryGirl.create(:league, starts_at: Time.now) }.not_to raise_error
+
+      expect { FactoryGirl.create(:league, starts_at: nil) }.to raise_error ActiveRecord::RecordInvalid, /Starts at can't be blank/
+    end
+
     it 'must have some prizes greater than 0 with same currency' do
       expect { FactoryGirl.create(:league, prizes: [1.5.chips]) }.not_to raise_error
       expect { FactoryGirl.create(:league, prizes: [100.coins, 50.coins, 20.coins]) }.not_to raise_error
