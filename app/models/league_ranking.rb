@@ -23,4 +23,8 @@ class LeagueRanking < ActiveRecord::Base
   def best_plays
     plays.order(points: :desc).limit(AMOUNT_OF_PLAYS_FOR_RANKING)
   end
+
+  def old_league_ranking_rounds
+    self.class.old_rounds_of(self)
+  end
 end

@@ -49,6 +49,21 @@ describe LeagueRanking do
     end
   end
 
+  describe '#old_league_ranking_rounds' do
+    let(:user) { FactoryGirl.create(:user) }
+    let(:league) { FactoryGirl.create(:league) }
+    let!(:league_ranking_round_1) { FactoryGirl.create(:league_ranking, league: league, user: user, round: 1) }
+    let!(:league_ranking_round_2) { FactoryGirl.create(:league_ranking, league: league, user: user, round: 2) }
+    let!(:league_ranking_round_3) { FactoryGirl.create(:league_ranking, league: league, user: user, round: 3) }
+
+    it 'returns the league rankings with a previous round' do
+      rankings = league_ranking_round_3.old_league_ranking_rounds
+
+      expect(rankings).to have(2).items
+      expect(rankings).to match_array [league_ranking_round_1, league_ranking_round_2]
+    end
+  end
+
   describe '#status' do
     let(:league_ranking) { FactoryGirl.create(:league_ranking, status: status) }
 
