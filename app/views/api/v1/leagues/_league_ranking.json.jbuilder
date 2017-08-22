@@ -11,7 +11,7 @@ json.rounds(league_ranking.all_rankings) do |old_ranking|
   json.round old_ranking.round
   json.round_status old_ranking.status
 
-  json.tables(old_ranking.plays) do |play|
+  json.tables(old_ranking.best_plays) do |play|
     json.table_id play.table.id
     json.table_name play.table.title
     json.points play.points { 'N/A' }
