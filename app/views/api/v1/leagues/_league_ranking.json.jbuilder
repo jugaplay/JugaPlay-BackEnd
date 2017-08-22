@@ -2,7 +2,7 @@ json.position league_ranking.position
 json.user_id league_ranking.user.id
 json.nickname league_ranking.user.nickname
 json.movement league_ranking.movement
-json.points_acumulative league_ranking.points_total
+json.points_acumulative league_ranking.total_points
 
 json.rounds(LeagueRanking.old_rounds_of(league_ranking)) do |old_ranking|
   json.user_position old_ranking.position
