@@ -49,6 +49,21 @@ describe League do
     end
   end
 
+  describe '#ranking_for_user' do
+    let(:league) { FactoryGirl.create(:league) }
+    let!(:league_ranking_round_1) { FactoryGirl.create(:league_ranking, league: league, user: user, round: 1) }
+    let!(:league_ranking_round_2) { FactoryGirl.create(:league_ranking, league: league, user: user, round: 2) }
+    let!(:another_league_ranking_1) { FactoryGirl.create(:league_ranking, league: league, user: another_user, round: 1) }
+    let!(:another_league_ranking_2) { FactoryGirl.create(:league_ranking, league: league, user: another_user, round: 2) }
+
+    let(:user) { FactoryGirl.create(:user) }
+    let(:another_user) { FactoryGirl.create(:user) }
+
+    it 'returns the last round ranking of the given user' do
+      expect(league.ranking_for_user user).to eq league_ranking_round_2
+    end
+  end
+
   describe '#status' do
     let(:league) { FactoryGirl.create(:league, status: status) }
 

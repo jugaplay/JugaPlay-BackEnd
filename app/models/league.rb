@@ -46,7 +46,7 @@ class League < ActiveRecord::Base
   end
 
   def ranking_for_user(user)
-    last_round_rankings.by_user(user).last
+    last_round_rankings.by_user(user)
   end
 
   def pot_prize
