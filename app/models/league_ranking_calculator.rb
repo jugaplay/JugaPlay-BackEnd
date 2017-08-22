@@ -27,8 +27,9 @@ class LeagueRankingCalculator
   def end_old_league_rankings
     if current_round > 1
       old_rankings = LeagueRanking.playing.where(league: current_league, round: current_round - 1).order(id: :asc)
-      old_rankings_data = old_rankings.size.times.map do { status: :ended } end
-      LeagueRanking.update(old_rankings.pluck(:id), old_rankings_data)
+      old_rankings.update_all(status_cd: LeagueRanking.statuses[:ended])
+      notifications = old_rankings.map { |ranking| build_notification ranking }
+      Notification.import(notifications)
     end
   end
 
@@ -48,7 +49,7 @@ class LeagueRankingCalculator
       ranking = LeagueRanking.playing.find_by(league: current_league, user: user, round: current_round)
       ranking = build_league_ranking_for(user) unless ranking
       ranking.plays << play
-      ranking.round_points = ranking.plays.order(points: :desc).first(2).sum(&:points)
+      ranking.round_points = ranking.best_plays.pluck(:points).sum
       ranking.save!
     end
   end
@@ -87,12 +88,19 @@ class LeagueRankingCalculator
   end
 
   def close_current_league_and_pick_next_league
+    notifications = []
     current_league.update_attributes!(status: :closed)
+    last_round_rankings = current_league.last_round_rankings.order(total_points: :desc)
+    last_round_rankings.update_all(status_cd: LeagueRanking.statuses[:ended])
     last_round_rankings.group_by(&:total_points).each_with_index do |(points, rankings), index|
       position = index + 1
       prize = current_league.prize_for_position(position)
-      rankings.each { |ranking| ranking.user.win_money! prize }
+      rankings.each do |ranking|
+        ranking.user.win_money! prize
+        notifications << build_notification(ranking)
+      end
     end
+    Notification.import(notifications)
     @current_league = League.where('starts_at <= ?', evaluation_time).opened.order(starts_at: :asc).first
     @current_round = ((evaluation_time - current_league.starts_at) / current_league.frequency).to_i + 1
   end
@@ -103,12 +111,6 @@ class LeagueRankingCalculator
       league = League.opened.order(starts_at: :asc).first unless league
       league
     end
-  end
-
-  def last_round_rankings
-    last_round = current_league.league_rankings.order(round: :desc).first.try(:round)
-    return [] unless last_round
-    current_league.league_rankings.where(round: last_round).order(total_points: :desc)
   end
 
   def current_round
@@ -132,5 +134,12 @@ class LeagueRankingCalculator
     league_days = current_league.frequency * current_league.periods
     end_at = current_league.starts_at + league_days
     evaluation_time > end_at
+  end
+
+  def build_notification(ranking)
+    title = "{\"round\": #{ranking.round}, \"status\": #{ranking.status_cd} }"
+    text = "{\"position\": #{ranking.position}, \"points_acumulative\": #{ranking.total_points}, \"movement\": #{ranking.movement}}"
+    action = "{\"league_id\": #{ranking.league_id}}"
+    Notification.league(user: ranking.user, title: title, text: text, action: action)
   end
 end

@@ -67,6 +67,14 @@ class Play < ActiveRecord::Base
     ask_table_ranking_for :prize_value, &if_none_block
   end
 
+  def league_ids_selected_as_best
+    league_rankings.select do |ranking|
+      ranking.best_plays.pluck(:id).include? id
+    end.map do |ranking|
+      ranking.league_id
+    end
+  end
+
   private
 
   def ask_table_ranking_for(message, &if_none_block)

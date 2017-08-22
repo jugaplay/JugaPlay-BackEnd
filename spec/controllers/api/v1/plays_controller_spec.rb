@@ -57,6 +57,7 @@ describe Api::V1::PlaysController do
                 points: 'N/A',
                 prize_type: 'N/A',
                 prize_value: 'N/A',
+                leagues: [],
                 players: play.players.map { |player| {
                   id: player.id,
                   first_name: player.first_name,

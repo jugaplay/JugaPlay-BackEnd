@@ -20,9 +20,9 @@ class ResultsMailer < ActionMailer::Base
       format.html { render 'mailer/results_mailer/send_results_message' }
     end
 
-    currency_text = @prize.chips? ? 'fichas' : 'monedas'
-    text = "Saliste #{play.position}° en #{@table.title }. Ganaste #{@prize} #{currency_text}."
-    text += 'Suerte para la próxima!' if @prize.zero?
-   	Notification.result!(user: @user, title: table.title, text: text , action: %q[window.location='history.html';])
+    notification_title = "{\"table\": \"#{table.title}\", \"type\": \"#{play.type}\"}"
+    notification_text = "{\"position\": #{play.position}, \"earned_coins\": #{@prize.value}, \"type_of_prize\": #{@prize.currency} }"
+    notification_action = "{\"table_id\": #{table.id}}"
+   	Notification.result!(user: @user, title: notification_title, text: notification_text , action: notification_action)
   end
 end

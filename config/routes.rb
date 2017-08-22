@@ -100,6 +100,11 @@
 
       resources :teams, only: [:show]
       resources :plays, only: [:index, :show]
+      resources :leagues, only: [:index, :show] do
+        collection do
+          get 'actual' => 'leagues#actual', as: :actual
+        end
+      end
 
       post '/play' => 'croupier#play'
 

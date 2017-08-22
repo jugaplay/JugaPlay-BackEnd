@@ -1,4 +1,6 @@
 class LeagueRanking < ActiveRecord::Base
+  AMOUNT_OF_PLAYS_FOR_RANKING = 2
+
   belongs_to :user
   belongs_to :league
   has_and_belongs_to_many :plays
@@ -15,4 +17,10 @@ class LeagueRanking < ActiveRecord::Base
 
   scope :ended, -> { endeds }
   scope :playing, -> { playings }
+  scope :by_user, -> user { find_by(user: user) }
+  scope :old_rounds_of, -> league_ranking { where(user: league_ranking.user, league: league_ranking.league).where('round < ?', league_ranking.round).includes(:plays) }
+
+  def best_plays
+    plays.order(points: :desc).limit(AMOUNT_OF_PLAYS_FOR_RANKING)
+  end
 end

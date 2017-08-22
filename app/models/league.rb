@@ -18,13 +18,43 @@ class League < ActiveRecord::Base
   scope :opened, -> { openeds }
   scope :closed, -> { closeds }
   scope :playing, -> { playings }
+  scope :recent_first, -> { order(created_at: :desc) }
 
   def frequency
     frequency_in_days.days
   end
 
+  def duration
+    frequency * periods
+  end
+
+  def ends_at
+    starts_at + duration
+  end
+
+  def amount_of_rankings
+    last_round_rankings.count
+  end
+
+  def last_round
+    league_rankings.order(round: :desc).first.try(:round)
+  end
+
+  def last_round_rankings
+    round = last_round
+    round ? league_rankings.where(round: round) : LeagueRanking.none
+  end
+
+  def ranking_for_user(user)
+    last_round_rankings.by_user(user).last
+  end
+
   def pot_prize
     Money.new prizes_type, prizes_values.sum
+  end
+
+  def prizes_with_positions
+    prizes.map.with_index { |prize, index| [index + 1, prize] }
   end
 
   def prize_for_position(position)
