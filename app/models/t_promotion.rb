@@ -7,10 +7,10 @@ class TPromotion < ActiveRecord::Base
   validates :promotion_type, presence: true, allow_blank: false
 
   def self.friend_invitation!(attributes)
-    create!(attributes.merge(promotion_type: 'friend-invitation', coins: Wallet::COINS_PER_INVITATION.value))
+    create!(attributes.merge(promotion_type: 'friend-invitation', coins: Wallet::INVITATION_PRIZE.value))
   end
 
   def self.registration!(user)
-    create!(user: user, promotion_type: 'registration', coins: Wallet::COINS_PER_REGISTRATION.value, detail: 'Bienvenida a JugaPlay')
+    create!(user: user, promotion_type: 'registration', coins: Wallet::REGISTRATION_PRIZE.value, detail: 'Bienvenida a JugaPlay')
   end
 end

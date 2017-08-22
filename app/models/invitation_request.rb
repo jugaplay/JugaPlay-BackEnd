@@ -15,9 +15,9 @@ class InvitationRequest < ActiveRecord::Base
 
   def accept(invited_user, ip)
     InvitationAcceptance.create!(invitation_request: self, ip: ip, user: invited_user)
-    user.win_money!(Wallet::COINS_PER_INVITATION)
+    user.win_money!(Wallet::INVITATION_PRIZE)
     TPromotion.friend_invitation!(user: user, detail: "Invitación a #{invited_user.nickname}")
     title = "<b>#{invited_user.nickname}</b> aceptó tu invitación"
-    Notification.friend_invitation!(user: user, title: title, text: Wallet::COINS_PER_INVITATION.to_s)
+    Notification.friend_invitation!(user: user, title: title, text: Wallet::INVITATION_PRIZE.to_s)
   end
 end

@@ -29,8 +29,8 @@ describe Api::V1::UsersController do
           expect(new_user.image).to be_nil
           expect(new_user.provider).to be_nil
           expect(new_user.wallet).not_to be_nil
-          expect(new_user.coins).to eq 30.coins
-          expect(new_user.chips).to eq 0.chips
+          expect(new_user.coins).to eq 0.coins
+          expect(new_user.chips).to eq 30.chips
           expect(new_user.address_book).not_to be_nil
           expect(new_user.address_book.contacts).to be_empty
 
@@ -41,8 +41,8 @@ describe Api::V1::UsersController do
           expect(response_body[:email]).to eq new_user.email
           expect(response_body[:first_name]).to eq new_user.first_name
           expect(response_body[:last_name]).to eq new_user.last_name
-          expect(response_body[:coins]).to eq 30.0
-          expect(response_body[:chips]).to eq 0
+          expect(response_body[:coins]).to eq 0
+          expect(response_body[:chips]).to eq 30.0
           expect(response_body[:telephone]).to eq new_user.telephone
           expect(response_body[:member_since]).to eq new_user.created_at.strftime('%d/%m/%Y')
           expect(response_body[:image]).to eq nil
@@ -129,7 +129,7 @@ describe Api::V1::UsersController do
 
       context 'when request succeeds' do
         it 'creates a user, add some coins to the user that has invited him, and renders a json of it' do
-          existing_user_initial_coins = existing_user.coins
+          existing_user_initial_chips = existing_user.chips
 
           expect { post :create, user_params }.to change { User.count }.by(1)
 
@@ -139,12 +139,12 @@ describe Api::V1::UsersController do
           expect(new_user.nickname).to eq user_params[:user][:nickname]
           expect(new_user.email).to eq user_params[:user][:email]
           expect(new_user.encrypted_password).to be_present
-          expect(new_user.coins).to eq 30.coins
-          expect(new_user.chips).to eq 0.chips
+          expect(new_user.coins).to eq 0.coins
+          expect(new_user.chips).to eq 30.chips
           expect(new_user.facebook_id).to be_nil
           expect(new_user.image).to be_nil
           expect(new_user.provider).to be_nil
-          expect(existing_user.reload.coins).to eq existing_user_initial_coins + Wallet::COINS_PER_INVITATION
+          expect(existing_user.reload.chips).to eq existing_user_initial_chips + Wallet::INVITATION_PRIZE
           expect(invitation_request.invitation_acceptances).to have(1).item
           expect(invitation_request.invitation_acceptances.first.user).to eq new_user
 
@@ -155,8 +155,8 @@ describe Api::V1::UsersController do
           expect(response_body[:email]).to eq new_user.email
           expect(response_body[:first_name]).to eq new_user.first_name
           expect(response_body[:last_name]).to eq new_user.last_name
-          expect(response_body[:coins]).to eq 30.0
-          expect(response_body[:chips]).to eq 0
+          expect(response_body[:coins]).to eq 0
+          expect(response_body[:chips]).to eq 30.0
           expect(response_body[:member_since]).to eq new_user.created_at.strftime('%d/%m/%Y')
           expect(response_body[:image]).to eq nil
         end
@@ -191,8 +191,8 @@ describe Api::V1::UsersController do
           expect(response_body[:nickname]).to eq user.nickname
           expect(response_body[:first_name]).to eq user.first_name
           expect(response_body[:last_name]).to eq user.last_name
-          expect(response_body[:coins]).to eq 30.0
-          expect(response_body[:chips]).to eq 0
+          expect(response_body[:coins]).to eq 0
+          expect(response_body[:chips]).to eq 30.0
           expect(response_body[:telephone]).to eq user.telephone
           expect(response_body[:member_since]).to eq user.created_at.strftime('%d/%m/%Y')
         end

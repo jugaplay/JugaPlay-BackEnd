@@ -1,6 +1,6 @@
 class Wallet < ActiveRecord::Base
-  COINS_PER_INVITATION = 10.coins
-  COINS_PER_REGISTRATION = 30.coins
+  INVITATION_PRIZE = 10.chips
+  REGISTRATION_PRIZE = 30.chips
 
   belongs_to :user
   

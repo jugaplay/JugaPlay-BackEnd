@@ -8,7 +8,7 @@ FactoryGirl.define do
     telephone { Faker::PhoneNumber.cell_phone.gsub(/[^0-9]/, '') }
 
     after :create do |user|
-      Wallet.create!(user: user, coins: Wallet::COINS_PER_REGISTRATION)
+      Wallet.create!(user: user, chips: Wallet::REGISTRATION_PRIZE)
     end
 
     trait :without_coins do

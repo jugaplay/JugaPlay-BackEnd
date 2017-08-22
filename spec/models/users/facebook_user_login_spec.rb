@@ -41,7 +41,7 @@ describe FacebookUserLogin do
       let(:query_params) { { 'invitation_token' => invitation_request.token } }
 
       it 'creates a user and gives 10 coins to the inviting user' do
-        old_amount_of_coins = inviting_user.coins
+        old_amount_of_chips = inviting_user.chips
 
         expect { facebook_login.call }.to change { User.count }.by 1
 
@@ -53,7 +53,7 @@ describe FacebookUserLogin do
         expect(new_user.last_name).to eq 'Bloggs'
         expect(new_user.image).to eq 'www.photo.com'
         expect(new_user.facebook_token).to eq 'TOKEN'
-        expect(inviting_user.reload.coins).to eq old_amount_of_coins + 10.coins
+        expect(inviting_user.reload.chips).to eq old_amount_of_chips + 10.chips
         expect(invitation_request.invitation_acceptances).to have(1).item
         expect(invitation_request.invitation_acceptances.first.user).to eq new_user
       end

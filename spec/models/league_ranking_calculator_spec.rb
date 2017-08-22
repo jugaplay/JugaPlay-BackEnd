@@ -12,9 +12,9 @@ describe LeagueRankingCalculator do
   end
 
   describe 'when there are three users playing league' do
-    let(:first_user) { FactoryGirl.create(:user) }
-    let(:second_user) { FactoryGirl.create(:user) }
-    let(:third_user) { FactoryGirl.create(:user) }
+    let(:first_user) { FactoryGirl.create(:user, :without_chips) }
+    let(:second_user) { FactoryGirl.create(:user, :without_chips) }
+    let(:third_user) { FactoryGirl.create(:user, :without_chips) }
 
     let!(:first_user_first_play) { FactoryGirl.create(:play, :league, user: first_user, table: table, points: first_user_first_play_points) }
     let!(:second_user_first_play) { FactoryGirl.create(:play, :league, user: second_user, table: table, points: second_user_first_play_points) }
