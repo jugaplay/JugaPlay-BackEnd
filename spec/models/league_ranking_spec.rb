@@ -57,10 +57,12 @@ describe LeagueRanking do
     let!(:league_ranking_round_3) { FactoryGirl.create(:league_ranking, league: league, user: user, round: 3) }
 
     it 'returns the league rankings with a previous round' do
-      rankings = league_ranking_round_3.old_league_ranking_rounds
+      rankings = league_ranking_round_3.all_rankings
 
-      expect(rankings).to have(2).items
-      expect(rankings).to match_array [league_ranking_round_1, league_ranking_round_2]
+      expect(rankings).to have(3).items
+      expect(rankings.first).to eq league_ranking_round_3
+      expect(rankings.second).to eq league_ranking_round_2
+      expect(rankings.third).to eq league_ranking_round_1
     end
   end
 

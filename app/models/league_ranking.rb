@@ -18,13 +18,13 @@ class LeagueRanking < ActiveRecord::Base
   scope :ended, -> { endeds }
   scope :playing, -> { playings }
   scope :by_user, -> user { find_by(user: user) }
-  scope :old_rounds_of, -> league_ranking { where(user: league_ranking.user, league: league_ranking.league).where('round < ?', league_ranking.round).includes(:plays) }
+  scope :all_rankings_of, -> league_ranking { where(user: league_ranking.user, league: league_ranking.league).order(round: :desc).includes(:plays) }
 
   def best_plays
     plays.order(points: :desc).limit(AMOUNT_OF_PLAYS_FOR_RANKING)
   end
 
-  def old_league_ranking_rounds
-    self.class.old_rounds_of(self)
+  def all_rankings
+    self.class.all_rankings_of(self)
   end
 end
