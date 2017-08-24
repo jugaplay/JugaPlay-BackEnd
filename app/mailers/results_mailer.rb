@@ -21,7 +21,7 @@ class ResultsMailer < ActionMailer::Base
     end
 
     notification_title = "{\"table\": \"#{table.title}\", \"type\": \"#{play.type}\"}"
-    notification_text = "{\"position\": #{play.position}, \"earned_coins\": #{@prize.value}, \"type_of_prize\": #{@prize.currency} }"
+    notification_text = "{\"position\": #{play.position}, \"earned_prize\": #{@prize.value}, \"type_of_prize\": \"#{@prize.currency}\" }"
     notification_action = "{\"table_id\": #{table.id}}"
    	Notification.result!(user: @user, title: notification_title, text: notification_text , action: notification_action)
   end
