@@ -15,7 +15,7 @@ class Api::V1::LeaguesController < Api::BaseController
 
   def actual
     @league = League.playing.last
-    render_not_found_error LEAGUE_NOT_FOUND unless @league
+    return render_not_found_error LEAGUE_NOT_FOUND unless @league
     load_league_rankings
     render :show
   end
