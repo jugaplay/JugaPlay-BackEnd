@@ -42,10 +42,6 @@ class TableRanking < ActiveRecord::Base
     "Premio en #{table.title}"
   end
 
-  def has_position?(position)
-    self.position.eql? position
-  end
-
   def private?
     table.private?
   end

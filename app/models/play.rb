@@ -4,6 +4,7 @@ class Play < ActiveRecord::Base
   has_many :player_selections, -> { order(position: :asc) }, dependent: :destroy
   has_many :players, through: :player_selections
   has_one :table_ranking, dependent: :destroy
+  has_and_belongs_to_many :league_rankings
 
   as_enum :type, league: 1, training: 2, challenge: 3
 
@@ -64,6 +65,14 @@ class Play < ActiveRecord::Base
 
  	def prize_value(&if_none_block)
     ask_table_ranking_for :prize_value, &if_none_block
+  end
+
+  def league_ids_selected_as_best
+    league_rankings.select do |ranking|
+      ranking.best_plays.pluck(:id).include? id
+    end.map do |ranking|
+      ranking.league_id
+    end
   end
 
   private

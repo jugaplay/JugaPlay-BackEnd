@@ -8,6 +8,6 @@ class CreateWallets < ActiveRecord::Migration
 
     add_index :wallets, :user_id, unique: true
 
-    User.all.each { |user| Wallet.create!(user: user, coins: Wallet::COINS_PER_REGISTRATION) }
+    User.all.each { |user| Wallet.create!(user: user, coins: Wallet::REGISTRATION_PRIZE) }
   end
 end

@@ -41,6 +41,7 @@ unless table.closed?
     json.nickname play.user.nickname
     json.multiplier play.multiplier
     json.bet_multiplier play.multiplier
+    json.leagues play.league_ids_selected_as_best
     if play.user.rankings.first.present?
       json.ranking_tournament_points play.user.rankings.first.points
       json.ranking_tournament_position play.user.rankings.first.position

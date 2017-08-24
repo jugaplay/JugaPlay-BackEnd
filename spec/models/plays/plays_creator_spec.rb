@@ -26,7 +26,7 @@ describe PlaysCreator do
       let(:match) { FactoryGirl.create(:match, title: '20 PTS River - Boca', local_team: river, visitor_team: boca, tournament: tournament) }
       let(:river) { FactoryGirl.create(:team, :river) }
       let(:boca) { FactoryGirl.create(:team, :boca) }
-      let(:user) { FactoryGirl.create(:user) }
+      let(:user) { FactoryGirl.create(:user, :with_coins, coins: 30.coins) }
 
       context 'when the table has one match' do
         let(:matches) { [match] }

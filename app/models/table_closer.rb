@@ -8,6 +8,7 @@ class TableCloser
     @prize_dealer = PrizeDealer.new(table)
     @ranking_points_updater = RankingPointsUpdater.new(table)
     @ranking_sorter = RankingSorter.new(table.tournament)
+    @league_calculator = LeagueRankingCalculator.new(Time.now, table)
   end
 
   def call
@@ -20,8 +21,10 @@ class TableCloser
     end
     table.close!
     ranking_sorter.call
+    league_calculator.call
   end
 
   private
-  attr_reader :table, :table_closer_validator, :play_points_assigner, :table_ranking_calculator, :prize_dealer, :ranking_points_updater, :ranking_sorter
+  attr_reader :table, :table_closer_validator, :play_points_assigner, :table_ranking_calculator,
+              :prize_dealer, :ranking_points_updater, :ranking_sorter, :league_calculator
 end

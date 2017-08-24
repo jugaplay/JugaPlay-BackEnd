@@ -38,7 +38,10 @@ describe Api::V1::TablesController do
             amount_of_users_playing: table.amount_of_users_playing,
             amount_of_users_challenge: table.challenge_plays.count,
             amount_of_users_league: table.league_plays.count,
-            amount_of_users_training: table.training_plays.count
+            amount_of_users_training: table.training_plays.count,
+            entry_coins_cost: (table.entry_cost.coins? ? table.entry_cost.value : 0),
+            pot_prize: (table.pot_prize.coins? ? table.pot_prize.value : 0),
+            bet_multiplier: table.multiplier_for(user)
           }
         end
 
