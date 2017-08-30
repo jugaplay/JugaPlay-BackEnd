@@ -55,12 +55,15 @@ class LeagueRankingCalculator
   end
 
   def sort_rankings
+    next_position = 1
     ranking_ids, rankings_data = [], []
-    current_round_rankings.group_by(&:round_points).each_with_index do |(points, rankings), index|
+    current_round_rankings.group_by(&:round_points).each do |(points, rankings)|
+      position = next_position
       rankings.each do |ranking|
         ranking_ids << ranking.id
-        rankings_data << { position: index + 1 }
+        rankings_data << { position: position }
       end
+      next_position += rankings.count
     end
     LeagueRanking.update(ranking_ids, rankings_data)
   end
