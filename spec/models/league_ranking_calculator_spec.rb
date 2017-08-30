@@ -15,15 +15,18 @@ describe LeagueRankingCalculator do
     let(:first_user) { FactoryGirl.create(:user, :without_chips) }
     let(:second_user) { FactoryGirl.create(:user, :without_chips) }
     let(:third_user) { FactoryGirl.create(:user, :without_chips) }
+    let(:fourth_user) { FactoryGirl.create(:user, :without_chips) }
 
     let!(:first_user_first_play) { FactoryGirl.create(:play, :league, user: first_user, table: table, points: first_user_first_play_points) }
     let!(:second_user_first_play) { FactoryGirl.create(:play, :league, user: second_user, table: table, points: second_user_first_play_points) }
     let!(:third_user_first_play) { FactoryGirl.create(:play, :league, user: third_user, table: table, points: third_user_first_play_points) }
+    let!(:fourth_user_first_play) { FactoryGirl.create(:play, :league, user: fourth_user, table: table, points: fourth_user_first_play_points) }
 
     describe 'when there are is no league' do
       let(:first_user_first_play_points) { 10 }
       let(:second_user_first_play_points) { 10 }
       let(:third_user_first_play_points) { 10 }
+      let(:fourth_user_first_play_points) { 10 }
 
       it 'does not create any league ranking' do
         expect { calculator.call }.not_to change { LeagueRanking.count }
@@ -38,9 +41,10 @@ describe LeagueRankingCalculator do
         let(:first_user_first_play_points) { 10 }
         let(:second_user_first_play_points) { 10 }
         let(:third_user_first_play_points) { 10 }
+        let(:fourth_user_first_play_points) { 8 }
 
         it 'creates three league rankings with same position in round 0 and starts the league' do
-          expect { calculator.call }.to change { LeagueRanking.count }.by 3
+          expect { calculator.call }.to change { LeagueRanking.count }.by 4
 
           expect(league.reload).to be_playing
 
@@ -70,6 +74,15 @@ describe LeagueRankingCalculator do
           expect(third_user_ranking.position).to eq 1
           expect(third_user_ranking.round_points).to eq 10
           expect(third_user_ranking.plays).to match_array [third_user_first_play]
+
+          fourth_user_ranking = LeagueRanking.find_by(user: fourth_user)
+          expect(fourth_user_ranking).to be_playing
+          expect(fourth_user_ranking.league).to eq league
+          expect(fourth_user_ranking.user).to eq fourth_user
+          expect(fourth_user_ranking.round).to eq 1
+          expect(fourth_user_ranking.position).to eq 4
+          expect(fourth_user_ranking.round_points).to eq 8
+          expect(fourth_user_ranking.plays).to match_array [fourth_user_first_play]
         end
 
         describe 'when all the users play again the next day and score different points' do
@@ -112,6 +125,15 @@ describe LeagueRankingCalculator do
             expect(third_user_ranking.position).to eq 3
             expect(third_user_ranking.round_points).to eq 15
             expect(third_user_ranking.plays).to match_array [third_user_first_play, third_user_second_play]
+
+            fourth_user_ranking = LeagueRanking.find_by(user: fourth_user)
+            expect(fourth_user_ranking).to be_playing
+            expect(fourth_user_ranking.league).to eq league
+            expect(fourth_user_ranking.user).to eq fourth_user
+            expect(fourth_user_ranking.round).to eq 1
+            expect(fourth_user_ranking.position).to eq 4
+            expect(fourth_user_ranking.round_points).to eq 8
+            expect(fourth_user_ranking.plays).to match_array [fourth_user_first_play]
           end
 
           describe 'when all the users play again two days after and score some points' do
@@ -154,6 +176,15 @@ describe LeagueRankingCalculator do
               expect(third_user_ranking.position).to eq 3
               expect(third_user_ranking.round_points).to eq 20.5
               expect(third_user_ranking.plays).to match_array [third_user_first_play, third_user_second_play, third_user_third_play]
+
+              fourth_user_ranking = LeagueRanking.find_by(user: fourth_user)
+              expect(fourth_user_ranking).to be_playing
+              expect(fourth_user_ranking.league).to eq league
+              expect(fourth_user_ranking.user).to eq fourth_user
+              expect(fourth_user_ranking.round).to eq 1
+              expect(fourth_user_ranking.position).to eq 4
+              expect(fourth_user_ranking.round_points).to eq 8
+              expect(fourth_user_ranking.plays).to match_array [fourth_user_first_play]
             end
 
             describe 'when all the users play again 8 days after and score different points' do
@@ -166,12 +197,13 @@ describe LeagueRankingCalculator do
               before { third_calculator.call }
 
               it 'ends the last round and open a new one creating new league rankings' do
-                expect { fourth_calculator.call }.to change { LeagueRanking.count }.by 3
+                expect { fourth_calculator.call }.to change { LeagueRanking.count }.by 4
 
                 expect(league.reload).to be_playing
                 first_user_rankings = LeagueRanking.where(user: first_user).order(round: :asc)
                 second_user_rankings = LeagueRanking.where(user: second_user).order(round: :asc)
                 third_user_rankings = LeagueRanking.where(user: third_user).order(round: :asc)
+                fourth_user_rankings = LeagueRanking.where(user: fourth_user).order(round: :asc)
 
                 expect(first_user_rankings.first).to be_ended
                 expect(first_user_rankings.first.league).to eq league
@@ -232,6 +264,26 @@ describe LeagueRankingCalculator do
                 expect(third_user_rankings.second.round_points).to eq 100
                 expect(third_user_rankings.second.total_points).to eq 120.5
                 expect(third_user_rankings.second.plays).to match_array [third_user_fourth_play]
+
+                expect(fourth_user_rankings.first).to be_ended
+                expect(fourth_user_rankings.first.league).to eq league
+                expect(fourth_user_rankings.first.user).to eq fourth_user
+                expect(fourth_user_rankings.first.round).to eq 1
+                expect(fourth_user_rankings.first.position).to eq 4
+                expect(fourth_user_rankings.first.movement).to eq 0
+                expect(fourth_user_rankings.first.round_points).to eq 8
+                expect(fourth_user_rankings.first.total_points).to eq 8
+                expect(fourth_user_rankings.first.plays).to match_array [fourth_user_first_play]
+
+                expect(fourth_user_rankings.second).to be_playing
+                expect(fourth_user_rankings.second.league).to eq league
+                expect(fourth_user_rankings.second.user).to eq fourth_user
+                expect(fourth_user_rankings.second.round).to eq 2
+                expect(fourth_user_rankings.second.position).to eq 4
+                expect(fourth_user_rankings.second.movement).to eq 0
+                expect(fourth_user_rankings.second.round_points).to eq 0
+                expect(fourth_user_rankings.second.total_points).to eq 8
+                expect(fourth_user_rankings.second.plays).to match_array []
               end
 
               describe 'when all the users play again 16 days after and score different points' do

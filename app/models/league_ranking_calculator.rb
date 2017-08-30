@@ -14,6 +14,7 @@ class LeagueRankingCalculator
       update_plays_and_points
       sort_rankings
       update_movement_and_total_points
+      create_rankings_for_non_playing_users
     end
   end
 
@@ -88,6 +89,19 @@ class LeagueRankingCalculator
       end
     end
     LeagueRanking.update(ranking_ids, rankings_data)
+  end
+
+  def create_rankings_for_non_playing_users
+    return unless current_round > 1
+    rankings  = []
+    last_position = current_round_rankings.last.position + 1
+    previous_round_rankings = current_league.league_rankings.where(round: current_round - 1)
+    not_playing_user_ids = previous_round_rankings.pluck(:user_id) - current_round_rankings.pluck(:user_id)
+    previous_round_rankings.where(user_id: not_playing_user_ids).all.each do |ranking|
+      movement = last_position - ranking.position
+      rankings << LeagueRanking.new(user_id: ranking.user_id, round: current_round, league: current_league, position: last_position, status: :playing, total_points: ranking.total_points, round_points: 0, movement: movement)
+    end
+    LeagueRanking.import(rankings)
   end
 
   def close_current_league_and_pick_next_league
