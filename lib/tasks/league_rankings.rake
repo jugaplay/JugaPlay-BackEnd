@@ -36,9 +36,9 @@ namespace :league_rankings do
         total_points = 0
         rankings.each do |ranking|
           puts "Total points #{total_points} in round #{ranking.round}"
+          total_points += ranking.round_points
           ranking_ids << ranking.id
           rankings_data << { total_points: total_points }
-          total_points += ranking.round_points
         end
       end
     end
