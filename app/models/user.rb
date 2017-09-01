@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   has_many :table_rankings, through: :plays
   has_many :t_entry_fees, dependent: :destroy
   has_many :rankings, dependent: :destroy
+  has_many :league_rankings, dependent: :destroy
   has_one :wallet, dependent: :destroy
   has_one :address_book, dependent: :destroy
   has_one :notifications_setting, dependent: :destroy
