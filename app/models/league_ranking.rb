@@ -12,7 +12,7 @@ class LeagueRanking < ActiveRecord::Base
   validates :round_points, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :total_points, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :round, presence: true, numericality: { only_integer: true, greater_than: 0 }
-  validates :movement, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :movement, presence: true, numericality: { only_integer: true }
   validates :position, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
 
   scope :ended, -> { endeds }
