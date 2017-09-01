@@ -14,7 +14,7 @@ namespace :league_rankings do
     puts "Detected #{not_playing_user_ids.count} missing rankings"
 
     previous_round_rankings.where(user_id: not_playing_user_ids).all.each do |ranking|
-      rankings << LeagueRanking.new(user_id: ranking.user_id, round: current_round, league: current_league, status: :playing, total_points: 0, round_points: 0, movement: 0)
+      rankings << LeagueRanking.new(user_id: ranking.user_id, round: current_round, league: current_league, status: :playing, position: 1, total_points: 0, round_points: 0, movement: 0)
       puts "New league rankings for user #{ranking.user_id} for round #{current_round}"
     end
     puts "Importing #{rankings.count} new rankings"
