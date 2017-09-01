@@ -1,4 +1,4 @@
-namespace :rankings do
+namespace :league_rankings do
   task create_missing_rounds: :environment do
     current_league = League.playing.order(starts_at: :asc).first
     current_league = League.opened.order(starts_at: :asc).first unless current_league
