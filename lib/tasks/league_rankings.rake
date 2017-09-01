@@ -35,10 +35,10 @@ namespace :league_rankings do
         puts "Recalculating total points for user #{user.id}"
         total_points = 0
         rankings.each do |ranking|
-          puts "Total points #{total_points} in round #{ranking.round}"
           total_points += ranking.round_points
           ranking_ids << ranking.id
           rankings_data << { total_points: total_points }
+          puts "Total points #{total_points} in round #{ranking.round}"
         end
       end
     end
@@ -51,6 +51,7 @@ namespace :league_rankings do
     current_league = League.playing.order(starts_at: :asc).first
     current_league = League.opened.order(starts_at: :asc).first unless current_league
     return unless current_league
+    current_round = current_league.last_round
 
     puts 'Preparing league rankings for order'
     next_position = 1
