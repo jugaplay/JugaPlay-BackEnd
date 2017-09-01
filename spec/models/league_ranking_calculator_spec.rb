@@ -43,7 +43,7 @@ describe LeagueRankingCalculator do
         let(:third_user_first_play_points) { 10 }
         let(:fourth_user_first_play_points) { 8 }
 
-        it 'creates three league rankings with same position in round 0 and starts the league' do
+        it 'creates four league rankings with same position in round 0 and starts the league' do
           expect { calculator.call }.to change { LeagueRanking.count }.by 4
 
           expect(league.reload).to be_playing
@@ -88,8 +88,8 @@ describe LeagueRankingCalculator do
         describe 'when all the users play again the next day and score different points' do
           let(:second_table) { FactoryGirl.create(:table) }
           let(:second_calculator) { LeagueRankingCalculator.new(now + 1.day, second_table) }
-          let!(:first_user_second_play) { FactoryGirl.create(:play, :league, user: first_user, table: second_table, points: 15) }
-          let!(:second_user_second_play) { FactoryGirl.create(:play, :league, user: second_user, table: second_table, points: 10) }
+          let!(:first_user_second_play) { FactoryGirl.create(:play, :league, user: first_user, table: second_table, points: 10) }
+          let!(:second_user_second_play) { FactoryGirl.create(:play, :league, user: second_user, table: second_table, points: 15) }
           let!(:third_user_second_play) { FactoryGirl.create(:play, :league, user: third_user, table: second_table, points: 5) }
 
           before { calculator.call }
@@ -104,8 +104,9 @@ describe LeagueRankingCalculator do
             expect(first_user_ranking.league).to eq league
             expect(first_user_ranking.user).to eq first_user
             expect(first_user_ranking.round).to eq 1
-            expect(first_user_ranking.position).to eq 1
-            expect(first_user_ranking.round_points).to eq 25
+            expect(first_user_ranking.position).to eq 2
+            expect(first_user_ranking.round_points).to eq 20
+            expect(first_user_ranking.total_points).to eq 20
             expect(first_user_ranking.plays).to match_array [first_user_first_play, first_user_second_play]
 
             second_user_ranking = LeagueRanking.find_by(user: second_user)
@@ -113,8 +114,9 @@ describe LeagueRankingCalculator do
             expect(second_user_ranking.league).to eq league
             expect(second_user_ranking.user).to eq second_user
             expect(second_user_ranking.round).to eq 1
-            expect(second_user_ranking.position).to eq 2
-            expect(second_user_ranking.round_points).to eq 20
+            expect(second_user_ranking.position).to eq 1
+            expect(second_user_ranking.round_points).to eq 25
+            expect(second_user_ranking.total_points).to eq 25
             expect(second_user_ranking.plays).to match_array [second_user_first_play, second_user_second_play]
 
             third_user_ranking = LeagueRanking.find_by(user: third_user)
@@ -139,8 +141,8 @@ describe LeagueRankingCalculator do
           describe 'when all the users play again two days after and score some points' do
             let(:third_table) { FactoryGirl.create(:table) }
             let(:third_calculator) { LeagueRankingCalculator.new(now + 2.day, third_table) }
-            let!(:first_user_third_play) { FactoryGirl.create(:play, :league, user: first_user, table: third_table, points: 10.5) }
-            let!(:second_user_third_play) { FactoryGirl.create(:play, :league, user: second_user, table: third_table, points: 15.5) }
+            let!(:first_user_third_play) { FactoryGirl.create(:play, :league, user: first_user, table: third_table, points: 15.5) }
+            let!(:second_user_third_play) { FactoryGirl.create(:play, :league, user: second_user, table: third_table, points: 10.5) }
             let!(:third_user_third_play) { FactoryGirl.create(:play, :league, user: third_user, table: third_table, points: 10.5) }
 
             before { second_calculator.call }

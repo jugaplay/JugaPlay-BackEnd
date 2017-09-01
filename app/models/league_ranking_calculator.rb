@@ -12,9 +12,10 @@ class LeagueRankingCalculator
       end_old_league_rankings
       prepare_league_rankings
       update_plays_and_points
-      sort_rankings
-      update_movement_and_total_points
       create_rankings_for_non_playing_users
+      update_total_points
+      sort_rankings
+      update_movement
     end
   end
 
@@ -55,10 +56,21 @@ class LeagueRankingCalculator
     end
   end
 
+  def create_rankings_for_non_playing_users
+    return unless current_round > 1
+    rankings  = []
+    previous_round_rankings = current_league.league_rankings.where(round: current_round - 1)
+    not_playing_user_ids = previous_round_rankings.pluck(:user_id) - current_round_rankings.pluck(:user_id)
+    previous_round_rankings.where(user_id: not_playing_user_ids).all.each do |ranking|
+      rankings << LeagueRanking.new(user_id: ranking.user_id, round: current_round, league: current_league, position: 1, status: :playing, total_points: 0, round_points: 0, movement: 0)
+    end
+    LeagueRanking.import(rankings)
+  end
+
   def sort_rankings
     next_position = 1
     ranking_ids, rankings_data = [], []
-    current_round_rankings.group_by(&:round_points).each do |(points, rankings)|
+    current_round_rankings.group_by(&:total_points).each do |(points, rankings)|
       position = next_position
       rankings.each do |ranking|
         ranking_ids << ranking.id
@@ -69,39 +81,33 @@ class LeagueRankingCalculator
     LeagueRanking.update(ranking_ids, rankings_data)
   end
 
-  def update_movement_and_total_points
+  def update_total_points
     ranking_ids, rankings_data = [], []
-    plays.each do |play|
-      user = play.user
-      prev_position = nil
-      prev_total_points = 0
+    current_league.league_rankings.where(round: current_round).each do |current_league_ranking|
+      user = current_league_ranking.user
+      total_points = 0
       LeagueRanking.where(league: current_league, user: user).order(round: :asc).all.each do |ranking|
+        total_points += ranking.round_points
         ranking_ids << ranking.id
-        if prev_position
-          total_points = prev_total_points + ranking.round_points
-          rankings_data << { total_points: total_points, movement: (ranking.position - prev_position) }
-          prev_total_points = total_points
-        else
-          rankings_data << { total_points: ranking.round_points, movement: 0 }
-          prev_total_points = ranking.round_points
-        end
-        prev_position = ranking.position
+        rankings_data << { total_points: total_points }
       end
     end
     LeagueRanking.update(ranking_ids, rankings_data)
   end
 
-  def create_rankings_for_non_playing_users
-    return unless current_round > 1
-    rankings  = []
-    last_position = current_round_rankings.last.position + 1
-    previous_round_rankings = current_league.league_rankings.where(round: current_round - 1)
-    not_playing_user_ids = previous_round_rankings.pluck(:user_id) - current_round_rankings.pluck(:user_id)
-    previous_round_rankings.where(user_id: not_playing_user_ids).all.each do |ranking|
-      movement = last_position - ranking.position
-      rankings << LeagueRanking.new(user_id: ranking.user_id, round: current_round, league: current_league, position: last_position, status: :playing, total_points: ranking.total_points, round_points: 0, movement: movement)
+  def update_movement
+    ranking_ids, rankings_data = [], []
+    current_league.league_rankings.where(round: current_round).each do |current_league_ranking|
+      user = current_league_ranking.user
+      prev_position = nil
+      LeagueRanking.where(league: current_league, user: user).order(round: :asc).all.each do |ranking|
+        movement = prev_position ? (ranking.position - prev_position) : 0
+        prev_position = ranking.position
+        ranking_ids << ranking.id
+        rankings_data << { movement: movement }
+      end
     end
-    LeagueRanking.import(rankings)
+    LeagueRanking.update(ranking_ids, rankings_data)
   end
 
   def close_current_league_and_pick_next_league
@@ -135,7 +141,7 @@ class LeagueRankingCalculator
   end
 
   def current_round_rankings
-    current_league.league_rankings.where(round: current_round).order(round_points: :desc)
+    current_league.league_rankings.where(round: current_round).order(total_points: :desc)
   end
 
   def build_league_ranking_for(user)
