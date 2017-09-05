@@ -37,7 +37,7 @@ class Api::V1::TablesController < Api::BaseController
     return render_json_error MULTIPLIER_MUST_BE_GREATER_THAN_ONE if multiplier < 1
     play = play_in_table { |redirect| return redirect }
     bet_multiplier_calculator.call(play, multiplier)
-    redirect_to api_v1_play_path(play.id)
+    render partial: 'api/v1/plays/play', locals: { play: play }
   rescue UserDoesNotHaveEnoughChips, TableDoesNotHaveAMultiplierChipsCostDefined, ActiveRecord::RecordInvalid => error
     render_json_error error.message
   rescue ActiveRecord::RecordNotFound

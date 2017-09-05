@@ -58,6 +58,7 @@ describe Api::V1::PlaysController do
                 prize_type: 'N/A',
                 prize_value: 'N/A',
                 leagues: [],
+                type: play.type.to_s,
                 players: play.players.map { |player| {
                   id: player.id,
                   first_name: player.first_name,
@@ -112,6 +113,7 @@ describe Api::V1::PlaysController do
             expect(response_body[:points]).to eq 'N/A'
             expect(response_body[:prize_type]).to eq 'N/A'
             expect(response_body[:prize_value]).to eq 'N/A'
+            expect(response_body[:type]).to eq 'league'
           end
         end
 
