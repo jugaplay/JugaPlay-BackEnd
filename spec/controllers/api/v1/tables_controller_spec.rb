@@ -336,7 +336,7 @@ describe Api::V1::TablesController do
             it 'sets the play multiplier and returns a json with the play data' do
               post :multiply_play, params
 
-              expect(response).to redirect_to api_v1_play_path(play.id)
+              expect(response).to render_template(partial: 'api/v1/plays/_play')
 
               expect(play.reload.multiplier).to eq 3
             end

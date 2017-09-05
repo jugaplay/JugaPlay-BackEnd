@@ -7,6 +7,7 @@ json.points play.points { 'N/A' }
 json.prize_type play.prize_currency
 json.prize_value play.prize_value
 json.leagues play.league_ids_selected_as_best
+json.type play.type
 
 # POR RETROCOMPATIBILIDAD #
 json.bet_base_coins play.cost_value
