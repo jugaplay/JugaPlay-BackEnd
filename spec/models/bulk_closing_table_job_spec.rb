@@ -59,7 +59,7 @@ describe BulkClosingTableJob do
         another_pending_job.table.close!
       end
 
-      it 'closes the opened tables that belong to a pending job' do
+      it 'closes the opened tables that belong to a pending job and ignores the closed ones' do
         job.call
 
         pending_job.reload
@@ -73,9 +73,9 @@ describe BulkClosingTableJob do
         expect(pending_job.error_message).to be_nil
 
         expect(another_pending_job.table).to be_closed
-        expect(another_pending_job.status).to eq :failed
+        expect(another_pending_job.status).to eq :finished_successfully
         expect(another_pending_job.stopped_at).not_to be_nil
-        expect(another_pending_job.error_message).to eq "The table #{another_pending_job.table.title} [#{another_pending_job.table.id}] is 'closed' and should be 'being closed' in order to process closing"
+        expect(another_pending_job.error_message).to be_nil
 
         expect(finished_successfully_job.table).not_to be_closed
         expect(finished_successfully_job.status).to eq :finished_successfully

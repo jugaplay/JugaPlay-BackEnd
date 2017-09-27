@@ -12,6 +12,7 @@ class TableCloser
   end
 
   def call
+    return if table.closed?
     table_closer_validator.validate_to_finish_closing table
     play_points_assigner.call
     table_ranking_calculator.call

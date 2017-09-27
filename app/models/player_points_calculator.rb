@@ -10,7 +10,7 @@ class PlayerPointsCalculator
 
   def calculate_points_for_player(player, table)
     player_stats = PlayerStats.for_table_and_player(table, player)
-    fail MissingPlayerStats if player_stats.empty?
+    return 0 if player_stats.empty?
     player_stats.map do |stat|
       calculate_for_player_stat(stat)
     end.sum.round(2)
