@@ -51,7 +51,7 @@ class LeagueRankingCalculator
       ranking = LeagueRanking.playing.find_by(league: current_league, user: user, round: current_round)
       ranking = build_league_ranking_for(user) unless ranking
       ranking.plays << play
-      ranking.round_points = ranking.best_plays.pluck(:points).sum
+      ranking.round_points = [ranking.best_plays.pluck(:points).sum, 0].max
       ranking.save!
     end
   end

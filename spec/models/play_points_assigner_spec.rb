@@ -59,11 +59,11 @@ describe PlayPointsAssigner do
                 end
               end
 
-              it 'raises an error and does not assign points' do
-                expect { play_points_assigner.call }.to raise_error MissingPlayerStats
+              it 'assigns 0 points to that play' do
+                play_points_assigner.call
                 play = PlaysHistory.new.made_by(user).in_table(table).last
 
-                expect(play.points).to be_nil
+                expect(play.points).to eq 0
               end
             end
           end
@@ -228,11 +228,11 @@ describe PlayPointsAssigner do
                 play.players.each { |player| PlayerStats.find_by(player: player).delete }
               end
 
-              it 'raises an error and does not assign points' do
-                expect{ play_points_assigner.call }.to raise_error MissingPlayerStats
+              it 'assigns 0 points to that play' do
+                play_points_assigner.call
                 play = PlaysHistory.new.made_by(user).in_table(table).last
 
-                expect(play.points).to be_nil
+                expect(play.points).to eq 0
               end
             end
           end
