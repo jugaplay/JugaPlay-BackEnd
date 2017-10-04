@@ -22,6 +22,25 @@ namespace :league_rankings do
     puts 'Finished rankings import'
   end
 
+  task recalculate_round_points: :environment do
+    current_league = League.playing.order(starts_at: :asc).first
+    current_league = League.opened.order(starts_at: :asc).first unless current_league
+    return unless current_league
+
+    puts 'Preparing league rankings to recalculate round points'
+    ranking_ids, rankings_data = [], []
+    current_league.league_rankings.each do |league_ranking|
+      user = league_ranking.user
+      puts "Recalculating round points for user #{user.id} in round #{league_ranking.round}"
+      round_points = [league_ranking.best_plays.pluck(:points).sum, 0].max
+      ranking_ids << league_ranking.id
+      rankings_data << { round_points: round_points }
+    end
+    puts 'Updating all rankings'
+    LeagueRanking.update(ranking_ids, rankings_data)
+    puts 'Finished rankings update'
+  end
+
   task recalculate_total_points: :environment do
     current_league = League.playing.order(starts_at: :asc).first
     current_league = League.opened.order(starts_at: :asc).first unless current_league
