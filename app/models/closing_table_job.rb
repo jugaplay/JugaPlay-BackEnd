@@ -10,7 +10,7 @@ class ClosingTableJob < ActiveRecord::Base
 
   scope :failed, -> { faileds }
   scope :pending, -> { pendings }
-  scope :retryable, -> { failed.where('failures < 5') }
+  scope :retryable, -> { failed.where('failures < 3') }
   scope :ordered, -> { order(priority: :asc).includes(:table) }
   scope :pending_or_retryable, -> { where(id: (pending.pluck(:id) + retryable.pluck(:id)).uniq) }
 

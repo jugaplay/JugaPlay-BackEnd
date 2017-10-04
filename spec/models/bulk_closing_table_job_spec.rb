@@ -8,7 +8,7 @@ describe BulkClosingTableJob do
     let!(:pending_job) { FactoryGirl.create(:closing_table_job, status: :pending) }
     let!(:another_pending_job) { FactoryGirl.create(:closing_table_job, status: :pending) }
     let!(:finished_successfully_job) { FactoryGirl.create(:closing_table_job, status: :finished_successfully, stopped_at: yesterday) }
-    let!(:failed_job) { FactoryGirl.create(:closing_table_job, status: :failed, stopped_at: yesterday, error_message: 'failed') }
+    let!(:failed_job) { FactoryGirl.create(:closing_table_job, status: :failed, failures: 3, stopped_at: yesterday, error_message: 'failed') }
 
     before do
       create_empty_stats_for_all pending_job.table.matches
