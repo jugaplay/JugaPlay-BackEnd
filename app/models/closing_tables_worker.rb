@@ -24,7 +24,7 @@ class ClosingTablesWorker
 
   def enqueue_job_for(table)
     validator.validate_to_start_closing(table)
-    ClosingTableJob.create!(table: table, priority: next_job_priority, status: :pending)
+    ClosingTableJob.create!(table: table, priority: next_job_priority, status: :pending, failures: 0)
     table.start_closing!
   rescue ActiveRecord::RecordInvalid, MissingPlayerStats, TableIsClosed => error
     errors << { table: table, error_message: error.message }
