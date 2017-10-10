@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170814150420) do
+ActiveRecord::Schema.define(version: 20171004124851) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,13 +38,14 @@ ActiveRecord::Schema.define(version: 20170814150420) do
   add_index "address_books", ["user_id"], name: "index_address_books_on_user_id", unique: true, using: :btree
 
   create_table "closing_table_jobs", force: :cascade do |t|
-    t.integer  "table_id",      null: false
-    t.integer  "priority",      null: false
-    t.integer  "status_cd",     null: false
+    t.integer  "table_id",                  null: false
+    t.integer  "priority",                  null: false
+    t.integer  "status_cd",                 null: false
     t.datetime "stopped_at"
     t.string   "error_message"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "failures",      default: 0, null: false
   end
 
   add_index "closing_table_jobs", ["table_id"], name: "index_closing_table_jobs_on_table_id", unique: true, using: :btree
